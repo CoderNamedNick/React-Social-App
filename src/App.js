@@ -25,7 +25,7 @@ function App() {
         )}
         {signup && !loggedIn && (
           <Routes>
-            <Route path="/" element={<SignUpPage onSignupSuccess={handleLogin} />} />
+            <Route path="/SignUp" element={<SignUpPage onSignupSuccess={handleLogin} />} />
           </Routes>
         )}
       </div>

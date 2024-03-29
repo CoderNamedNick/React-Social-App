@@ -22,20 +22,58 @@ code {
   align-items: center;
   color: white;
 }
-.Login-square{
+.Login-square,
+.signup-square{
   margin-top: 10%;
   width: 400px;
-  height: 500px;
+  height: 400px;
   background-color: rgba(0, 0, 0, 0.438);
   display: flex;
   flex-direction: column;
   align-items: center;
+  border-radius: 20px;
+}
+.signup-square{
+  height: 500px;
 }
 .LoginBars{
-  margin-top: 30px;
+  margin-top: 20px;
+  margin-bottom: 20px;
   padding: 20px 0px;
   padding-right: 60px;
   border: solid black 3px;
   border-radius: 30px;
   font-size: 15px;
+}
+.new-p-login{
+  font-size: 20px;
+  margin-top: 50px;
+}
+.signuplink{
+  color: skyblue;
+}
+.signuplink:hover{
+  cursor: pointer;
+  text-decoration: underline;
+  font-weight: 700;
+  font-size: 22px;
+}
+.loginlink{
+  color: rgb(26, 205, 250);
+}
+.loginlink:hover{
+  cursor: pointer;
+  font-weight: 100;
+  font-size: 26px;
+}
+.signup-labels{
+  font-weight: 100;
+  font-size: 22px;
+}
+.signup-inputs{
+  font-weight: 100;
+  font-size: 22px;
+  border: black 1px solid;
+  padding: 5px 0px;
+  border-radius: 5px;
 }

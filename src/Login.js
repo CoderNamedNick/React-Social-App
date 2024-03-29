@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-//import { Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 const LoginPage = ({onSignupClick}) => {
   const [message, setMessage] = useState('');
@@ -19,8 +19,8 @@ const LoginPage = ({onSignupClick}) => {
         <br/>
         <input className="LoginBars" type="text" placeholder="Email"></input>
         <input className="LoginBars" type="password"placeholder="Pasword"></input>
-        <h2>LOG IN</h2>
-        <p>New? <span onClick={onSignupClick}>Sign Up</span></p>
+        <h2 className="loginlink">LOG IN!</h2>
+        <p className="new-p-login">New? <Link to="/SignUp"><span className="signuplink" onClick={onSignupClick}>Sign Up</span></Link></p>
       </div>
       <p>{message}</p> {/* Display the message from backend */}
     </div>
