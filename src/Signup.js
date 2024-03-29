@@ -17,13 +17,12 @@ const SignUpPage = () => {
       <div className="Login-square">
         <h2>SUPER COOL NAME OF SITE</h2>
         <br></br>
-        <input type="text" placeholder="Email"></input>
-        <input type="password"placeholder="Pasword"></input>
-        <h2>LOG IN</h2>
-        <p>or</p>
-        <h3>Sign Up</h3>
+        <input className="LoginBars" type="text" placeholder="FullName"></input>
+        <input className="LoginBars" type="text" placeholder="UserName"></input>
+        <input className="LoginBars" type="text" placeholder="Email"></input>
+        <input className="LoginBars" type="password"placeholder="Pasword"></input>
+        <button>Make Account</button>
       </div>
-      <button>Click to see db</button>
       <p>{message}</p> {/* Display the message from backend */}
     </div>
   )

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 //import { Link } from "react-router-dom";
 
-const LoginPage = () => {
+const LoginPage = ({onSignupClick}) => {
   const [message, setMessage] = useState('');
 
   useEffect(() => {
@@ -14,16 +14,14 @@ const LoginPage = () => {
 
   return (
     <div className="main-login-page-div">
+      <h2>SUPER COOL NAME OF SITE</h2>
       <div className="Login-square">
-        <h2>SUPER COOL NAME OF SITE</h2>
-        <br></br>
-        <input type="text" placeholder="Email"></input>
-        <input type="password"placeholder="Pasword"></input>
+        <br/>
+        <input className="LoginBars" type="text" placeholder="Email"></input>
+        <input className="LoginBars" type="password"placeholder="Pasword"></input>
         <h2>LOG IN</h2>
-        <p>or</p>
-        <h3>Sign Up</h3>
+        <p>New? <span onClick={onSignupClick}>Sign Up</span></p>
       </div>
-      <button>Click to see db</button>
       <p>{message}</p> {/* Display the message from backend */}
     </div>
   )

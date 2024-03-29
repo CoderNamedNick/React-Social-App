@@ -31,3 +31,11 @@ code {
   flex-direction: column;
   align-items: center;
 }
+.LoginBars{
+  margin-top: 30px;
+  padding: 20px 0px;
+  padding-right: 60px;
+  border: solid black 3px;
+  border-radius: 30px;
+  font-size: 15px;
+}
