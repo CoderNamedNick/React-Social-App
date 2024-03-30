@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-function SignUpPage() {
+function SignUpPage({onSignupSuccess}) {
   const [formData, setFormData] = useState({
     username: '',
     email: '',
@@ -9,6 +10,7 @@ function SignUpPage() {
     birthdate: ''
   });
   const [errors, setErrors] = useState({});
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -49,6 +51,8 @@ function SignUpPage() {
 
     // If all validations pass, you can submit the form data
     console.log('Form submitted:', formData);
+    onSignupSuccess()
+    navigate('/HomePage')
   };
 
   return (

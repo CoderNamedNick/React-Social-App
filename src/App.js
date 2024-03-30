@@ -2,10 +2,14 @@ import React, { useState } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import LoginPage from "./Login";
 import SignUpPage from "./Signup";
+import HomePage from "./Homepage";
+//MAKE A FETCH CUSTOM HOOK FOR USER DATA
 
 function App() {
   const [loggedIn, setLoggedIn] = useState(false);
   const [signup, setSignup] = useState(false);
+
+  
 
   const handleSignupClick = () => {
     setSignup(true);
@@ -13,6 +17,7 @@ function App() {
 
   const handleLogin = () => {
     setLoggedIn(true);
+    //USE FETCH HOOK HERE
   };
 
   return (
@@ -26,6 +31,11 @@ function App() {
         {signup && !loggedIn && (
           <Routes>
             <Route path="/SignUp" element={<SignUpPage onSignupSuccess={handleLogin} />} />
+          </Routes>
+        )}
+        {loggedIn && (
+          <Routes>
+            <Route path="/HomePage" element={<HomePage />} />
           </Routes>
         )}
       </div>

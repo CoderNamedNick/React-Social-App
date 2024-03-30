@@ -1,13 +1,13 @@
 body {
   margin: 0;
+  padding: 0%;
+  height: 100vh;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-image: url(./images/3430013.jpg);
-  background-size: cover;
-  background-repeat: no-repeat;
+  background: linear-gradient(to bottom, #000c22, #04083f, #1a075a, #2c007d, #3d008f, #4800a3, #5400b5, #6000c7, #6b00da, #7600ee, #8100ff, #7f00e7, #7e00cf, #7c00b7, #7b009f, #7a0087, #78006f, #972071, #74435d, #473349, #181717);
 }
 
 code {
