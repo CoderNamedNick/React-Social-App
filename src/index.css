@@ -77,6 +77,21 @@ code {
   padding: 5px 0px;
   border-radius: 5px;
 }
+.signup-submit-btn{
+  background-color: #ffffff00;
+  color: white;
+  border: None;
+  font-weight: 700;
+  font-size: 30px;
+  padding-left: 70px;
+  margin-top: 40px;
+  cursor: pointer;
+}
+.signup-submit-btn:hover{
+  color: rgb(207, 102, 102);
+  font-weight: 100;
+  font-size: 30px;
+}
 .Header-Main-Div {
   background-color: rgb(90, 25, 25);
   display: flex;
@@ -101,4 +116,23 @@ code {
   height: 60px;
   padding-right: 20px;
   text-align: right; /* Align text to the right */
+}
+.header-drop-down-menu {
+  background-color: rgba(241, 241, 241, 0.836);
+  color: rgb(29, 29, 29);
+  display: flex;
+  flex-direction: column;
+  width: fit-content;
+  padding: 20px;
+  position: fixed;
+  right: -300px; /* Start just outside the viewport */
+  top: 104px;
+  bottom: 0; /* Adjust as needed */
+  opacity: 0; /* Initially hide the menu */
+  transition: opacity 0.5s ease-in-out, right 0.5s ease-in-out; /* Apply transition for smooth appearance */
+}
+
+.show-menu {
+  right: 0; /* Slide into view */
+  opacity: 1; /* Make the menu visible */
 }

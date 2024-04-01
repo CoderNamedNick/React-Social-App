@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import Logo from './images/Tavern-logo.png'
 
 const LoginPage = ({onSignupClick}) => {
   const [message, setMessage] = useState('');
@@ -14,7 +15,7 @@ const LoginPage = ({onSignupClick}) => {
 
   return (
     <div className="main-login-page-div">
-      <h2>SUPER COOL NAME OF SITE</h2>
+      <img src={Logo} alt="TAVERN"></img>
       <div className="Login-square">
         <br/>
         <input className="LoginBars" type="text" placeholder="Email"></input>
