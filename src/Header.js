@@ -37,13 +37,12 @@ const Header = ({ title }) => {
       <div className={`header-drop-down-menu ${showMenu ? 'show-menu' : ''}`}>
         <h2>Tavern Menu</h2>
         <div>
-          <p>Profile Book</p>
-          <p>Join A Guild</p>
-          <p>Tavern News</p>
-          <p>Make A Guild</p>
-          <p>Form a Party</p>
-          <hr></hr>
-          <p>Leave the Tavern</p>
+          <div className="Menu-p-s">Profile Book</div>
+          <div className="Menu-p-s">Join A Guild</div>
+          <div className="Menu-p-s">Tavern News</div>
+          <div className="Menu-p-s">Make A Guild</div>
+          <div className="Menu-p-s">Form a Party</div>
+          <p className="menu-leave">Leave the Tavern</p>
         </div>
       </div>
     </div>

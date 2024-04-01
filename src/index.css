@@ -136,3 +136,33 @@ code {
   right: 0; /* Slide into view */
   opacity: 1; /* Make the menu visible */
 }
+.Menu-p-s{
+  font-size: 20px;
+  padding-top: 5px;
+  padding-bottom: 15px;
+  border-bottom-color: rgba(161, 72, 72, 0.521);
+  border-bottom-width: 1px;
+  border-bottom-style: groove;
+  text-align: center;
+  cursor: pointer;
+}
+.Menu-p-s:hover{
+  color: brown;
+  border-bottom-width: 3px;
+  font-weight: 100;
+  font-size: 22px;
+  background-color: rgba(165, 42, 42, 0.096);
+  border-top-right-radius: 10px;
+  border-top-left-radius: 10px;
+}
+.menu-leave{
+  font-weight: 400;
+  font-size: 21px;
+  cursor: pointer;
+}
+.menu-leave:hover{
+  font-weight: 100;
+  font-size: 22px;
+  padding-right: 1px;
+  color: red;
+}
