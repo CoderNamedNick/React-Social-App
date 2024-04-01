@@ -91,11 +91,14 @@ code {
 }
 
 .Header-title {
-  flex: 1; /* Take remaining space */
+  flex: 1;
+  padding-right: 70px; /* Take remaining space */
   text-align: center; /* Center the text */
 }
 
 .Header-menu {
-  width: 200px; /* Set width of the dropdown menu */
+  width: 80px; 
+  height: 60px;
+  padding-right: 20px;
   text-align: right; /* Align text to the right */
 }
