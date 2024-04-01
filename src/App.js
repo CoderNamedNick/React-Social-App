@@ -3,6 +3,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import LoginPage from "./Login";
 import SignUpPage from "./Signup";
 import HomePage from "./Homepage";
+import Header from "./Header";
 //MAKE A FETCH CUSTOM HOOK FOR USER DATA
 
 function App() {
@@ -23,21 +24,24 @@ function App() {
   return (
     <BrowserRouter>
       <div className="App">
-        {!signup && !loggedIn && (
-          <Routes>
-            <Route path="/" element={<LoginPage onSignupClick={handleSignupClick} onLogin={handleLogin} />} />
-          </Routes>
-        )}
-        {signup && !loggedIn && (
-          <Routes>
-            <Route path="/SignUp" element={<SignUpPage onSignupSuccess={handleLogin} />} />
-          </Routes>
-        )}
-        {loggedIn && (
-          <Routes>
-            <Route path="/HomePage" element={<HomePage />} />
-          </Routes>
-        )}
+        {loggedIn && ( <Header/>  )}
+          <div>
+            {!signup && !loggedIn && (
+              <Routes>
+                <Route path="/" element={<LoginPage onSignupClick={handleSignupClick} onLogin={handleLogin} />} />
+              </Routes>
+            )}
+            {signup && !loggedIn && (
+              <Routes>
+                <Route path="/SignUp" element={<SignUpPage onSignupSuccess={handleLogin} />} />
+              </Routes>
+            )}
+            {loggedIn && (
+              <Routes>
+                <Route path="/HomePage" element={<HomePage />} />
+              </Routes>
+            )}
+          </div>
       </div>
     </BrowserRouter>
   );

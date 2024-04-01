@@ -77,3 +77,25 @@ code {
   padding: 5px 0px;
   border-radius: 5px;
 }
+.Header-Main-Div {
+  background-color: rgb(90, 25, 25);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: rgb(255, 211, 211);
+}
+
+.Header-logo {
+  width: 200px; /* Set width of logo */
+  height: 100px;
+}
+
+.Header-title {
+  flex: 1; /* Take remaining space */
+  text-align: center; /* Center the text */
+}
+
+.Header-menu {
+  width: 200px; /* Set width of the dropdown menu */
+  text-align: right; /* Align text to the right */
+}
