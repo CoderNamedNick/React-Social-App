@@ -8,7 +8,7 @@ const HomePage = () => {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [showMore, setShowMore] = useState(false);
-  const [width, setWidth] = useState(300); // Initial width
+  const [width, setWidth] = useState(250); // Initial width
 
   useEffect(() => {
     // Fetch data here
@@ -76,11 +76,12 @@ const HomePage = () => {
     <div className='Homepage-main-div'>
       <Resizable 
         width={width}
-        height={300} 
+        height={100} 
         onResize={handleResize} 
-        minConstraints={[100, 300]} // Minimum width and height
-        maxConstraints={[600, 600]} // Maximum width and height
+        minConstraints={[100, 1000]} // Minimum width and height
+        maxConstraints={[600, 10000]} // Maximum width and height
         resizeHandles={['ne']}
+        style={{ position: 'absolute', top: 108, left: 0, bottom: 0 }}
       >
         <div className="Travelers-homepage-div" style={{ width }}>
           <div className="Travelers-hompage-search-h2">Search known Travelers</div>
