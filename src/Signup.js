@@ -58,7 +58,7 @@ function SignUpPage({onSignupSuccess}) {
   return (
     <div className='main-login-page-div'>
       <div className="signup-square">
-        <h2>Create an Account</h2>
+        <h2 className='medievalsharp-regular'>Create an Account</h2>
         <form onSubmit={handleSubmit}>
           <div>
             <label className='signup-labels' htmlFor="username">Username:</label><br />
@@ -89,7 +89,7 @@ function SignUpPage({onSignupSuccess}) {
             <input className='signup-inputs' type="date" id="birthdate" name="birthdate" value={formData.birthdate} onChange={handleChange} required />
           </div>
 
-          <button className='signup-submit-btn' type="submit">Register</button>
+          <button className='signup-submit-btn medievalsharp-regular' type="submit">Register</button>
         </form>
       </div>
     </div>

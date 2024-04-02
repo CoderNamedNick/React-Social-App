@@ -7,9 +7,14 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background: linear-gradient(to bottom, #000c22, #04083f, #1a075a, #2c007d, #3d008f, #4800a3, #5400b5, #6000c7, #6b00da, #7600ee, #8100ff, #7f00e7, #7e00cf, #7c00b7, #7b009f, #7a0087, #78006f, #972071, #74435d, #473349, #181717);
+  background: linear-gradient(to bottom, rgba(90, 25, 25), rgba(90, 25, 25),rgb(105, 30, 30), rgb(121, 36, 36), rgb(141, 47, 47), rgb(139, 56, 56),rgb(170, 72, 72),rgb(197, 99, 99));
 }
-
+.medievalsharp-regular {
+  font-family: "MedievalSharp", cursive;
+  font-weight: 400;
+  font-style: normal;
+  font-size: 38px;
+}
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
@@ -34,7 +39,8 @@ code {
   border-radius: 20px;
 }
 .signup-square{
-  height: 500px;
+  height: 550px;
+  margin-top: 80px;
 }
 .LoginBars{
   margin-top: 20px;
@@ -47,7 +53,7 @@ code {
 }
 .new-p-login{
   font-size: 20px;
-  margin-top: 50px;
+  margin-top: 40px;
 }
 .signuplink{
   color: skyblue;
@@ -98,6 +104,7 @@ code {
   align-items: center;
   justify-content: space-between;
   color: rgb(255, 211, 211);
+  border-bottom: 4px black solid;
 }
 
 .Header-logo {
@@ -116,6 +123,7 @@ code {
   height: 60px;
   padding-right: 20px;
   text-align: right; /* Align text to the right */
+  cursor: pointer;
 }
 .header-drop-down-menu {
   background-color: rgba(241, 241, 241, 0.836);
@@ -126,7 +134,7 @@ code {
   padding: 20px;
   position: fixed;
   right: -300px; /* Start just outside the viewport */
-  top: 104px;
+  top: 108px;
   bottom: 0; /* Adjust as needed */
   opacity: 0; /* Initially hide the menu */
   transition: opacity 0.5s ease-in-out, right 0.5s ease-in-out; /* Apply transition for smooth appearance */
