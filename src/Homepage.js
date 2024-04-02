@@ -1,10 +1,14 @@
 import React, { useState, useEffect } from "react";
+import { Resizable } from 'react-resizable';
+import 'react-resizable/css/styles.css';
 
 const HomePage = () => {
   const [friends, setFriends] = useState([]);
   const [filteredFriends, setFilteredFriends] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
+  const [showMore, setShowMore] = useState(false);
+  const [width, setWidth] = useState(300); // Initial width
 
   useEffect(() => {
     // Fetch data here
@@ -13,7 +17,7 @@ const HomePage = () => {
         // Simulate fetching data
         const data = await fetchFriendsData(); // Assuming fetchFriendsData is a function to fetch friends data
         setFriends(data);
-        setFilteredFriends(data); // Initialize filtered friends with all friends
+        setFilteredFriends(data.slice(0, 5)); // Initially show only the first 5 friends
         setLoading(false);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -35,6 +39,7 @@ const HomePage = () => {
           { name: "Friend 3", dailyObjectives: "Objective 3" },
           { name: "Friend 4", dailyObjectives: "Objective 4" },
           { name: "Friend 5", dailyObjectives: "Objective 5" },
+          { name: "Friend 6", dailyObjectives: "Objective 6" },
           // Add more data as needed
         ];
         resolve(friendsData);
@@ -53,31 +58,55 @@ const HomePage = () => {
     const filtered = friends.filter((friend) =>
       friend.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
-    setFilteredFriends(filtered);
+    setFilteredFriends(filtered.slice(0, 5)); // Update filtered friends, but only show first 5
+  };
+
+  // Function to handle showing more friends
+  const handleShowMore = () => {
+    setFilteredFriends(friends.slice(0, filteredFriends.length + 5));
+    setShowMore(filteredFriends.length + 5 < friends.length);
+  };
+
+  // Function to handle resizing
+  const handleResize = (event, { size }) => {
+    setWidth(size.width);
   };
 
   return (
     <div className='Homepage-main-div'>
-      <div className="Travelers-homepage-div">
-        <h3>Search known Travelers</h3>
-        <input 
-          type="text" 
-          value={searchTerm} 
-          onChange={handleSearchChange} 
-          placeholder="Search by name" 
-        />
-        <h2>Known Travelers</h2>
-        {loading ? (
-          <p>Loading...</p>
-        ) : (
-          filteredFriends.map((friend, index) => (
-            <div key={index} className="Travelers-hompage-info">
-              <p>{friend.name}</p>
-              <p>{friend.dailyObjectives}</p>
-            </div>
-          ))
-        )}
-      </div>
+      <Resizable 
+        width={width}
+        height={300} 
+        onResize={handleResize} 
+        minConstraints={[100, 300]} // Minimum width and height
+        maxConstraints={[600, 600]} // Maximum width and height
+        resizeHandles={['ne']}
+      >
+        <div className="Travelers-homepage-div" style={{ width }}>
+          <div className="Travelers-hompage-search-h2">Search known Travelers</div>
+          <input 
+            type="text" 
+            value={searchTerm} 
+            onChange={handleSearchChange} 
+            placeholder="Search by name"
+            className="Travelers-hompage-search" 
+          />
+          <div className="Travelers-hompage-h2">Known Travelers</div>
+          {loading ? (
+            <p>Loading...</p>
+          ) : (
+            <>
+              {filteredFriends.map((friend, index) => (
+                <div key={index} className="Travelers-hompage-info">
+                  <p>{friend.name}</p>
+                  <p>{friend.dailyObjectives}</p>
+                </div>
+              ))}
+              {showMore && <button onClick={handleShowMore}>Show More</button>}
+            </>
+          )}
+        </div>
+      </Resizable>
     </div>
   );
 };

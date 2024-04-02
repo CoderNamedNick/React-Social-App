@@ -174,3 +174,50 @@ code {
   padding-right: 1px;
   color: red;
 }
+.Travelers-homepage-div{
+  position: fixed;
+  background-color: rgba(199, 60, 60, 0.699);
+  width: fit-content;
+  color: rgb(29, 29, 29);
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  border-right: rgba(0, 0, 0, 0.678) 3px solid;
+  top: 0 ;
+  bottom: 0;
+  border-right: rgba(0, 0, 0, 0.678) 3px solid;
+}
+.Travelers-hompage-info{
+  margin-left: -10px;
+  padding-left: 10px;
+  cursor: pointer;
+}
+.Travelers-hompage-info:hover{
+  border-bottom: 3px black solid;
+  background-color: rgba(80, 33, 33, 0.568);
+  color: rgb(223, 217, 217);
+  font-size: 18px;
+}
+.Travelers-hompage-h2{
+  font-size: 25px;
+  margin-left: -10px;
+  padding-left: 10px;
+  padding-top: 30px;
+  padding-bottom: 5px;
+  border-bottom: 2px black solid;
+}
+.Travelers-hompage-search{
+  height: 24px;
+  margin-left: -5px;
+  margin-right: 5px;
+  border-radius: 10px;
+  border: none;
+}
+.Travelers-hompage-search-h2{
+  font-size: 20px;
+  margin-left: -10px;
+  padding-left: 10px;
+  padding-top: 20px;
+  padding-bottom: 5px;
+  padding-right: 18px;
+}
