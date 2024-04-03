@@ -127,7 +127,7 @@ code {
   cursor: pointer;
 }
 .header-drop-down-menu {
-  background-color: rgba(241, 241, 241, 0.836);
+  background-color: rgba(241, 241, 241, 0.897);
   color: rgb(29, 29, 29);
   display: flex;
   flex-direction: column;
@@ -229,9 +229,22 @@ code {
 .Homepage-content-div{
   width: 100%;
   display: flex;
-  padding-left: 3%;
+  padding-left: 7%;
   flex-direction: column;
-  gap: 5px;
+  gap: 25px;
   color: black;
   font-size: 22px;
+}
+.Homepage-contents-divs{
+  background-color: brown;
+  font-size: 18px;
+  padding: 10px;
+  padding-bottom: 30px;
+  width: 600px;
+  border: black solid 3px;
+  border-radius: 10px;
+}
+.Homepage-contents-divs:hover{
+  border: rgba(0, 0, 0, 0.185) solid 3px;
+  border-bottom: rgba(0, 0, 0, 0.767) solid 6px;
 }
