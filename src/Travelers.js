@@ -8,7 +8,7 @@ const Travelers = () => {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [showMore, setShowMore] = useState(false);
-  const [width, setWidth] = useState(250); // Initial width
+  const [width, setWidth] = useState(100); // Initial width
 
   useEffect(() => {
     // Fetch data here

@@ -220,11 +220,18 @@ code {
   padding-bottom: 5px;
   padding-right: 18px;
 }
-
 .Homepage-main-div {
   display: flex;
 }
-
 .Travelers-container {
   flex-grow: 1;
+}
+.Homepage-content-div{
+  width: 100%;
+  display: flex;
+  padding-left: 3%;
+  flex-direction: column;
+  gap: 5px;
+  color: black;
+  font-size: 22px;
 }
