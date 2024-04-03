@@ -176,7 +176,6 @@ code {
   color: red;
 }
 .Travelers-homepage-div{
-  position: fixed;
   z-index: 10;
   background-color: rgba(199, 60, 60, 0.699);
   width: fit-content;
@@ -184,11 +183,8 @@ code {
   display: flex;
   flex-direction: column;
   padding: 10px;
-  padding-bottom: 0;
   border-right: rgba(0, 0, 0, 0.678) 3px solid;
-  top: 0 ;
-  bottom: 0;
-  border-right: rgba(0, 0, 0, 0.678) 3px solid;
+  border-bottom: rgba(0, 0, 0, 0.678) 3px solid;
 }
 .Travelers-hompage-info{
   margin-left: -10px;
@@ -223,4 +219,12 @@ code {
   padding-top: 20px;
   padding-bottom: 5px;
   padding-right: 18px;
+}
+
+.Homepage-main-div {
+  display: flex;
+}
+
+.Travelers-container {
+  flex-grow: 1;
 }
