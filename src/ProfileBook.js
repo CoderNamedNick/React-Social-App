@@ -7,20 +7,28 @@ const ProfileBook = () => {
 
  // when edit pfp is clicked firsrt make input boxes for bio, daily, and maybe UserName then make a patch request with new info
 
+  // if id of person is eqaul top user id then give option to edit 
+
+  //loop through persons guild array to use for persons entered guilds
+
   return( 
     <div>
       <div>
-        <div className="Traveler-Pic">PROFILE PIC</div>
-        <div className="Traveler-Info">
-          <h2>UserName</h2>
-          <h3>Daily Obj</h3>
-          <p>Bio</p>
-          <p>Traveler Since: adadadad</p>
-          <h4>Edit ProfileBook</h4>
+        <div className="travelors-info-div">
+          <div className="Traveler-Pic">PROFILE PIC</div>
+          <div className="Traveler-Info">
+            <h1>UserName</h1>
+            <h2>Daily Obj</h2>
+            <div className="Traveler-Bio">
+              Bio
+            </div>
+            <p>Traveler Since: adadadad</p>
+          </div>
+          <h4 className="Edit-PB">Edit ProfileBook</h4>
         </div>
         <br></br>
         <br></br>
-        <div>
+        <div className="ProfileBook-guilds-div">
           <h2>Guilds Traveler is part of</h2>
           {/*loop through user.Guilds array and then display guilds in this format */}
           <div>

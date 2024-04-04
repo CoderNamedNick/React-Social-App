@@ -51,8 +51,9 @@ const HomePage = () => {
               value={dailyObjective}
               onChange={(e) => setDailyObjective(e.target.value)}
               placeholder="Enter your daily objective"
+              className="Hompage-daily-input"
             />
-            <button type="submit">Submit</button>
+            <button className="Hompage-daily-submit" type="submit">Confirm</button>
           </form>
         </div>
 
