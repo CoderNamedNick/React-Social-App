@@ -3,7 +3,7 @@ import { useLocation, Link } from "react-router-dom";
 import Logo from './images/Tavern-logo.png'
 import Menu from './icons/menu.png'
 
-const Header = ({ title }) => {
+const Header = ({ title, LogOut }) => {
   const [showMenu, setShowMenu] = useState(false);
   const location = useLocation();
 
@@ -44,7 +44,7 @@ const Header = ({ title }) => {
           <div className="Menu-p-s">Tavern News</div>
           <div className="Menu-p-s">Make A Guild</div>
           <div className="Menu-p-s">Form a Party</div>
-          <p className="menu-leave">Leave the Tavern</p>
+          <Link to="/Login"><p className="menu-leave"onClick={LogOut}>Leave the Tavern</p></Link>
         </div>
       </div>
     </div>

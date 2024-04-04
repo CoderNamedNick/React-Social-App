@@ -19,17 +19,21 @@ function App() {
     setLoggedIn(true);
     //USE FETCH HOOK HERE
   };
+  const LogOut = () => {
+    setLoggedIn(false);
+  }
 
   return (
     <BrowserRouter>
       <div className="App">
-        {loggedIn && <Header />}
+        {loggedIn && <Header LogOut={LogOut}/>}
         <div>
           {!signup && !loggedIn && (
             <Routes>
               <Route
                 path="/"
                 element={<LoginPage onSignupClick={handleSignupClick} onLogin={handleLogin} />}
+                exact
               />
             </Routes>
           )}
@@ -38,6 +42,11 @@ function App() {
               <Route
                 path="/SignUp"
                 element={<SignUpPage onSignupSuccess={handleLogin} />}
+              />
+              <Route
+                path="/Login"
+                element={<LoginPage onSignupClick={handleSignupClick} onLogin={handleLogin} />}
+                exact
               />
             </Routes>
           )}
