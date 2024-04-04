@@ -4,10 +4,12 @@ import LoginPage from "./Login";
 import SignUpPage from "./Signup";
 import HomePage from "./Homepage";
 import Header from "./Header";
+import ProfileBook from './ProfileBook'
 
 function App() {
   const [loggedIn, setLoggedIn] = useState(false);
   const [signup, setSignup] = useState(false);
+  //Make usestate to handle fecth and save in state variable to then pass it down
 
   const handleSignupClick = () => {
     setSignup(true);
@@ -42,6 +44,7 @@ function App() {
           {loggedIn && (
             <Routes>
               <Route path="/HomePage" element={<HomePage />} />
+              <Route path="/ProfileBook" element={<ProfileBook />} />
             </Routes>
           )}
         </div>

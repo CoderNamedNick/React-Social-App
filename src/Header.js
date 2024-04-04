@@ -20,6 +20,8 @@ const Header = ({ title }) => {
         return "Sign Up";
       case "/HomePage":
         return "Home";
+      case "/ProfileBook":
+        return "ProfileBook";
       default:
         return "TAVERN"; // Default title
     }
@@ -37,7 +39,7 @@ const Header = ({ title }) => {
       <div className={`header-drop-down-menu ${showMenu ? 'show-menu' : ''}`}>
         <h2>Tavern Menu</h2>
         <div>
-          <div className="Menu-p-s">Profile Book</div>
+          <Link to="/ProfileBook"><div className="Menu-p-s">Profile Book</div></Link>
           <div className="Menu-p-s">Join A Guild</div>
           <div className="Menu-p-s">Tavern News</div>
           <div className="Menu-p-s">Make A Guild</div>
