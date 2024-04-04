@@ -31,9 +31,11 @@ const ProfileBook = () => {
         <div className="ProfileBook-guilds-div">
           <h2>Guilds Traveler is part of</h2>
           {/*loop through user.Guilds array and then display guilds in this format */}
-          <div>
-            <h3>GuildName</h3>
-            <h5># of guild Members</h5>
+          <div className="PB-guilds-div">
+            <div style={{paddingLeft: '20px',}}>
+              <h1 className="PB-guilds-name">GuildName</h1>
+              <h5># of guild Members</h5>
+            </div>
             <p>Guild Bio</p>
           </div>
         </div>
