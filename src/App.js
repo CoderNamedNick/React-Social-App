@@ -9,6 +9,7 @@ import ProfileBook from './ProfileBook'
 function App() {
   const [loggedIn, setLoggedIn] = useState(false);
   const [signup, setSignup] = useState(false);
+  const [UserData, setUserData] = useState({})
   //Make usestate to handle fecth and save in state variable to then pass it down
 
   const handleSignupClick = () => {
@@ -32,7 +33,7 @@ function App() {
             <Routes>
               <Route
                 path="/"
-                element={<LoginPage onSignupClick={handleSignupClick} onLogin={handleLogin} />}
+                element={<LoginPage onSignupClick={handleSignupClick} onLogin={handleLogin} UserData={UserData} setUserData={setUserData} />}
                 exact
               />
             </Routes>
@@ -41,19 +42,19 @@ function App() {
             <Routes>
               <Route
                 path="/SignUp"
-                element={<SignUpPage onSignupSuccess={handleLogin} />}
+                element={<SignUpPage onSignupSuccess={handleLogin} UserData={UserData} setUserData={setUserData} />}
               />
               <Route
                 path="/Login"
-                element={<LoginPage onSignupClick={handleSignupClick} onLogin={handleLogin} />}
+                element={<LoginPage onSignupClick={handleSignupClick} onLogin={handleLogin} UserData={UserData} setUserData={setUserData} />}
                 exact
               />
             </Routes>
           )}
           {loggedIn && (
             <Routes>
-              <Route path="/HomePage" element={<HomePage />} />
-              <Route path="/ProfileBook" element={<ProfileBook />} />
+              <Route path="/HomePage" element={<HomePage UserData={UserData} setUserData={setUserData}/>} />
+              <Route path="/ProfileBook" element={<ProfileBook UserData={UserData} setUserData={setUserData}/>} />
             </Routes>
           )}
         </div>

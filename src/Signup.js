@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-function SignUpPage({onSignupSuccess}) {
+function SignUpPage({onSignupSuccess, UserData, setUserData }) {
   const [formData, setFormData] = useState({
     username: '',
     email: '',
@@ -20,7 +20,7 @@ function SignUpPage({onSignupSuccess}) {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     // Username length validation
@@ -50,9 +50,35 @@ function SignUpPage({onSignupSuccess}) {
     // Additional validation logic can be added here
 
     // If all validations pass, you can submit the form data
-    console.log('Form submitted:', formData);
-    onSignupSuccess()
-    navigate('/HomePage')
+    try {
+      const response = await fetch('http://localhost:5000/Users', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          username: formData.username,
+          email: formData.email,
+          password: formData.password,
+          birthDate: formData.birthdate
+        })
+      });
+  
+      if (!response.ok) {
+        // Handle error response
+        throw new Error('Sign up request failed');
+      }
+      // Assuming successful sign up
+      const newUser = await response.json(); // Assuming server returns the created user data
+      console.log('Sign up successful');
+      // Update UserData state with the new user
+      setUserData(newUser);
+      onSignupSuccess();
+      navigate('/HomePage');
+    } catch (error) {
+      console.error('Error during sign up:', error);
+      // Handle error, maybe display a message to the user
+    }
   };
 
   return (

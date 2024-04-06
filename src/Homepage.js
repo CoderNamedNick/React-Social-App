@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from "react";
 import Travelers from "./Travelers";
 
-const HomePage = () => {
+const HomePage = ({UserData, setUserData}) => {
   // State variables and functions for managing data
   const [dailyObjective, setDailyObjective] = useState('');
   const [guildNotifications, setGuildNotifications] = useState([]);
   const [partyNotifications, setPartyNotifications] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [tavernNews, setTavernNews] = useState([]);
+
+  console.log(UserData)
 
   // Function to handle submitting the daily objective
   /*const handleSubmitObjective = (e) => {

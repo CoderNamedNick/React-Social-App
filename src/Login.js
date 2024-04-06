@@ -2,25 +2,30 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Logo from './images/Tavern-logo.png'
 
-const LoginPage = ({ onSignupClick, onLogin }) => {
+const LoginPage = ({ onSignupClick, onLogin, UserData, setUserData }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
   const navigate = useNavigate(); // Initialize useNavigate
 
-  const handleLogin = () => {
-    // Send a POST request to your backend server with user credentials
-    fetch('http://localhost:5000/Users/login', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ email, password }),
-    })
-    .then(response => {
+  const handleLogin = async () => {
+    try {
+      const response = await fetch('http://localhost:5000/Users/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
       if (response.ok) {
         // If response is OK, user is authenticated
         setMessage('Login successful');
+        // Get user data from the response
+        const userData = await response.json();
+        // Update UserData state with the logged-in user data
+        setUserData(userData);
+        // Trigger the onLogin callback if needed
         onLogin();
         // Navigate to home page
         navigate('/HomePage');
@@ -28,11 +33,10 @@ const LoginPage = ({ onSignupClick, onLogin }) => {
         // If response is not OK, handle error
         setMessage('Incorrect email or password');
       }
-    })
-    .catch(error => {
+    } catch (error) {
       console.error('Error:', error);
       setMessage('An error occurred, please try again later');
-    });
+    }
   };
 
   return (
