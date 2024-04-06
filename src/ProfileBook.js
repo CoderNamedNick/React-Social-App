@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 
 
-const ProfileBook = () => {
+const ProfileBook = ({UserData, setUserData}) => {
  // Use Prop from app to disply User data
  //if on other persons profile ur id params to get there info and with a fetch method
 
@@ -17,12 +17,13 @@ const ProfileBook = () => {
         <div className="travelors-info-div">
           <div className="Traveler-Pic">PROFILE PIC</div>
           <div className="Traveler-Info">
-            <h1>UserName</h1>
-            <h2>Daily Obj</h2>
+            <h1>{UserData.username}</h1>
+            <h2>Daily Objective:{UserData.dailyObjs}</h2>
             <div className="Traveler-Bio">
               Bio
+              {UserData.bios}
             </div>
-            <p>Traveler Since: adadadad</p>
+            <p>Traveler Since: {UserData.AccDate.substring(0, 10)}</p>
           </div>
           <h4 className="Edit-PB">Edit ProfileBook</h4>
         </div>

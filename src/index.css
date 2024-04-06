@@ -133,6 +133,7 @@ a{
 }
 .header-drop-down-menu {
   background-color: rgba(241, 241, 241, 0.897);
+  z-index: 100000000000000;
   color: rgb(29, 29, 29);
   display: flex;
   flex-direction: column;
