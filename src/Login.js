@@ -24,7 +24,7 @@ const LoginPage = ({ onSignupClick, onLogin, UserData, setUserData }) => {
         // Get user data from the response
         const userData = await response.json();
         // Update UserData state with the logged-in user data
-        setUserData(userData);
+        setUserData(userData.user);
         // Trigger the onLogin callback if needed
         onLogin();
         // Navigate to home page
