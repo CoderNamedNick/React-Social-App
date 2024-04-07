@@ -10,6 +10,7 @@ function App() {
   const [loggedIn, setLoggedIn] = useState(false);
   const [signup, setSignup] = useState(false);
   const [UserData, setUserData] = useState({})
+  
   //Make usestate to handle fecth and save in state variable to then pass it down
 
   const handleSignupClick = () => {

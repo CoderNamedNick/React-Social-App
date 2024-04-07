@@ -60,7 +60,9 @@ function SignUpPage({onSignupSuccess, UserData, setUserData }) {
           username: formData.username,
           email: formData.email,
           password: formData.password,
-          birthDate: formData.birthdate
+          birthDate: formData.birthdate,
+          bio: "",
+          dailyObj: ""
         })
       });
   
