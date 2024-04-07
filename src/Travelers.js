@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Resizable } from 'react-resizable';
 import 'react-resizable/css/styles.css';
 
-const Travelers = () => {
+const Travelers = ({UserData, setUserData}) => {
   const [friends, setFriends] = useState([]);
   const [filteredFriends, setFilteredFriends] = useState([]);
   const [loading, setLoading] = useState(true);

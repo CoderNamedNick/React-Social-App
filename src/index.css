@@ -74,8 +74,7 @@ a{
 }
 .loginlink:hover{
   cursor: pointer;
-  font-weight: 100;
-  font-size: 26px;
+  font-weight: 800;
 }
 .signup-labels{
   font-weight: 100;

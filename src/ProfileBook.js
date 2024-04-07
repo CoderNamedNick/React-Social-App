@@ -2,7 +2,8 @@ import React, { useState } from "react";
 
 
 const ProfileBook = ({UserData, setUserData}) => {
- // Use Prop from app to disply User data
+  const [EditProfile, setEditProfile] = useState(false)
+ // Use Prop from app to disply User data DONE!
  //if on other persons profile ur id params to get there info and with a fetch method
 
  // when edit pfp is clicked firsrt make input boxes for bio, daily, and maybe UserName then make a patch request with new info
@@ -14,6 +15,7 @@ const ProfileBook = ({UserData, setUserData}) => {
   return( 
     <div>
       <div>
+      {!EditProfile && (
         <div className="travelors-info-div">
           <div className="Traveler-Pic">PROFILE PIC</div>
           <div className="Traveler-Info">
@@ -27,6 +29,21 @@ const ProfileBook = ({UserData, setUserData}) => {
           </div>
           <h4 className="Edit-PB">Edit ProfileBook</h4>
         </div>
+        )}
+        {EditProfile && (
+        <div className="travelors-info-div">
+          <div className="Traveler-Pic">PROFILE PIC</div>
+          <div className="Traveler-Info">
+            <h1>{UserData.username}</h1>
+            <h2>Daily Objective:{UserData.dailyObjs}</h2>
+            <div className="Traveler-Bio">
+              <input></input>
+            </div>
+            <p>Traveler Since: {UserData.AccDate.substring(0, 10)}</p>
+          </div>
+          <h4 className="Edit-PB">Finish Edit</h4>
+        </div>
+        )}
         <br></br>
         <br></br>
         <div className="ProfileBook-guilds-div">
