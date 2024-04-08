@@ -56,10 +56,13 @@ const ProfileBook = ({ UserData, setUserData }) => {
             <div className="Traveler-Pic">PROFILE PIC</div>
             <div className="Traveler-Info">
               <h1>{UserData.username}</h1>
-              <h2>Daily Objective: <span>{UserData.dailyObj}</span></h2>
-              <p>Bio:</p>
-              <div style={{marginTop: '-12px'}} className="Traveler-Bio">
-                {UserData.bio}
+              <h2>Daily Objective: </h2>
+              <div className="PB-dailyObj" style={{ maxWidth: '200px', wordWrap: 'break-word' }}>{UserData.dailyObj}</div>
+              <div>
+                <p>Bio:</p>
+                <div className="Traveler-Bio" style={{ maxWidth: '300px', wordWrap: 'break-word', marginTop: '-10px' }}>
+                  {UserData.bio}
+                </div>
               </div>
               <p>Traveler Since: {UserData.AccDate ? UserData.AccDate.substring(0, 10) : ''}</p>
             </div>
@@ -79,6 +82,9 @@ const ProfileBook = ({ UserData, setUserData }) => {
                   name="username"
                   value={editedUserData.username}
                   onChange={handleInputChange}
+                  minLength={4}
+                  maxLength={16}
+                  className="edit-inputs"
                 />
               </h1>
               <h2>
@@ -88,17 +94,20 @@ const ProfileBook = ({ UserData, setUserData }) => {
                   name="dailyObj"
                   value={editedUserData.dailyObj}
                   onChange={handleInputChange}
+                  maxLength={40}
+                  className="edit-inputs"
                 />
               </h2>
               <div>
                 Bio:
                 <br />
-                <input
-                  type="text"
-                  name="bio"
-                  value={editedUserData.bio}
-                  onChange={handleInputChange}
-                />
+                <textarea
+                    name="bio"
+                    value={editedUserData.bio}
+                    onChange={handleInputChange}
+                    className="Bio-input"
+                    maxLength={120}
+                ></textarea>
               </div>
               <p>Traveler Since: {UserData.AccDate.substring(0, 10)}</p>
             </div>

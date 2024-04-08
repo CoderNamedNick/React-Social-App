@@ -289,9 +289,32 @@ a{
 }
 .Traveler-Bio{
   border: rgb(0, 0, 0) solid 2px;
-  max-width: 400px;
-  max-height: 100px;
+  width: 400px; /* Optionally limit the width */
   font-size: 20px;
+  overflow: auto; /* Allow overflow when needed */
+  white-space: pre-line; /* Allow line breaks */
+  height: auto; /* Automatically adjust height to fit content */
+  padding: 10px;
+}
+.PB-dailyObj{
+  margin-left: 200px;
+  margin-top: -49px;
+  padding-bottom: 30px;
+  font-size: 20px;
+
+}
+.Bio-input{
+  min-width: 100px; /* Set initial minimum width */
+  width: auto; /* Let the input expand based on content */
+  max-width: 300px; /* Optional: Limit maximum width */
+  font-size: 15px;
+  min-height: 80px;
+  max-height: 170px;
+}
+.edit-inputs{
+  height: 30px;
+  margin-left: 10px;
+  margin-bottom: 5px;
 }
 .Traveler-Info{
   padding-bottom: 30px;
