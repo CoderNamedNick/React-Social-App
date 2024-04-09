@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Resizable } from 'react-resizable';
 import 'react-resizable/css/styles.css';
+import { Link } from "react-router-dom";
 
 const Travelers = ({UserData, setUserData}) => {
   const [friends, setFriends] = useState([]);
@@ -8,7 +9,7 @@ const Travelers = ({UserData, setUserData}) => {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [showMore, setShowMore] = useState(false);
-  const [width, setWidth] = useState(100); // Initial width
+  const [width, setWidth] = useState(130); // Initial width
   const [maxVisibleFriends, setMaxVisibleFriends] = useState(4); // Initial max visible friends
 
   useEffect(() => {
@@ -109,15 +110,17 @@ const Travelers = ({UserData, setUserData}) => {
         style={{ position: 'relative', height: '85.5vh', top: 0 }}
       >
         <div className="Travelers-homepage-div" style={{ width }}>
-          <div className="Travelers-hompage-search-h2">Search known Travelers</div>
+          <Link to="/FindCompanions"><div className="Travelers-hompage-search-h2">Find Travelers</div></Link>
+          <div className="Travelers-hompage-h2">Companions</div>
+          <br></br>
           <input 
+            style={{marginBottom: '5px'}}
             type="text" 
             value={searchTerm} 
             onChange={handleSearchChange} 
             placeholder="Search by name"
             className="Travelers-hompage-search" 
           />
-          <div className="Travelers-hompage-h2">Known Travelers</div>
           {loading ? (
             <p>Loading...</p>
           ) : (

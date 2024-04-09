@@ -1,6 +1,9 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 
 const FindTravelers = ({UserData, setUserData}) => {
+  const [companions, setCompanions] = useState([]);
+  const [filteredCompanions, setFilteredCompanions] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
   const fakeTravelers = [
     {
       _id: "1",
@@ -37,6 +40,24 @@ const FindTravelers = ({UserData, setUserData}) => {
   //make a grid of findable poeple with the get all but priotise people with age closest to user
   // have grid items show Username, Daliy, and accdate for now
   // make other component for other travelers profiles books
+
+  useEffect(() => {
+    setCompanions(fakeTravelers); // later make this UserData.Travelers
+    setFilteredCompanions(fakeTravelers);
+  }, []);
+
+  const handleSearchChange = (event) => {
+    const term = event.target.value;
+    setSearchTerm(term);
+    filterCompanions(term);
+  };
+
+  const filterCompanions = (term) => {
+    const filtered = companions.filter((companion) =>
+      companion.username.toLowerCase().includes(term.toLowerCase())
+    );
+    setFilteredCompanions(filtered);
+  };
 
   const handleAccPrivChange = (newValue) => {
     const updatedUserData = { ...UserData, AccPrivate: newValue };
@@ -77,18 +98,26 @@ const FindTravelers = ({UserData, setUserData}) => {
         console.error('Error updating Privacy:', error);
       });
   };
+  console.log(UserData)
 
   return (
     <div className="Find-travelers-main-div">
+      <h1>Current Companions</h1>
+      <input
+        style={{ marginBottom: '5px' }}
+        type="text"
+        value={searchTerm}
+        onChange={handleSearchChange}
+        placeholder="Search by name"
+        className="Travelers-hompage-search"
+      />
       <div>
-        <h1>Current Companions</h1>
         <div className="Current-Companions-grid">
-          {/*this will be a grid of companions */}
-          {fakeTravelers.map((Traveler, index) => (
-            <div key={Traveler._id || Traveler.id} className="companion-item">
-              <p>{Traveler.username}</p>
-              <p>{Traveler.dailyObj}</p>
-              <p>{Traveler.AccDate ? Traveler.AccDate.substring(0, 10) : '' }</p>
+          {filteredCompanions.map((companion, index) => (
+            <div key={companion._id || companion.id} className="companion-item">
+              <p>{companion.username}</p>
+              <p>{companion.dailyObj}</p>
+              <p>{companion.AccDate ? companion.AccDate.substring(0, 10) : ''}</p>
             </div>
           ))}
         </div>
