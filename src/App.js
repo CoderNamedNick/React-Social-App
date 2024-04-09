@@ -23,6 +23,7 @@ function App() {
   };
   const LogOut = () => {
     setLoggedIn(false);
+    setSignup(true)
   }
 
   return (

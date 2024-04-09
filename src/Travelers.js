@@ -9,6 +9,7 @@ const Travelers = ({UserData, setUserData}) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [showMore, setShowMore] = useState(false);
   const [width, setWidth] = useState(100); // Initial width
+  const [maxVisibleFriends, setMaxVisibleFriends] = useState(4); // Initial max visible friends
 
   useEffect(() => {
     // Fetch data here
@@ -17,7 +18,7 @@ const Travelers = ({UserData, setUserData}) => {
         // Simulate fetching data
         const data = await fetchFriendsData(); // Assuming fetchFriendsData is a function to fetch friends data
         setFriends(data);
-        setFilteredFriends(data.slice(0, 5)); // Initially show only the first 5 friends
+        setFilteredFriends(data.slice(0, maxVisibleFriends)); // Initially show only the first maxVisibleFriends friends
         setLoading(false);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -26,7 +27,7 @@ const Travelers = ({UserData, setUserData}) => {
     };
 
     fetchData();
-  }, []);
+  }, [maxVisibleFriends]);
 
   // Function to simulate fetching friends data
   const fetchFriendsData = () => {
@@ -58,19 +59,43 @@ const Travelers = ({UserData, setUserData}) => {
     const filtered = friends.filter((friend) =>
       friend.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
-    setFilteredFriends(filtered.slice(0, 5)); // Update filtered friends, but only show first 5
+    setFilteredFriends(filtered.slice(0, maxVisibleFriends)); // Update filtered friends
   };
 
   // Function to handle showing more friends
   const handleShowMore = () => {
-    setFilteredFriends(friends.slice(0, filteredFriends.length + 5));
-    setShowMore(filteredFriends.length + 5 < friends.length);
+    setMaxVisibleFriends(maxVisibleFriends + 1); // Increase maxVisibleFriends
   };
 
   // Function to handle resizing
   const handleResize = (event, { size }) => {
     setWidth(size.width);
   };
+
+  // Calculate maxVisibleFriends based on screen height
+  useEffect(() => {
+    const updateMaxVisibleFriends = () => {
+      const windowHeight = window.innerHeight;
+      if (windowHeight < 590) {
+        setMaxVisibleFriends(2);
+      }else if (windowHeight < 700) {
+        setMaxVisibleFriends(3);
+      } else if (windowHeight < 800) {
+        setMaxVisibleFriends(4);
+      } else {
+        setMaxVisibleFriends(5);
+      }
+    };
+
+    updateMaxVisibleFriends();
+
+    // Update maxVisibleFriends when the window is resized
+    window.addEventListener('resize', updateMaxVisibleFriends);
+
+    return () => {
+      window.removeEventListener('resize', updateMaxVisibleFriends);
+    };
+  }, []);
 
   return (
     <div className='Travelers-container'>
