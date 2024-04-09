@@ -344,3 +344,30 @@ a{
   gap: 10%;
   align-items: center;
 }
+.Find-travelers-main-div{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  gap: 40px;
+}
+.acc-status-div{
+  font-size: 20px;
+}
+.Find-C-Span{
+  color: Brown;
+}
+.Current-Companions-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(300px, 1fr)); /* 4 columns with minimum width of 200px */
+  grid-auto-rows: minmax(100px, auto); /* Adjust the minimum height of rows */
+  grid-gap: 10px; /* Increase the gap between grid items */
+  width: 98vw; /* Full width */
+  background-color: rgb(112, 7, 7);
+}
+
+.companion-item {
+  border: 1px solid #ccc; /* Border for grid items */
+  padding: 10px; /* Padding inside grid items */
+  width: calc(100% - 20px); /* Make the grid items take up full width minus padding and border */
+}
