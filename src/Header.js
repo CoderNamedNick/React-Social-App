@@ -21,7 +21,9 @@ const Header = ({ title, LogOut }) => {
       case "/HomePage":
         return "Home";
       case "/ProfileBook":
-        return "ProfileBook";
+        return "Profile Book";
+      case "/FindCompanions":
+        return "Find Companions";
       default:
         return "TAVERN"; // Default title
     }

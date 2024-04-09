@@ -5,6 +5,7 @@ import SignUpPage from "./Signup";
 import HomePage from "./Homepage";
 import Header from "./Header";
 import ProfileBook from './ProfileBook'
+import FindTravelers from "./FindTravelers";
 
 function App() {
   const [loggedIn, setLoggedIn] = useState(false);
@@ -57,6 +58,7 @@ function App() {
             <Routes>
               <Route path="/HomePage" element={<HomePage UserData={UserData} setUserData={setUserData}/>} />
               <Route path="/ProfileBook" element={<ProfileBook UserData={UserData} setUserData={setUserData}/>} />
+              <Route path="/FindCompanions" element={<FindTravelers UserData={UserData} setUserData={setUserData}/>} />
             </Routes>
           )}
         </div>

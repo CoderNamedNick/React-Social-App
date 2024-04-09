@@ -51,9 +51,13 @@ const FindTravelers = ({UserData, setUserData}) => {
       <div>
         <h1>Current Companions</h1>
         <div> {/*this will be a grid of companions */}
-          <div></div>
-          <div></div>
-          <div></div>
+        {UserData.travelers.map(Traveler => (
+          <div key={Traveler._id || Traveler.id}>
+            <p>{Traveler.username}</p>
+            <p>{Traveler.dailyObj}</p>
+            <p>{Traveler.AccDate}</p>
+          </div>
+        ))}
         </div>
       </div>
       <div>

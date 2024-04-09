@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import Travelers from "./Travelers";
 
 const HomePage = ({UserData, setUserData}) => {
@@ -97,10 +98,10 @@ const HomePage = ({UserData, setUserData}) => {
         </div>
 
         {/* Div for finding travelers */}
-        <div className="Homepage-contents-divs">
+        <Link to="/FindCompanions"><div className="Homepage-contents-divs">
           <h2>Find Travelers</h2>
           {/* Search bar to find travelers */}
-        </div>
+        </div></Link>
 
         {/* Div for Tavern News */}
         <div className="Homepage-contents-divs">
