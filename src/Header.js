@@ -30,7 +30,7 @@ const Header = ({ title, LogOut }) => {
   };
 
   return( 
-    <div>
+    <div className="Header">
       <div className="Header-Main-Div">
         <Link to='/HomePage'><img src={Logo} alt="TAVERN" className="Header-logo"></img></Link>
         <div className="Header-title">

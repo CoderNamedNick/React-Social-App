@@ -104,13 +104,16 @@ a{
   font-size: 30px;
 }
 .Header-Main-Div {
-  background-color: rgb(90, 25, 25);
+  position: absolute;
+  left: 0;
+  right: 0;
+  background-color: rgba(0, 0, 0, 0.541);
   display: flex;
   align-items: center;
   justify-content: space-between;
   color: rgb(255, 211, 211);
   border-bottom: 4px black solid;
-  z-index: 10000;
+  z-index: 111110000;
 }
 
 .Header-logo {
@@ -231,9 +234,20 @@ a{
 }
 .Homepage-main-div {
   display: flex;
+  padding-top: 108px;
 }
 .Travelers-container {
   flex-grow: 1;
+}
+.PB-main-div{
+  position: absolute;
+  padding-top: 30px;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 100vh;
+  background: linear-gradient(to bottom, #c38eda, #27054e);
 }
 .Homepage-content-div{
   width: 100%;
@@ -276,7 +290,7 @@ a{
 .travelors-info-div{
   position: relative;
   border: black solid 4px;
-  margin-top: 10px;
+  margin-top: 108px;
   width: 97%;
   margin-left: 1%;
   display: flex;
@@ -348,7 +362,7 @@ a{
   align-items: center;
 }
 .Find-travelers-main-div{
-  margin-top: 108px;
+  padding-top: 108px;
   position: absolute;
   display: flex;
   flex-direction: column;
@@ -366,6 +380,9 @@ a{
   color: rgb(97, 236, 155);
   cursor: pointer;
 }
+.Header{
+  z-index: 1000000;
+}
 .Current-Companions-grid {
   margin-top: -30px;
   display: grid;
@@ -377,6 +394,7 @@ a{
   padding: 20px;
   border: black 2px solid;
   border-radius: 20px;
+  z-index: 0;
 }
 .companion-item {
   background-color: rgba(10, 36, 109, 0.521); 

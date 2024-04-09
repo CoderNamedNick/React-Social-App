@@ -67,7 +67,7 @@ const HomePage = ({UserData, setUserData}) => {
       <div className="Travelelers-homepage-div">
         <Travelers />
       </div>
-      <div className="Homepage-content-div">
+      <div style={{marginTop: '10px'}} className="Homepage-content-div">
         {/* Div for setting daily objective */}
         <div className="Homepage-contents-divs"> 
           <h2>Set your daily objective</h2>

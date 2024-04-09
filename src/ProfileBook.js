@@ -49,7 +49,7 @@ const ProfileBook = ({ UserData, setUserData }) => {
   };
 
   return (
-    <div>
+    <div className="PB-main-div">
       <div>
         {!EditProfile && (
           <div className="travelors-info-div">
