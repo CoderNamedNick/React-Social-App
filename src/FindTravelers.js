@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+
 
 const FindTravelers = ({UserData, setUserData}) => {
   const [companions, setCompanions] = useState([]);
@@ -36,9 +38,26 @@ const FindTravelers = ({UserData, setUserData}) => {
       AccDate: "2022-03-25T00:00:00.000Z"
     }
   ];
-  // make a grid of already make friends 
+  const [allUsers, setAllUsers] = useState([]);
+  useEffect(() => {
+    // Function to fetch all users
+    const fetchAllUsers = async () => {
+      try {
+        const response = await fetch('http://localhost:5000/Users'); // Assuming you have an endpoint to fetch all users
+        if (!response.ok) {
+          throw new Error('Failed to fetch users');
+        }
+        const AllusersData = await response.json();
+        console.log(AllusersData)
+        setAllUsers(AllusersData);
+      } catch (error) {
+        console.error('Error fetching all users:', error);
+      }
+    };
+    // Call the fetchAllUsers function when the component mounts
+    fetchAllUsers();
+  }, []);
   //make a grid of findable poeple with the get all but priotise people with age closest to user
-  // have grid items show Username, Daliy, and accdate for now
   // make other component for other travelers profiles books
 
   useEffect(() => {
@@ -134,9 +153,28 @@ const FindTravelers = ({UserData, setUserData}) => {
             <span className="Find-C-Span" onClick={() => handleAccPrivChange(true)}>Make Account Private</span>
           </div>
         )}
-        <div> {/*Get all and then filter with findable accounts Also A grid*/}
-          <div></div>
-          <div></div>
+        <div style={{marginTop: '50px'}} className="Current-Companions-grid"> {/*Get all and then filter with findable accounts Also A grid*/}
+        {allUsers.map((traveler) => {
+          // Check if the traveler's id matches UserData id
+          if (traveler.username === UserData.username) {
+            // Skip rendering this traveler
+            return null;
+          }
+          if (traveler.AccPrivate) {
+            // Skip rendering this traveler
+            return null;
+          }
+          return (
+            <Link key={traveler._id || traveler.id} to={`/user/${traveler.username}`}>
+              {/* Link to another page with the username as a parameter */}
+              <div className="companion-item">
+                <p>{traveler.username}</p>
+                <p>Daily Objective: {traveler.dailyObj}</p>
+                <p>Traveler Since: {traveler.AccDate ? traveler.AccDate.substring(0, 10) : ''}</p>
+              </div>
+            </Link>
+          );
+        })}
         </div>
       </div>
     </div>
