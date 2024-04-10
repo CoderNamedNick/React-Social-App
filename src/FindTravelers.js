@@ -102,7 +102,7 @@ const FindTravelers = ({UserData, setUserData}) => {
 
   return (
     <div className="Find-travelers-main-div">
-      <h1>Current Companions</h1>
+      <h1 style={{paddingTop: '118px'}}>Current Companions</h1>
       <input
         style={{ marginBottom: '5px' }}
         type="text"
