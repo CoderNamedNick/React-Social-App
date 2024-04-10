@@ -239,6 +239,17 @@ a{
 .Travelers-container {
   flex-grow: 1;
 }
+.TB-main-div{
+  position: absolute;
+  padding-top: 0px;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 100vh;
+  background: linear-gradient(to bottom, #baf3c8, #495c33);
+  overflow-y: auto;
+}
 .PB-main-div{
   position: absolute;
   padding-top: 0px;

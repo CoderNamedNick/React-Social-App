@@ -3,6 +3,8 @@ import { Resizable } from 'react-resizable';
 import 'react-resizable/css/styles.css';
 import { Link } from "react-router-dom";
 
+//MAKE A COMPANION REQUEST POP UP
+
 const Travelers = ({UserData, setUserData}) => {
   const [friends, setFriends] = useState([]);
   const [filteredFriends, setFilteredFriends] = useState([]);

@@ -13,6 +13,16 @@ const Header = ({ title, LogOut }) => {
 
   // Function to get the title based on the current route
   const getTitle = () => {
+    // Check if the current route contains "/user/" substring
+    if (location.pathname.startsWith("/user/")) {
+      // Extract the username from the URL
+      const username = location.pathname.split("/")[2]; // Assuming "/user/:username" format
+  
+      // Return a custom title with the username
+      return `${username}'s Profile Book`;
+    }
+  
+    // For other routes, provide default titles
     switch (location.pathname) {
       case "/":
         return "Login";

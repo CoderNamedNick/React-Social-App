@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
-const TravelersBooks = () => {
+const TravelersBooks = ({UserData, setUserData}) => {
   const { username } = useParams(); // Get the username parameter from the URL
 
   const [userDetails, setUserDetails] = useState(null);
+  const [SentRequest, setSentRequest] = useState(false);
 
   useEffect(() => {
     // Fetch user details based on the username
@@ -16,6 +17,7 @@ const TravelersBooks = () => {
         }
         const userData = await response.json();
         setUserDetails(userData);
+        console.log(userDetails)
       } catch (error) {
         console.error('Error fetching user details:', error);
       }
@@ -29,13 +31,58 @@ const TravelersBooks = () => {
     };
   }, [username]); // Fetch user details whenever the username parameter changes
 
+  const SendCompanionRequest = () => {
+    const { id, username } = UserData;
+
+    // Create a new object containing only the required fields
+    const requestData = { id, username };
+
+    fetch(`http://localhost:5000/Users/id/${userDetails.id || userDetails._id}`, {
+      method: 'PATCH',
+      body: JSON.stringify({ CompanionRequest: requestData  }),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Failed to update daily objective');
+        }
+        // Handle successful response (if needed)
+        console.log('Daily objective updated successfully');
+
+        // Fetch updated user data after successful patch
+        fetch(`http://localhost:5000/Users/id/${userDetails.id || userDetails._id}`)
+          .then(response => {
+            if (!response.ok) {
+              throw new Error('Failed to fetch updated user data');
+            }
+            return response.json();
+          })
+          .then(data => {
+            // Update UserData with fetched data
+            setUserDetails(data);
+          })
+          .catch(error => {
+            // Handle error (if needed)
+            console.error('Error fetching updated user data:', error);
+          });
+      })
+      .catch(error => {
+        // Handle error (if needed)
+        console.error('Error updating daily objective:', error);
+      });
+      setSentRequest(true)
+  };
+
+
   // Render loading state while user details are being fetched
   if (!userDetails) {
     return <div>Loading...</div>;
   }
 
   return (
-    <div className="PB-main-div">
+    <div className="TB-main-div">
       <div>
         <div className="travelors-info-div">
           <div className="Traveler-Pic">PROFILE PIC</div>
@@ -51,6 +98,8 @@ const TravelersBooks = () => {
             </div>
             <p>Traveler Since: {userDetails.AccDate ? userDetails.AccDate.substring(0, 10) : ''}</p>
           </div>
+          {!SentRequest && (<h2 onClick={SendCompanionRequest} className="Edit-PB">Send Companion request</h2>)}
+          {SentRequest && (<h2 className="Edit-PB">Companion request Sent</h2>)}
         </div>
         <br />
         <br />

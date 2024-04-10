@@ -60,7 +60,7 @@ function App() {
               <Route path="/HomePage" element={<HomePage UserData={UserData} setUserData={setUserData}/>} />
               <Route path="/ProfileBook" element={<ProfileBook UserData={UserData} setUserData={setUserData}/>} />
               <Route path="/FindCompanions" element={<FindTravelers UserData={UserData} setUserData={setUserData}/>} />
-              <Route path="/user/:username" element={<TravelersBooks />} />
+              <Route path="/user/:username" element={<TravelersBooks UserData={UserData} setUserData={setUserData}/>} />
             </Routes>
           )}
         </div>
