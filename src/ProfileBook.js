@@ -3,14 +3,28 @@ import React, { useState } from "react";
 const ProfileBook = ({ UserData, setUserData }) => {
   const [EditProfile, setEditProfile] = useState(false);
   const [ShowColors, setShowColors] = useState(false);
+  const [color, setcolor] = useState('');
   const [editedUserData, setEditedUserData] = useState({
-    username: UserData?.username || '', // Using optional chaining for safety
+    username: UserData?.username || '',
     dailyObj: UserData?.dailyObj || '',
     bio: UserData?.bio || ''
   });
+  const [selectedColor, setSelectedColor] = useState(() => {
+    // If UserData.ProfileColor exists and is a valid color option, return it
+    if (
+      UserData.ProfileColor &&
+      ["Blue", "Green", "Red", "Purple", "Yellow", "Orange", "Gray"].includes(UserData.ProfileColor)
+    ) {
+      return colors.find(color => color.name === UserData.ProfileColor)?.color1 || '';
+    }
+    // Default to an empty string if UserData.ProfileColor is null or invalid
+    return '';
+  });
+
   const Editprofile = () => {
     setEditProfile(true);
   };
+
   const EditColor = () => {
     setShowColors(!ShowColors);
   };
@@ -22,6 +36,7 @@ const ProfileBook = ({ UserData, setUserData }) => {
       [name]: value
     });
   };
+
 
   const saveProfile = () => {
     console.log(UserData.id)
@@ -52,8 +67,31 @@ const ProfileBook = ({ UserData, setUserData }) => {
     });
   };
 
+  const colors = 
+  [
+  {name: 'Blue', color1: '#98A5EA', color2: '#0F2180'},
+  {name: 'Green', color1: '#9FE5A6', color2: '#0F6617'},
+  {name: 'Red', color1: '#C26D6D', color2: '#A70909'},
+  {name: 'Purple', color1: '#C56CBD', color2: '#78096F'},
+  {name: 'Yellow', color1: '#EAF396', color2: '#E2FA11'},
+  {name: 'Orange', color1: '#F6AF75', color2: '#EA6A00'},
+  {name: 'Gray', color1: '#AE9F9F', color2: '#4D4545'},
+  ];
+
+
+  const changeBackgroundColor = (colorname, color1, color2) => {
+    setSelectedColor(`${color1}, ${color2}`);
+    // You can add additional logic here if needed, such as saving the colors to the database
+    setcolor(colorname)
+  };
+
+  const SaveColor = () => {
+    console.log(color)
+    //Make a post theat saves color  in ProfileColor: colorName
+  }
+
   return (
-    <div className="PB-main-div">
+    <div className="PB-main-div" style={{ background: `linear-gradient(to bottom, ${selectedColor})` }}>
       <div>
         {!EditProfile && (
           <div>
@@ -70,6 +108,7 @@ const ProfileBook = ({ UserData, setUserData }) => {
                   </div>
                 </div>
                 <p>Traveler Since: {UserData.AccDate ? UserData.AccDate.substring(0, 10) : ''}</p>
+                {ShowColors && (<div onClick={SaveColor}>Save color</div>)}
               </div>
               <h4 style={{bottom: 0}} onClick={Editprofile} className="Edit-PB">
                 Edit ProfileBook
@@ -80,13 +119,11 @@ const ProfileBook = ({ UserData, setUserData }) => {
             </div>
             {ShowColors && (
               <div className="Color-Div">
-                <div>Blue</div>
-                <div>Green</div>
-                <div>Red</div>
-                <div>Purple</div>
-                <div>Yellow</div>
-                <div>Orange</div>
-                <div>Gray</div>
+                {colors.map((color, index) => (
+                  <div key={index} onClick={() => changeBackgroundColor(color.name, color.color1, color.color2)}>
+                    {color.name}
+                  </div>
+                ))}
               </div>
             )}
           </div>
