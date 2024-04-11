@@ -2,6 +2,7 @@ import React, { useState } from "react";
 
 const ProfileBook = ({ UserData, setUserData }) => {
   const [EditProfile, setEditProfile] = useState(false);
+  const [ShowColors, setShowColors] = useState(false);
   const [editedUserData, setEditedUserData] = useState({
     username: UserData?.username || '', // Using optional chaining for safety
     dailyObj: UserData?.dailyObj || '',
@@ -9,6 +10,9 @@ const ProfileBook = ({ UserData, setUserData }) => {
   });
   const Editprofile = () => {
     setEditProfile(true);
+  };
+  const EditColor = () => {
+    setShowColors(!ShowColors);
   };
 
   const handleInputChange = (event) => {
@@ -52,23 +56,39 @@ const ProfileBook = ({ UserData, setUserData }) => {
     <div className="PB-main-div">
       <div>
         {!EditProfile && (
-          <div className="travelors-info-div">
-            <div className="Traveler-Pic">PROFILE PIC</div>
-            <div className="Traveler-Info">
-              <h1>{UserData.username}</h1>
-              <h2>Daily Objective: </h2>
-              <div className="PB-dailyObj" style={{ maxWidth: '200px', wordWrap: 'break-word' }}>{UserData.dailyObj}</div>
-              <div>
-                <p>Bio:</p>
-                <div className="Traveler-Bio" style={{ maxWidth: '300px', wordWrap: 'break-word', marginTop: '-10px' }}>
-                  {UserData.bio}
+          <div>
+            <div className="travelors-info-div">
+              <div className="Traveler-Pic">PROFILE PIC</div>
+              <div className="Traveler-Info">
+                <h1>{UserData.username}</h1>
+                <h2>Daily Objective: </h2>
+                <div className="PB-dailyObj" style={{ maxWidth: '200px', wordWrap: 'break-word' }}>{UserData.dailyObj}</div>
+                <div>
+                  <p>Bio:</p>
+                  <div className="Traveler-Bio" style={{ maxWidth: '300px', wordWrap: 'break-word', marginTop: '-10px' }}>
+                    {UserData.bio}
+                  </div>
                 </div>
+                <p>Traveler Since: {UserData.AccDate ? UserData.AccDate.substring(0, 10) : ''}</p>
               </div>
-              <p>Traveler Since: {UserData.AccDate ? UserData.AccDate.substring(0, 10) : ''}</p>
+              <h4 style={{bottom: 0}} onClick={Editprofile} className="Edit-PB">
+                Edit ProfileBook
+              </h4>
+              <h4 onClick={EditColor} className="Edit-PB">
+                Edit ProfileBook Color
+              </h4>
             </div>
-            <h4 onClick={Editprofile} className="Edit-PB">
-              Edit ProfileBook
-            </h4>
+            {ShowColors && (
+              <div className="Color-Div">
+                <div>Blue</div>
+                <div>Green</div>
+                <div>Red</div>
+                <div>Purple</div>
+                <div>Yellow</div>
+                <div>Orange</div>
+                <div>Gray</div>
+              </div>
+            )}
           </div>
         )}
         {EditProfile && (

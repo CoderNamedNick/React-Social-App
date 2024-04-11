@@ -57,6 +57,14 @@ const FindTravelers = ({UserData, setUserData}) => {
     // Call the fetchAllUsers function when the component mounts
     fetchAllUsers();
   }, []);
+
+  const calculateAgeDifference = (birthdate1, birthdate2) => {
+    const date1 = new Date(birthdate1);
+    const date2 = new Date(birthdate2);
+    const diffTime = Math.abs(date1 - date2);
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    return diffDays;
+  };
   //make a grid of findable poeple with the get all but priotise people with age closest to user
   // make other component for other travelers profiles books
 
@@ -154,17 +162,23 @@ const FindTravelers = ({UserData, setUserData}) => {
           </div>
         )}
         <div style={{marginTop: '50px'}} className="Current-Companions-grid"> {/*Get all and then filter with findable accounts Also A grid*/}
-        {allUsers.map((traveler) => {
-          // Check if the traveler's id matches UserData id
-          if (traveler.username === UserData.username) {
-            // Skip rendering this traveler
-            return null;
-          }
-          if (traveler.AccPrivate) {
-            // Skip rendering this traveler
-            return null;
-          }
-          return (
+        {allUsers
+          .map((traveler) => {
+            // Check if the traveler's id matches UserData id or if their account is private
+            if (traveler.username === UserData.username || traveler.AccPrivate) {
+              // Skip rendering this traveler
+              return null;
+            }
+            return traveler;
+          })
+          .filter((traveler) => traveler !== null)
+          .sort((a, b) => {
+            // Sort based on age difference with UserData
+            const ageDifferenceA = calculateAgeDifference(a.birthdate, UserData.birthdate);
+            const ageDifferenceB = calculateAgeDifference(b.birthdate, UserData.birthdate);
+            return ageDifferenceA - ageDifferenceB;
+          })
+          .map((traveler) => (
             <Link key={traveler._id || traveler.id} to={`/user/${traveler.username}`}>
               {/* Link to another page with the username as a parameter */}
               <div className="companion-item">
@@ -173,8 +187,7 @@ const FindTravelers = ({UserData, setUserData}) => {
                 <p>Traveler Since: {traveler.AccDate ? traveler.AccDate.substring(0, 10) : ''}</p>
               </div>
             </Link>
-          );
-        })}
+          ))}
         </div>
       </div>
     </div>

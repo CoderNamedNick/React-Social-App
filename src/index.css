@@ -308,6 +308,7 @@ a{
   display: flex;
   flex-direction: row;
   align-items: center;
+  padding-bottom: 40px;
   gap: 60px;
 }
 .Traveler-Pic{
@@ -331,7 +332,6 @@ a{
   margin-top: -49px;
   padding-bottom: 30px;
   font-size: 20px;
-
 }
 .Bio-input{
   min-width: 100px; /* Set initial minimum width */
@@ -351,7 +351,7 @@ a{
 }
 .Edit-PB {
   position: absolute;
-  bottom: 0;
+  bottom: 40px;
   right: 0;
   padding: 10px; /* adjust padding as needed */
   border-radius: 5px; /* adjust border radius as needed */
@@ -372,6 +372,17 @@ a{
   flex-direction: row;
   gap: 10%;
   align-items: center;
+}
+.Color-Div{
+  display: flex;
+  flex-direction: row;
+  background-color: rgba(0, 0, 0, 0.596);
+  color: rgba(255, 255, 255, 0.623);
+  padding-top: 10px;
+  padding-bottom: 10px;
+  align-items: center;
+  justify-content: center;
+  gap: 30px;
 }
 .Find-travelers-main-div{
   display: flex;
