@@ -3,10 +3,6 @@ import { useParams } from 'react-router-dom';
 
 const TravelersBooks = ({UserData, setUserData}) => {
   const { username } = useParams(); // Get the username parameter from the URL
-
-  const [userDetails, setUserDetails] = useState(null);
-  const [SentRequest, setSentRequest] = useState(false);
-
   useEffect(() => {
     // Fetch user details based on the username
     const fetchUserDetails = async () => {
@@ -29,7 +25,34 @@ const TravelersBooks = ({UserData, setUserData}) => {
     return () => {
       // Any cleanup code if needed
     };
-  }, [username]); // Fetch user details whenever the username parameter changes
+  }, [username]);
+  const [userDetails, setUserDetails] = useState(null);
+  const [SentRequest, setSentRequest] = useState(false);
+  const colors = 
+  [
+  {name: 'Blue', color1: '#F5F6FC', color2: '#0F2180'},
+  {name: 'Green', color1: '#9FE5A6', color2: '#0F6617'},
+  {name: 'Red', color1: '#C26D6D', color2: '#A70909'},
+  {name: 'Purple', color1: '#D8B4D9', color2: '#78096F'},
+  {name: 'Yellow', color1: '#FFFF03', color2: '#E3E322'},
+  {name: 'Orange', color1: '#F6AF75', color2: '#EA6A00'},
+  {name: 'Gray', color1: '#D3D3D3', color2: '#4D4545'},
+  ];
+  const [selectedColor, setSelectedColor] = useState(() => {
+    // If UserData.ProfileColor exists and is a valid color option, return its corresponding color1 and color2
+    if (!userDetails) {
+      return '';
+    }
+    if (
+      userDetails.ProfileColor &&
+      ["Blue", "Green", "Red", "Purple", "Yellow", "Orange", "Gray"].includes(userDetails.ProfileColor)
+    ) {
+      const selectedColorData = colors.find(color => color.name === userDetails.ProfileColor);
+      return `${selectedColorData.color1}, ${selectedColorData.color2}`;
+    }
+    return '';
+  });
+
 
   const SendCompanionRequest = () => {
     const { id, username } = UserData;
@@ -82,7 +105,7 @@ const TravelersBooks = ({UserData, setUserData}) => {
   }
 
   return (
-    <div className="TB-main-div">
+    <div style={{ background: `linear-gradient(to bottom, ${selectedColor})` }} className="TB-main-div">
       <div>
         <div className="travelors-info-div">
           <div className="Traveler-Pic">PROFILE PIC</div>

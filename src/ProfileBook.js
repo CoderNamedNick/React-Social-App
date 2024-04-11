@@ -4,18 +4,29 @@ const ProfileBook = ({ UserData, setUserData }) => {
   const [EditProfile, setEditProfile] = useState(false);
   const [ShowColors, setShowColors] = useState(false);
   const [color, setcolor] = useState('');
+  const colors = 
+  [
+  {name: 'Blue', color1: '#F5F6FC', color2: '#0F2180'},
+  {name: 'Green', color1: '#9FE5A6', color2: '#0F6617'},
+  {name: 'Red', color1: '#C26D6D', color2: '#A70909'},
+  {name: 'Purple', color1: '#D8B4D9', color2: '#78096F'},
+  {name: 'Yellow', color1: '#FFFF03', color2: '#E3E322'},
+  {name: 'Orange', color1: '#F6AF75', color2: '#EA6A00'},
+  {name: 'Gray', color1: '#D3D3D3', color2: '#4D4545'},
+  ];
   const [editedUserData, setEditedUserData] = useState({
     username: UserData?.username || '',
     dailyObj: UserData?.dailyObj || '',
     bio: UserData?.bio || ''
   });
   const [selectedColor, setSelectedColor] = useState(() => {
-    // If UserData.ProfileColor exists and is a valid color option, return it
+    // If UserData.ProfileColor exists and is a valid color option, return its corresponding color1 and color2
     if (
       UserData.ProfileColor &&
       ["Blue", "Green", "Red", "Purple", "Yellow", "Orange", "Gray"].includes(UserData.ProfileColor)
     ) {
-      return colors.find(color => color.name === UserData.ProfileColor)?.color1 || '';
+      const selectedColorData = colors.find(color => color.name === UserData.ProfileColor);
+      return `${selectedColorData.color1}, ${selectedColorData.color2}`;
     }
     // Default to an empty string if UserData.ProfileColor is null or invalid
     return '';
@@ -66,19 +77,6 @@ const ProfileBook = ({ UserData, setUserData }) => {
       console.error("Error updating profile:", error);
     });
   };
-
-  const colors = 
-  [
-  {name: 'Blue', color1: '#98A5EA', color2: '#0F2180'},
-  {name: 'Green', color1: '#9FE5A6', color2: '#0F6617'},
-  {name: 'Red', color1: '#C26D6D', color2: '#A70909'},
-  {name: 'Purple', color1: '#C56CBD', color2: '#78096F'},
-  {name: 'Yellow', color1: '#EAF396', color2: '#E2FA11'},
-  {name: 'Orange', color1: '#F6AF75', color2: '#EA6A00'},
-  {name: 'Gray', color1: '#AE9F9F', color2: '#4D4545'},
-  ];
-
-
   const changeBackgroundColor = (colorname, color1, color2) => {
     setSelectedColor(`${color1}, ${color2}`);
     // You can add additional logic here if needed, such as saving the colors to the database
@@ -88,6 +86,42 @@ const ProfileBook = ({ UserData, setUserData }) => {
   const SaveColor = () => {
     console.log(color)
     //Make a post theat saves color  in ProfileColor: colorName
+    fetch(`http://localhost:5000/Users/id/${UserData.id || UserData._id}`, {
+      method: 'PATCH',
+      body: JSON.stringify({ ProfileColor: color }),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Failed to update Profile Color');
+        }
+        // Handle successful response (if needed)
+        console.log('Profile Color updated successfully');
+
+        // Fetch updated user data after successful patch
+        fetch(`http://localhost:5000/Users/id/${UserData.id || UserData._id}`)
+          .then(response => {
+            if (!response.ok) {
+              throw new Error('Failed to fetch updated user data');
+            }
+            return response.json();
+          })
+          .then(data => {
+            // Update UserData with fetched data
+            setUserData(data);
+          })
+          .catch(error => {
+            // Handle error (if needed)
+            console.error('Error fetching updated user data:', error);
+          });
+      })
+      .catch(error => {
+        // Handle error (if needed)
+        console.error('Error updating daily objective:', error);
+      });
+    setShowColors(false)
   }
 
   return (
