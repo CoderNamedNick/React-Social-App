@@ -20,6 +20,7 @@ const TravelersBooks = ({UserData, setUserData}) => {
     };
 
     fetchUserDetails();
+    console.log(userDetails)
 
     // Cleanup function
     return () => {
@@ -53,49 +54,31 @@ const TravelersBooks = ({UserData, setUserData}) => {
     return '';
   });
 
-
   const SendCompanionRequest = () => {
-    const { id, username } = UserData;
+    sendCompanionRequest(UserData.id || UserData._id, userDetails.id || userDetails._id)
+  }
 
-    // Create a new object containing only the required fields
-    const requestData = { id, username };
-
-    fetch(`http://localhost:5000/Users/id/${userDetails.id || userDetails._id}`, {
-      method: 'PATCH',
-      body: JSON.stringify({ CompanionRequest: requestData  }),
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    })
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Failed to update daily objective');
-        }
-        // Handle successful response (if needed)
-        console.log('Daily objective updated successfully');
-
-        // Fetch updated user data after successful patch
-        fetch(`http://localhost:5000/Users/id/${userDetails.id || userDetails._id}`)
-          .then(response => {
-            if (!response.ok) {
-              throw new Error('Failed to fetch updated user data');
-            }
-            return response.json();
-          })
-          .then(data => {
-            // Update UserData with fetched data
-            setUserDetails(data);
-          })
-          .catch(error => {
-            // Handle error (if needed)
-            console.error('Error fetching updated user data:', error);
-          });
-      })
-      .catch(error => {
-        // Handle error (if needed)
-        console.error('Error updating daily objective:', error);
+  const sendCompanionRequest = async (senderUserId, receiverUserId) => {
+    try {
+      const response = await fetch(`http://localhost:5000/Users/${receiverUserId}/companion-request`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ companionId: senderUserId }) // Send the sender's user ID as companionId in the request body
       });
-      setSentRequest(true)
+      const data = await response.json();
+      if (response.ok) {
+        // Companion request sent successfully
+        setSentRequest(true); // Update state to indicate that the request has been sent
+        console.log(data.message); // Log the success message from the server
+      } else {
+        // Handle error response from the server
+        console.error('Failed to send companion request:', data.message);
+      }
+    } catch (error) {
+      console.error('Error sending companion request:', error); // Handle fetch errors
+    }
   };
 
 

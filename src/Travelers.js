@@ -113,6 +113,9 @@ const Travelers = ({UserData, setUserData}) => {
       >
         <div className="Travelers-homepage-div" style={{ width }}>
           <Link to="/FindCompanions"><div className="Travelers-hompage-search-h2">Find Travelers</div></Link>
+          <br></br>
+          <div>Companion Requests: {UserData.CompanionRequest ? UserData.CompanionRequest.length : 0}</div>
+          <br></br>
           <div className="Travelers-hompage-h2">Companions</div>
           <br></br>
           <input 
