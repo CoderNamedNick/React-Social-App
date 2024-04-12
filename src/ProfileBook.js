@@ -10,7 +10,7 @@ const ProfileBook = ({ UserData, setUserData }) => {
   {name: 'Green', color1: '#9FE5A6', color2: '#0F6617'},
   {name: 'Red', color1: '#C26D6D', color2: '#A70909'},
   {name: 'Purple', color1: '#D8B4D9', color2: '#78096F'},
-  {name: 'Yellow', color1: '#FFFF03', color2: '#E3E322'},
+  {name: 'Yellow', color1: '#F9F1C7', color2: '#F6D936'},
   {name: 'Orange', color1: '#F6AF75', color2: '#EA6A00'},
   {name: 'Gray', color1: '#D3D3D3', color2: '#4D4545'},
   ];

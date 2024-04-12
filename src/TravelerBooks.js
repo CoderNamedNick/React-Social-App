@@ -3,30 +3,7 @@ import { useParams } from 'react-router-dom';
 
 const TravelersBooks = ({UserData, setUserData}) => {
   const { username } = useParams(); // Get the username parameter from the URL
-  useEffect(() => {
-    // Fetch user details based on the username
-    const fetchUserDetails = async () => {
-      try {
-        const response = await fetch(`http://localhost:5000/Users/username/${username}`); // Assuming your backend API endpoint for fetching user details is '/api/users/:username'
-        if (!response.ok) {
-          throw new Error('Failed to fetch user details');
-        }
-        const userData = await response.json();
-        setUserDetails(userData);
-        console.log(userDetails)
-      } catch (error) {
-        console.error('Error fetching user details:', error);
-      }
-    };
-
-    fetchUserDetails();
-    console.log(userDetails)
-
-    // Cleanup function
-    return () => {
-      // Any cleanup code if needed
-    };
-  }, [username]);
+  
   const [userDetails, setUserDetails] = useState(null);
   const [SentRequest, setSentRequest] = useState(false);
   const colors = 
@@ -35,7 +12,7 @@ const TravelersBooks = ({UserData, setUserData}) => {
   {name: 'Green', color1: '#9FE5A6', color2: '#0F6617'},
   {name: 'Red', color1: '#C26D6D', color2: '#A70909'},
   {name: 'Purple', color1: '#D8B4D9', color2: '#78096F'},
-  {name: 'Yellow', color1: '#FFFF03', color2: '#E3E322'},
+  {name: 'Yellow', color1: '#F9F1C7', color2: '#F6D936'},
   {name: 'Orange', color1: '#F6AF75', color2: '#EA6A00'},
   {name: 'Gray', color1: '#D3D3D3', color2: '#4D4545'},
   ];
@@ -53,12 +30,49 @@ const TravelersBooks = ({UserData, setUserData}) => {
     }
     return '';
   });
+  useEffect(() => {
+    // Fetch user details based on the username
+    const fetchUserDetails = async () => {
+      try {
+        const response = await fetch(`http://localhost:5000/Users/username/${username}`); // Assuming your backend API endpoint for fetching user details is '/api/users/:username'
+        if (!response.ok) {
+          throw new Error('Failed to fetch user details');
+        }
+        const userData = await response.json();
+        setUserDetails(userData);
+      } catch (error) {
+        console.error('Error fetching user details:', error);
+      }
+    };
+
+    fetchUserDetails();
+    console.log(userDetails)
+
+    // Cleanup function
+    return () => {
+      // Any cleanup code if needed
+    };
+  }, [username]);
+  useEffect(() => {
+    // If UserDetails exists and is a valid color option, update selectedColor
+    if (userDetails && userDetails.ProfileColor &&
+      ["Blue", "Green", "Red", "Purple", "Yellow", "Orange", "Gray"].includes(userDetails.ProfileColor)) {
+      const selectedColorData = colors.find(color => color.name === userDetails.ProfileColor);
+      setSelectedColor(`${selectedColorData.color1}, ${selectedColorData.color2}`);
+    }
+    if(userDetails && userDetails.CompanionRequest.includes(UserData.id || UserData._id)){
+      setSentRequest(true)
+    }
+  }, [userDetails]);
 
   const SendCompanionRequest = () => {
     sendCompanionRequest(UserData.id || UserData._id, userDetails.id || userDetails._id)
   }
 
   const sendCompanionRequest = async (senderUserId, receiverUserId) => {
+    if(userDetails.CompanionRequest.includes(senderUserId)){
+      return alert('request already sent')
+    }
     try {
       const response = await fetch(`http://localhost:5000/Users/${receiverUserId}/companion-request`, {
         method: 'PATCH',
