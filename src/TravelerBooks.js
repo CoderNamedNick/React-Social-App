@@ -6,6 +6,7 @@ const TravelersBooks = ({UserData, setUserData}) => {
   
   const [userDetails, setUserDetails] = useState(null);
   const [SentRequest, setSentRequest] = useState(false);
+  const [isCompanion, setisCompanion] = useState(false);
   const colors = 
   [
   {name: 'Blue', color1: '#F5F6FC', color2: '#0F2180'},
@@ -62,6 +63,9 @@ const TravelersBooks = ({UserData, setUserData}) => {
     }
     if(userDetails && userDetails.CompanionRequest.includes(UserData.id || UserData._id)){
       setSentRequest(true)
+    }
+    if(userDetails && userDetails.companions.includes(UserData.id || UserData._id)){
+      setisCompanion(true)
     }
   }, [userDetails]);
 
@@ -120,6 +124,7 @@ const TravelersBooks = ({UserData, setUserData}) => {
           </div>
           {!SentRequest && (<h2 onClick={SendCompanionRequest} className="Edit-PB">Send Companion request</h2>)}
           {SentRequest && (<h2 className="Edit-PB">Companion request Sent</h2>)}
+          {isCompanion && (<h2 className="Edit-PB">Send Message</h2>)}
         </div>
         <br />
         <br />

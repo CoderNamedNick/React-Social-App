@@ -7,6 +7,7 @@ import Header from "./Header";
 import ProfileBook from './ProfileBook'
 import FindTravelers from "./FindTravelers";
 import TravelersBooks from "./TravelerBooks";
+import CompanionReq from "./CompanionReq";
 
 function App() {
   const [loggedIn, setLoggedIn] = useState(false);
@@ -60,6 +61,7 @@ function App() {
               <Route path="/HomePage" element={<HomePage UserData={UserData} setUserData={setUserData}/>} />
               <Route path="/ProfileBook" element={<ProfileBook UserData={UserData} setUserData={setUserData}/>} />
               <Route path="/FindCompanions" element={<FindTravelers UserData={UserData} setUserData={setUserData}/>} />
+              <Route path="/Companion-Request" element={<CompanionReq UserData={UserData} setUserData={setUserData}/>} />
               <Route path="/user/:username" element={<TravelersBooks UserData={UserData} setUserData={setUserData}/>} />
             </Routes>
           )}

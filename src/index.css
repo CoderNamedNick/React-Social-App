@@ -430,3 +430,16 @@ a{
   border: 2px solid rgba(0, 0, 0, 0.486);
   border-bottom: 4px solid rgba(0, 0, 0, 0.774);
 }
+.CompReq-main-div {
+  display: flex;
+  padding-top: 108px;
+}
+.CompReq-content-div{
+  width: 100%;
+  display: flex;
+  padding-left: 7%;
+  flex-direction: column;
+  gap: 25px;
+  color: black;
+  font-size: 22px;
+}
