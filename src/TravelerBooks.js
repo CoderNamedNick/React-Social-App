@@ -6,6 +6,7 @@ const TravelersBooks = ({UserData, setUserData}) => {
   
   const [userDetails, setUserDetails] = useState(null);
   const [SentRequest, setSentRequest] = useState(false);
+  const [AcceptRequest, setAcceptRequest] = useState(false)
   const [isCompanion, setisCompanion] = useState(false);
   const colors = 
   [
@@ -67,6 +68,9 @@ const TravelersBooks = ({UserData, setUserData}) => {
     if(userDetails && userDetails.companions.includes(UserData.id || UserData._id)){
       setisCompanion(true)
     }
+    if(userDetails && UserData.CompanionRequest.includes(userDetails.id || userDetails._id)){
+      setAcceptRequest(true)
+    }
   }, [userDetails]);
 
   const SendCompanionRequest = () => {
@@ -122,10 +126,12 @@ const TravelersBooks = ({UserData, setUserData}) => {
             </div>
             <p>Traveler Since: {userDetails.AccDate ? userDetails.AccDate.substring(0, 10) : ''}</p>
           </div>
-          {!SentRequest && (<h2 onClick={SendCompanionRequest} className="Edit-PB">Send Companion request</h2>)}
-          {SentRequest && (<h2 className="Edit-PB">Companion request Sent</h2>)}
+          {!AcceptRequest && !SentRequest && (<h2 onClick={SendCompanionRequest} className="Edit-PB">Send Companion request</h2>)}
+          {!AcceptRequest && SentRequest && (<h2 className="Edit-PB">Companion request Sent</h2>)}
+          {AcceptRequest && (<h2 className="Edit-PB">Accept Companion Request</h2>)}
+          {AcceptRequest && (<h2 style={{bottom: 0}} className="Edit-PB">Decline Companion Request</h2>)}
           {isCompanion && (<h2 className="Edit-PB">Send Message</h2>)}
-        </div>
+        </div> 
         <br />
         <br />
         <div className="ProfileBook-guilds-div">

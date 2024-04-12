@@ -443,3 +443,19 @@ a{
   color: black;
   font-size: 22px;
 }
+.companion-req-item {
+  background: linear-gradient(to right, #4d0505, #b12c33);
+  font-size: 18px;
+  font-weight: 700;
+  border-radius: 10px;
+  padding: 10px; /* Padding inside grid items */
+  width: calc(90% - 20px); /* Make the grid items take up full width minus padding and border */
+  color: rgb(224, 217, 217);
+}
+.companion-req-item:hover {
+  border: black solid 2px;
+}
+.No-request{
+  font-size: 25px;
+  padding-left: 13%;
+}

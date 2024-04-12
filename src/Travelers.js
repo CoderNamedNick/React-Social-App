@@ -106,7 +106,7 @@ const Travelers = ({UserData, setUserData}) => {
         width={width}
         height={100} 
         onResize={handleResize} 
-        minConstraints={[100, 1000]} // Minimum width and height
+        minConstraints={[130, 1000]} // Minimum width and height
         maxConstraints={[600, 10000]} // Maximum width and height
         resizeHandles={['ne']}
         style={{ position: 'relative', height: '85.5vh', top: 0 }}
