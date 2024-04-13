@@ -301,7 +301,6 @@ a{
 }
 .travelors-info-div{
   position: relative;
-  border: black solid 4px;
   margin-top: 118px;
   width: 97%;
   margin-left: 1%;
@@ -458,4 +457,18 @@ a{
 .No-request{
   font-size: 25px;
   padding-left: 13%;
+}
+.Trav-div{
+  display: flex;
+  border: black solid 4px;
+  flex-direction: column;
+  width: 100%;
+}
+.Trav-negatives{
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  font-size: 20px;
+  font-weight: 700;
+  padding: 10px;
 }

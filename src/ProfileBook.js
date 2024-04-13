@@ -128,7 +128,7 @@ const ProfileBook = ({ UserData, setUserData }) => {
     <div className="PB-main-div" style={{ background: `linear-gradient(to bottom, ${selectedColor})` }}>
       <div>
         {!EditProfile && (
-          <div>
+          <div style={{border: 'Solid Black 3px'}}>
             <div className="travelors-info-div">
               <div className="Traveler-Pic">PROFILE PIC</div>
               <div className="Traveler-Info">

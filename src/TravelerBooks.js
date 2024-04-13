@@ -169,6 +169,38 @@ const TravelersBooks = ({UserData, setUserData}) => {
     }
   }
 
+  const RemCompanion = () => {
+    RemoveCompanion(UserData.id || UserData._id, userDetails.id || userDetails._id)
+  }
+  const RemoveCompanion = async (userId, companionId) => {
+    try {
+      const response = await fetch(`http://localhost:5000/Users/${userId}/companions/${companionId}`, {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+      });
+
+      if (!response.ok) {
+        const errorMessage = await response.json();
+        throw new Error(errorMessage.message);
+      }
+
+      // If the response is okay, companion has been successfully removed
+      console.log('Companion removed successfully');
+
+      // Fetch updated user data and update UI
+      const userDataResponse = await fetch(`http://localhost:5000/Users/id/${userId}`);
+      const userData = await userDataResponse.json();
+      setUserData(userData);
+      setAcceptRequest(false);
+      setSentRequest(false);
+      setisCompanion(false);
+    } catch (error) {
+        console.error('Error removing companion:', error.message);
+        // Optionally, update UI to indicate the error to the user
+    }
+}
 
 
   // Render loading state while user details are being fetched
@@ -179,26 +211,32 @@ const TravelersBooks = ({UserData, setUserData}) => {
   return (
     <div style={{ background: `linear-gradient(to bottom, ${selectedColor})` }} className="TB-main-div">
       <div>
-        <div className="travelors-info-div">
-          <div className="Traveler-Pic">PROFILE PIC</div>
-          <div className="Traveler-Info">
-            <h1>{userDetails.username}</h1>
-            <h2>Daily Objective: </h2>
-            <div className="PB-dailyObj" style={{ maxWidth: '200px', wordWrap: 'break-word' }}>{userDetails.dailyObj}</div>
-            <div>
-              <p>Bio:</p>
-              <div className="Traveler-Bio" style={{ maxWidth: '300px', wordWrap: 'break-word', marginTop: '-10px' }}>
-                {userDetails.bio}
+        <div className='Trav-div'>
+          <div className="travelors-info-div">
+            <div className="Traveler-Pic">PROFILE PIC</div>
+            <div className="Traveler-Info">
+              <h1>{userDetails.username}</h1>
+              <h2>Daily Objective: </h2>
+              <div className="PB-dailyObj" style={{ maxWidth: '200px', wordWrap: 'break-word' }}>{userDetails.dailyObj}</div>
+              <div>
+                <p>Bio:</p>
+                <div className="Traveler-Bio" style={{ maxWidth: '300px', wordWrap: 'break-word', marginTop: '-10px' }}>
+                  {userDetails.bio}
+                </div>
               </div>
+              <p>Traveler Since: {userDetails.AccDate ? userDetails.AccDate.substring(0, 10) : ''}</p>
             </div>
-            <p>Traveler Since: {userDetails.AccDate ? userDetails.AccDate.substring(0, 10) : ''}</p>
+            {!isCompanion && !AcceptRequest && !SentRequest && (<h2 onClick={SendCompanionRequest} className="Edit-PB">Send Companion request</h2>)}
+            {!AcceptRequest && SentRequest && (<h2 className="Edit-PB">Companion request Sent</h2>)}
+            {AcceptRequest && (<h2 onClick={AccCompanionRequest} className="Edit-PB">Accept Companion Request</h2>)}
+            {AcceptRequest && (<h2 onClick={DeclCompanionRequest} style={{bottom: 0}} className="Edit-PB">Decline Companion Request</h2>)}
+            {isCompanion && (<h2 style={{bottom: 0}} className="Edit-PB">Send Message</h2>)}
+          </div> 
+          <div className='Trav-negatives'>
+            <div style={{cursor: 'pointer'}}>Block Traveler</div>
+            {isCompanion && (<div onClick={RemCompanion} style={{cursor: 'pointer'}}>Remove as Companion</div>)}
           </div>
-          {!isCompanion && !AcceptRequest && !SentRequest && (<h2 onClick={SendCompanionRequest} className="Edit-PB">Send Companion request</h2>)}
-          {!AcceptRequest && SentRequest && (<h2 className="Edit-PB">Companion request Sent</h2>)}
-          {AcceptRequest && (<h2 onClick={AccCompanionRequest} className="Edit-PB">Accept Companion Request</h2>)}
-          {AcceptRequest && (<h2 onClick={DeclCompanionRequest} style={{bottom: 0}} className="Edit-PB">Decline Companion Request</h2>)}
-          {isCompanion && (<h2 className="Edit-PB">Send Message</h2>)}
-        </div> 
+        </div>
         <br />
         <br />
         <div className="ProfileBook-guilds-div">
