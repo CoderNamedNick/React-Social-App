@@ -76,7 +76,6 @@ const TravelersBooks = ({UserData, setUserData}) => {
   const SendCompanionRequest = () => {
     sendCompanionRequest(UserData.id || UserData._id, userDetails.id || userDetails._id)
   }
-
   const sendCompanionRequest = async (senderUserId, receiverUserId) => {
     if(userDetails.CompanionRequest.includes(senderUserId)){
       return alert('request already sent')
@@ -103,6 +102,74 @@ const TravelersBooks = ({UserData, setUserData}) => {
     }
   };
 
+  const AccCompanionRequest = () => {
+    AcceptCompanionRequest(UserData.id || UserData._id, userDetails.id || userDetails._id)
+  }
+  const AcceptCompanionRequest = async (accepterId, acceptieId) => {
+    try {
+      // Check if the accepter is already a companion
+      if (userDetails.companions.includes(accepterId)) {
+        return alert('You are already a companion');
+      }
+  
+      const response = await fetch(`http://localhost:5000/Users/${acceptieId}/companions`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ companionId: accepterId }) // Send the sender's user ID as companionId in the request body
+      });
+      const data = await response.json();
+      if (response.ok) {
+        // Companion request sent successfully
+        const userDataResponse = await fetch(`http://localhost:5000/Users/id/${accepterId}`);
+        const userData = await userDataResponse.json();
+        setUserData(userData);
+        setisCompanion(true); // Update state to indicate that the request has been sent
+        setAcceptRequest(false);
+        DeclCompanionRequest();
+        console.log(data.message); // Log the success message from the server
+      } else {
+        // Handle error response from the server
+        console.error('Failed to send companion request:', data.message);
+      }
+    } catch (error) {
+      console.error('Error sending companion request:', error); // Handle fetch errors
+    }
+  }
+
+  const DeclCompanionRequest = () => {
+    DeclineCompanionRequest(UserData.id || UserData._id, userDetails.id || userDetails._id)
+  }
+  const DeclineCompanionRequest = async (accepterId, acceptieId) => {
+    try {
+      const response = await fetch(`http://localhost:5000/Users/${acceptieId}/companions/${accepterId}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({}) // No need to send any data in the body
+      });
+      const data = await response.json();
+      if (response.ok) {
+        // Companion request declined successfully
+        // Fetch updated user data and save it as setUserData
+        const userDataResponse = await fetch(`http://localhost:5000/Users/id/${accepterId}`);
+        const userData = await userDataResponse.json();
+        setUserData(userData);
+        setAcceptRequest(false);
+        setSentRequest(false);
+        console.log(data.message); // Log the success message from the server
+      } else {
+        // Handle error response from the server
+        console.error('Failed to decline companion request:', data.message);
+      }
+    } catch (error) {
+      console.error('Error declining companion request:', error); // Handle fetch errors
+    }
+  }
+
+
 
   // Render loading state while user details are being fetched
   if (!userDetails) {
@@ -126,10 +193,10 @@ const TravelersBooks = ({UserData, setUserData}) => {
             </div>
             <p>Traveler Since: {userDetails.AccDate ? userDetails.AccDate.substring(0, 10) : ''}</p>
           </div>
-          {!AcceptRequest && !SentRequest && (<h2 onClick={SendCompanionRequest} className="Edit-PB">Send Companion request</h2>)}
+          {!isCompanion && !AcceptRequest && !SentRequest && (<h2 onClick={SendCompanionRequest} className="Edit-PB">Send Companion request</h2>)}
           {!AcceptRequest && SentRequest && (<h2 className="Edit-PB">Companion request Sent</h2>)}
-          {AcceptRequest && (<h2 className="Edit-PB">Accept Companion Request</h2>)}
-          {AcceptRequest && (<h2 style={{bottom: 0}} className="Edit-PB">Decline Companion Request</h2>)}
+          {AcceptRequest && (<h2 onClick={AccCompanionRequest} className="Edit-PB">Accept Companion Request</h2>)}
+          {AcceptRequest && (<h2 onClick={DeclCompanionRequest} style={{bottom: 0}} className="Edit-PB">Decline Companion Request</h2>)}
           {isCompanion && (<h2 className="Edit-PB">Send Message</h2>)}
         </div> 
         <br />
