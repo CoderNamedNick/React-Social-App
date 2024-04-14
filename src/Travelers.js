@@ -94,10 +94,12 @@ const Travelers = ({ UserData, setUserData }) => {
           ) : (
             <>
               {filteredCompanions.map(({ id, userData }, index) => (
-                <div key={index} className="Travelers-hompage-info">
-                  <p>{userData.username}</p>
-                  <p>Daily: {userData.dailyObj}</p>
-                </div>
+                <Link key={userData._id || userData.id} to={`/user/${userData.username}`}>
+                  <div key={index} className="Travelers-hompage-info">
+                    <p>{userData.username}</p>
+                    <p style={{wordWrap: 'break-word', marginTop: '-10px'}}>Daily: {userData.dailyObj}</p>
+                  </div>
+                </Link>
               ))}
               {filteredCompanions.length > 5 && !showMore && <button onClick={handleShowMore}>Show More</button>}
             </>

@@ -1,44 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 
-
 const FindTravelers = ({UserData, setUserData}) => {
   const [companions, setCompanions] = useState([]);
   const [filteredCompanions, setFilteredCompanions] = useState([]);
+  const [Nocompanions, setNocompanions] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const fakeTravelers = [
-    {
-      _id: "1",
-      username: "John Doe",
-      dailyObj: "Complete tasks",
-      AccDate: "2022-04-01T00:00:00.000Z"
-    },
-    {
-      _id: "2",
-      username: "Jane Smith",
-      dailyObj: "Exercise",
-      AccDate: "2022-03-15T00:00:00.000Z"
-    },
-    {
-      _id: "3",
-      username: "Alice Johnson",
-      dailyObj: "Read a book",
-      AccDate: "2022-03-20T00:00:00.000Z"
-    },
-    {
-      _id: "4",
-      username: "Bob Anderson",
-      dailyObj: "Cook a new recipe",
-      AccDate: "2022-03-10T00:00:00.000Z"
-    },
-    {
-      _id: "5",
-      username: "Emily Wilson",
-      dailyObj: "Learn something new",
-      AccDate: "2022-03-25T00:00:00.000Z"
-    }
-  ];
   const [allUsers, setAllUsers] = useState([]);
+
   useEffect(() => {
     // Function to fetch all users
     const fetchAllUsers = async () => {
@@ -65,13 +34,31 @@ const FindTravelers = ({UserData, setUserData}) => {
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
     return diffDays;
   };
-  //make a grid of findable poeple with the get all but priotise people with age closest to user
-  // make other component for other travelers profiles books
 
   useEffect(() => {
-    setCompanions(fakeTravelers); // later make this UserData.Travelers
-    setFilteredCompanions(fakeTravelers);
-  }, []);
+    const fetchCompanionData = async () => {
+      if (UserData.companions) {
+        if (UserData.companions.length < 1) {
+          setNocompanions(true);
+        }
+        const companionDataPromises = UserData.companions.map(async (id) => {
+          const userData = await fetchUserDataById(id);
+          return { id, userData }; // Store ID along with user data
+        });
+        const companionData = await Promise.all(companionDataPromises);
+        setCompanions(companionData);
+        setFilteredCompanions(companionData); // Initialize filteredCompanions with all companions
+      }
+    };
+
+    fetchCompanionData();
+  }, [UserData.companions]);
+
+  const fetchUserDataById = async (id) => {
+    const response = await fetch(`http://localhost:5000/Users/id/${id}`);
+    const userData = await response.json();
+    return userData;
+  };
 
   const handleSearchChange = (event) => {
     const term = event.target.value;
@@ -79,9 +66,9 @@ const FindTravelers = ({UserData, setUserData}) => {
     filterCompanions(term);
   };
 
-  const filterCompanions = (term) => {
-    const filtered = companions.filter((companion) =>
-      companion.username.toLowerCase().includes(term.toLowerCase())
+  const filterCompanions = (searchTerm) => {
+    const filtered = companions.filter(({ userData }) =>
+      userData.username.toLowerCase().includes(searchTerm.toLowerCase())
     );
     setFilteredCompanions(filtered);
   };
@@ -125,7 +112,6 @@ const FindTravelers = ({UserData, setUserData}) => {
         console.error('Error updating Privacy:', error);
       });
   };
-  console.log(UserData)
 
   return (
     <div className="Find-travelers-main-div">
@@ -141,11 +127,13 @@ const FindTravelers = ({UserData, setUserData}) => {
       <div>
         <div className="Current-Companions-grid">
           {filteredCompanions.map((companion, index) => (
-            <div key={companion._id || companion.id} className="companion-item">
-              <p>{companion.username}</p>
-              <p>{companion.dailyObj}</p>
-              <p>{companion.AccDate ? companion.AccDate.substring(0, 10) : ''}</p>
-            </div>
+            <Link key={companion._id || companion.id} to={`/user/${companion.userData.username}`}>
+              <div key={companion._id || companion.id} className="companion-item">
+                <p>{companion.userData.username}</p>
+                <p style={{wordWrap: 'break-word'}}>Daily Objective: {companion.userData.dailyObj}</p>
+                <p>Traveler Since: {companion.userData.AccDate ? companion.userData.AccDate.substring(0, 10) : ''}</p>
+              </div>
+            </Link>
           ))}
         </div>
       </div>
@@ -183,7 +171,7 @@ const FindTravelers = ({UserData, setUserData}) => {
               {/* Link to another page with the username as a parameter */}
               <div className="companion-item">
                 <p>{traveler.username}</p>
-                <p>Daily Objective: {traveler.dailyObj}</p>
+                <p style={{wordWrap: 'break-word'}}>Daily Objective: {traveler.dailyObj}</p>
                 <p>Traveler Since: {traveler.AccDate ? traveler.AccDate.substring(0, 10) : ''}</p>
               </div>
             </Link>
