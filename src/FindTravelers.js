@@ -157,6 +157,10 @@ const FindTravelers = ({UserData, setUserData}) => {
               // Skip rendering this traveler
               return null;
             }
+            if (UserData.BlockedTravelers.includes(traveler.id || traveler._id)) {
+              // Skip rendering this traveler
+              return null;
+            }
             return traveler;
           })
           .filter((traveler) => traveler !== null)

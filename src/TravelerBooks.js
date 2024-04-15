@@ -7,11 +7,11 @@ import { useParams } from 'react-router-dom';
 
 const TravelersBooks = ({UserData, setUserData}) => {
   const { username } = useParams(); // Get the username parameter from the URL
-  
   const [userDetails, setUserDetails] = useState(null);
   const [SentRequest, setSentRequest] = useState(false);
   const [AcceptRequest, setAcceptRequest] = useState(false)
   const [isCompanion, setisCompanion] = useState(false);
+  const [isBlocked, setisBlocked] = useState(false);
   const colors = 
   [
   {name: 'Blue', color1: '#F5F6FC', color2: '#0F2180'},
@@ -71,6 +71,9 @@ const TravelersBooks = ({UserData, setUserData}) => {
     }
     if(userDetails && userDetails.companions.includes(UserData.id || UserData._id)){
       setisCompanion(true)
+    }
+    if(userDetails && UserData.BlockedTravelers.includes(userDetails.id || userDetails._id)){
+      setisBlocked(true)
     }
     if(userDetails && UserData.CompanionRequest.includes(userDetails.id || userDetails._id)){
       setAcceptRequest(true)
@@ -234,6 +237,7 @@ const TravelersBooks = ({UserData, setUserData}) => {
       console.log('Traveler blocked successfully:', data);
       // Handle success, maybe update UI
       setUserData(data.user)
+      setisBlocked(true);
     } catch (error) {
       console.error('Error blocking traveler:', error);
       // Handle error, show error message to user
@@ -263,15 +267,16 @@ const TravelersBooks = ({UserData, setUserData}) => {
               </div>
               <p>Traveler Since: {userDetails.AccDate ? userDetails.AccDate.substring(0, 10) : ''}</p>
             </div>
-            {!isCompanion && !AcceptRequest && !SentRequest && (<h2 onClick={SendCompanionRequest} className="Edit-PB">Send Companion request</h2>)}
-            {!AcceptRequest && SentRequest && (<h2 className="Edit-PB">Companion request Sent</h2>)}
-            {AcceptRequest && (<h2 onClick={AccCompanionRequest} className="Edit-PB">Accept Companion Request</h2>)}
-            {AcceptRequest && (<h2 onClick={DeclCompanionRequest} style={{bottom: 0}} className="Edit-PB">Decline Companion Request</h2>)}
-            {isCompanion && (<h2 style={{bottom: 0}} className="Edit-PB">Send Message</h2>)}
+            {!isBlocked && !isCompanion && !AcceptRequest && !SentRequest && (<h2 onClick={SendCompanionRequest} className="Edit-PB">Send Companion request</h2>)}
+            {!isBlocked && !AcceptRequest && SentRequest && (<h2 className="Edit-PB">Companion request Sent</h2>)}
+            {!isBlocked && AcceptRequest && (<h2 onClick={AccCompanionRequest} className="Edit-PB">Accept Companion Request</h2>)}
+            {!isBlocked && AcceptRequest && (<h2 onClick={DeclCompanionRequest} style={{bottom: 0}} className="Edit-PB">Decline Companion Request</h2>)}
+            {!isBlocked && isCompanion && (<h2 style={{bottom: 0}} className="Edit-PB">Send Message</h2>)}
           </div> 
           <div className='Trav-negatives'>
-            {!isCompanion && (<div onClick={BlockTrav} style={{cursor: 'pointer'}}>Block Traveler</div>)}
+            {!isBlocked && !isCompanion && (<div onClick={BlockTrav} style={{cursor: 'pointer'}}>Block Traveler</div>)}
             {isCompanion && (<div onClick={RemCompanion} style={{cursor: 'pointer'}}>Remove as Companion</div>)}
+            {isBlocked &&(<h2 style={{paddingLeft: '30%',bottom: 0}}>This Traveler is Blocked</h2>)}
           </div>
         </div>
         <br />
