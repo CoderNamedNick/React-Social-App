@@ -56,6 +56,7 @@ const Header = ({ title, LogOut }) => {
           <div className="Menu-p-s">Tavern News</div>
           <div className="Menu-p-s">Make A Guild</div>
           <div className="Menu-p-s">Form a Party</div>
+          <div className="Menu-p-s">Blocked Travelers</div>
           <Link to="/Login"><p className="menu-leave"onClick={LogOut}>Leave the Tavern</p></Link>
         </div>
       </div>

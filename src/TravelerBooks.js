@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
+
+//make a block function thta if id is in companionrequest it runs the decine option first
+// if not  then just the block function block
+
 const TravelersBooks = ({UserData, setUserData}) => {
   const { username } = useParams(); // Get the username parameter from the URL
   
@@ -200,8 +204,41 @@ const TravelersBooks = ({UserData, setUserData}) => {
         console.error('Error removing companion:', error.message);
         // Optionally, update UI to indicate the error to the user
     }
-}
+  }
 
+  const BlockTrav = () => {
+    if (UserData.CompanionRequest.includes(userDetails.id || userDetails._id)){
+      DeclCompanionRequest()
+      BlockTraveler(UserData.id || UserData._id, userDetails.id || userDetails._id)
+    } else{
+      BlockTraveler(UserData.id || UserData._id, userDetails.id || userDetails._id)
+    }
+  }
+  const BlockTraveler = async (userId, travelerId) => {
+    try {
+      const response = await fetch(`http://localhost:5000/Users/${userId}/Block-List`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          travelerId: travelerId,
+        }),
+      });
+    
+      if (!response.ok) {
+        throw new Error('Failed to block traveler');
+      }
+    
+      const data = await response.json();
+      console.log('Traveler blocked successfully:', data);
+      // Handle success, maybe update UI
+      setUserData(data.user)
+    } catch (error) {
+      console.error('Error blocking traveler:', error);
+      // Handle error, show error message to user
+    }
+  }
 
   // Render loading state while user details are being fetched
   if (!userDetails) {
@@ -233,7 +270,7 @@ const TravelersBooks = ({UserData, setUserData}) => {
             {isCompanion && (<h2 style={{bottom: 0}} className="Edit-PB">Send Message</h2>)}
           </div> 
           <div className='Trav-negatives'>
-            <div style={{cursor: 'pointer'}}>Block Traveler</div>
+            {!isCompanion && (<div onClick={BlockTrav} style={{cursor: 'pointer'}}>Block Traveler</div>)}
             {isCompanion && (<div onClick={RemCompanion} style={{cursor: 'pointer'}}>Remove as Companion</div>)}
           </div>
         </div>
