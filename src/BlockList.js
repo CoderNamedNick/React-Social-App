@@ -13,7 +13,6 @@ const BlockList = ({ UserData, setUserData }) => {
           setNoBlocked(true)
         }
         const companionDataPromises = UserData.BlockedTravelers.map(async (id) => {
-          // Assuming you have a function to fetch user data by ID, replace `fetchUserDataById` with that function
           const userData = await fetchUserDataById(id);
           return userData;
         });
@@ -26,12 +25,36 @@ const BlockList = ({ UserData, setUserData }) => {
     fetchCompanionData();
   }, [UserData.BlockedTravelers]);
 
-  // Function to fetch user data by ID (replace this with your actual implementation)
   const fetchUserDataById = async (id) => {
-    // Example fetch call
     const response = await fetch(`http://localhost:5000/Users/id/${id}`);
     const userData = await response.json();
     return userData;
+  };
+
+  const UnBlockTraveler = async (userId, travelerId) => {
+    try {
+      const response = await fetch(`http://localhost:5000/Users/${userId}/Unblock-List`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          travelerId: travelerId,
+        }),
+      });
+    
+      if (!response.ok) {
+        throw new Error('Failed to unblock traveler');
+      }
+    
+      const data = await response.json();
+      console.log('Traveler unblocked successfully:', data);
+      setUserData(data.user);
+      // Remove the unblocked traveler from BlockedTravs
+      setBlockedTravs(BlockedTravs.filter(trav => trav._id !== travelerId));
+    } catch (error) {
+      console.error('Error unblocking traveler:', error);
+    }
   };
 
   return (
@@ -40,20 +63,25 @@ const BlockList = ({ UserData, setUserData }) => {
         <Travelers UserData={UserData} setUserData={setUserData}/>
       </div>
       {NoBlocked && (<div className="No-request">You Have No One Blocked</div>)}
-    {!NoBlocked && (
-      <div style={{marginTop: '10px'}} className="CompReq-content-div">
-        {BlockedTravs.map((traveler) => (
-          <Link key={traveler._id || traveler.id} to={`/user/${traveler.username}`}>
-            {/* Link to another page with the username as a parameter */}
-            <div className="companion-req-item">
-              <p>{traveler.username}</p>
-              <p>Daily Objective: {traveler.dailyObj}</p>
-              <p>Traveler Since: {traveler.AccDate ? traveler.AccDate.substring(0, 10) : ''}</p>
-            </div>
-          </Link>
-        ))}
-      </div>
-    )}
+      {!NoBlocked && (
+        <div style={{marginTop: '10px'}} className="CompReq-content-div">
+          {BlockedTravs.map((traveler) => (
+              <div key={traveler._id || traveler.id} className="blocked-div">
+                <div>
+                  <p>{traveler.username}</p>
+                  <p>Daily Objective: {traveler.dailyObj}</p>
+                  <p>Traveler Since: {traveler.AccDate ? traveler.AccDate.substring(0, 10) : ''}</p>
+                </div>
+                <div style={{textAlign: 'right'}}>
+                  <Link to={`/user/${traveler.username}`}>
+                    <p style={{paddingTop: '10px'}}>View Profile</p>
+                  </Link>
+                  <p onClick={() => UnBlockTraveler(UserData.id || UserData._id, traveler._id || traveler.id)} style={{color: 'black', paddingTop: '10px', cursor: 'pointer'}}>Unblock</p>
+                </div>
+              </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };
