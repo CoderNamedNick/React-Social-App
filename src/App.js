@@ -7,6 +7,7 @@ import Header from "./Header";
 import ProfileBook from './ProfileBook'
 import FindTravelers from "./FindTravelers";
 import TravelersBooks from "./TravelerBooks";
+import BlockList from "./BlockList";
 import CompanionReq from "./CompanionReq";
 
 function App() {
@@ -62,6 +63,7 @@ function App() {
               <Route path="/ProfileBook" element={<ProfileBook UserData={UserData} setUserData={setUserData}/>} />
               <Route path="/FindCompanions" element={<FindTravelers UserData={UserData} setUserData={setUserData}/>} />
               <Route path="/Companion-Request" element={<CompanionReq UserData={UserData} setUserData={setUserData}/>} />
+              <Route path="/Block-List" element={<BlockList UserData={UserData} setUserData={setUserData}/>} />
               <Route path="/user/:username" element={<TravelersBooks UserData={UserData} setUserData={setUserData}/>} />
             </Routes>
           )}
