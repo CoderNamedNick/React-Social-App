@@ -497,3 +497,36 @@ a{
   background-attachment: fixed; 
   overflow-y: auto;
 }
+.Guild-form{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border: 2px solid black ;
+  gap: 20px;
+  border-radius: 5%;
+  background-color: rgba(255, 255, 255, 0.363);
+  width: 60vw;
+  height: auto;
+}
+.Guild-inputs{
+  width: 55%;
+  max-width: 70%;
+  height: 30px;
+  font-size: 17px;
+}
+.make-guild-p{
+  font-size: 20px;
+  margin-top: -30px;
+}
+.Make-guild-btn{
+  border: none;
+  background: none;
+  padding-top: 30px;
+  font-size: 28px;
+  font-weight: 500;
+  font-family: "MedievalSharp", cursive;
+  cursor: pointer;
+}
+.Make-guild-btn:hover{
+  font-weight: 900;
+}
