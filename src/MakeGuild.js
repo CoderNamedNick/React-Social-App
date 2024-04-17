@@ -2,6 +2,7 @@ import React, { useState } from "react";
 
 const MakeGuild = ({ UserData, setUserData }) => {
   const [errorMessage, setErrorMessage] = useState(null);
+  const [GuildMade, setGuildMade] = useState(false);
   const [formData, setFormData] = useState({
     guildName: "",
     guildMoto: "",
@@ -20,6 +21,10 @@ const MakeGuild = ({ UserData, setUserData }) => {
   };
 
   const handleSubmit = async (e) => {
+    if (UserData.guildsOwned.length === 3) {
+      setErrorMessage('Sorry you already own 3 Guilds')
+      return
+    }
     console.log(formData)
     e.preventDefault();
     try {
@@ -30,15 +35,18 @@ const MakeGuild = ({ UserData, setUserData }) => {
         },
         body: JSON.stringify(formData),
       });
-
+  
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.message);
       }
-
-      const createdGuild = await response.json();
-      console.log('Guild created:', createdGuild);
-      // Optionally, you can update your UI or state here
+  
+      const data = await response.json(); // assuming the response includes both user and guild data
+      console.log('Guild created:', data.guild);
+  
+      // Update UserData with the user data from the response
+      setUserData(data.user);
+      setGuildMade(true)
     } catch (error) {
       console.error('Error creating guild:', error.message);
       setErrorMessage(`${error.message}`)
@@ -57,6 +65,7 @@ const MakeGuild = ({ UserData, setUserData }) => {
         <br/>
         You can only be a "Guild Master" of up to 3 guilds.
       </p>
+      {!GuildMade && (
       <div>
         <h1 style={{ textAlign: 'center' }}>Guild Registry</h1>
         <form onSubmit={handleSubmit} className="Guild-form">
@@ -135,6 +144,16 @@ const MakeGuild = ({ UserData, setUserData }) => {
           <button className="Make-guild-btn" type="submit">Create Guild</button>
         </form>
       </div>
+      )}
+      {GuildMade && (
+        <div>
+          <h1>{formData.guildName} Has Been Made</h1>
+          <br/>
+          <br/>
+          <br/>
+          <h3 style={{textAlign: 'center', cursor: 'pointer'}}> Go To Guild Page </h3> 
+        </div>
+      )}
     </div>
   )
 }
