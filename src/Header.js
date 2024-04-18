@@ -52,7 +52,7 @@ const Header = ({ title, LogOut }) => {
         <h2>Tavern Menu</h2>
         <div>
           <Link to="/ProfileBook"><div className="Menu-p-s">Profile Book</div></Link>
-          <div className="Menu-p-s">Join A Guild</div>
+          <Link to="/Join-Guild"><div className="Menu-p-s">Join A Guild</div></Link>
           <div className="Menu-p-s">Tavern News</div>
           <Link to="/Guild-Registry"><div className="Menu-p-s">Make A Guild</div></Link>
           <div className="Menu-p-s">Form a Party</div>

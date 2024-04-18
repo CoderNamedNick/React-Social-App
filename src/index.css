@@ -563,3 +563,14 @@ a{
   color: rgb(224, 217, 217);
   width: 100%; /* Ensures the item stretches horizontally */
 }
+.findable-guild-item{
+  border: black solid 3px;
+  font-size: 18px;
+  font-weight: 700;
+  border-radius: 10px;
+  margin-left: 3%;
+  padding: 10px; 
+  margin-bottom: 20px;
+  color: rgb(8, 8, 8);
+  width: 90%; /* Ensures the item stretches horizontally */
+}

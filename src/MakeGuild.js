@@ -101,6 +101,7 @@ const MakeGuild = ({ UserData, setUserData }) => {
             style={{ width: '210px', height: '100px', resize: 'none' }}
             id="bio"
             name="bio"
+            maxLength={115}
             value={formData.bio}
             onChange={handleChange}
             required
