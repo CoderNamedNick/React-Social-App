@@ -86,10 +86,12 @@ const HomePage = ({UserData, setUserData}) => {
         </div>
 
         {/* Div for Guild content */}
-        <div className="Homepage-contents-divs">
-          <h2>Guild Content</h2>
-          {/* Display guild notifications or "WANT TO JOIN A GUILD?" */}
-        </div>
+        <Link to="/All-Guilds">
+          <div className="Homepage-contents-divs">
+            <h2>Guild Content</h2>
+            {/* Display guild notifications or "WANT TO JOIN A GUILD?" */}
+          </div>
+        </Link>
 
         {/* Div for Party content */}
         <div className="Homepage-contents-divs">

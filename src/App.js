@@ -10,6 +10,7 @@ import TravelersBooks from "./TravelerBooks";
 import BlockList from "./BlockList";
 import CompanionReq from "./CompanionReq";
 import MakeGuild from "./MakeGuild";
+import AllGuilds from "./AllGuilds";
 
 function App() {
   const [loggedIn, setLoggedIn] = useState(false);
@@ -67,6 +68,7 @@ function App() {
               <Route path="/Block-List" element={<BlockList UserData={UserData} setUserData={setUserData}/>} />
               <Route path="/user/:username" element={<TravelersBooks UserData={UserData} setUserData={setUserData}/>} />
               <Route path="/Guild-Registry" element={<MakeGuild UserData={UserData} setUserData={setUserData}/>} />
+              <Route path="/All-Guilds" element={<AllGuilds UserData={UserData} setUserData={setUserData}/>} />
             </Routes>
           )}
         </div>
