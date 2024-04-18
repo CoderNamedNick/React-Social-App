@@ -187,11 +187,12 @@ a{
 }
 .Travelers-homepage-div{
   z-index: 10;
-  background-color: rgba(199, 60, 60, 0.699);
+  background-color: rgba(117, 56, 56, 0.212);
   width: fit-content;
   color: rgb(29, 29, 29);
   display: flex;
   flex-direction: column;
+  bottom: 0;
   padding: 10px;
   border-right: rgba(0, 0, 0, 0.678) 3px solid;
   border-bottom: rgba(0, 0, 0, 0.678) 3px solid;
@@ -448,8 +449,9 @@ a{
   font-size: 18px;
   font-weight: 700;
   border-radius: 10px;
+  margin-left: 130px;
   padding: 10px; 
-  width: calc(90% - 20px); 
+  width: calc(70% - 15px); 
   color: rgb(224, 217, 217);
 }
 .companion-req-item:hover {
@@ -530,4 +532,34 @@ a{
 }
 .Make-guild-btn:hover{
   font-weight: 900;
+}
+.All-Guilds-main-div {
+  display: flex;
+  width: 100vw;
+  height: 100vh;
+  background: linear-gradient(to bottom, rgb(219, 197, 98), #d49029);
+  background-repeat: no-repeat;
+  background-attachment: fixed; 
+  overflow-y: auto;/* Adjust as needed */
+}
+
+.guild-container {
+  display: flex;
+  flex-direction: column;
+  width: 90%; /* Ensure container spans the entire viewport width */
+}
+.All-Guilds-content-div{
+  padding-left: 170px;
+  padding-top: 120px;
+}
+.guild-item {
+  background: linear-gradient(to right, #947f3931, #63550675);
+  border: black solid 3px;
+  font-size: 18px;
+  font-weight: 700;
+  border-radius: 10px;
+  padding: 10px; 
+  margin-bottom: 20px;
+  color: rgb(224, 217, 217);
+  width: 100%; /* Ensures the item stretches horizontally */
 }

@@ -72,7 +72,7 @@ const Travelers = ({ UserData, setUserData }) => {
         minConstraints={[130, 1000]}
         maxConstraints={[600, 10000]}
         resizeHandles={['ne']}
-        style={{ position: 'relative', height: '85.5vh', top: 0 }}
+        style={{ position: 'fixed', bottom: '0', top: '108px' }}
       >
         <div className="Travelers-homepage-div" style={{ width }}>
           <Link to="/FindCompanions"><div className="Travelers-hompage-search-h2">Find Travelers</div></Link>

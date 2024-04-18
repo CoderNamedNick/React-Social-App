@@ -47,43 +47,47 @@ const AllGuilds = ({ UserData, setUserData }) => {
   };
 
   return (
-    <div className='CompReq-main-div'>
-      <div className="Travelelers-homepage-div">
-        <Travelers UserData={UserData} setUserData={setUserData}/>
-      </div>
-      {NoGuild && (<div className="No-request">You Are Not In A Guild</div>)}
-      {!NoGuild && (
-        <div>
-          <div style={{marginTop: '10px'}} className="CompReq-content-div">
-            <h1>Owned Guilds</h1>
+  <div className='All-Guilds-main-div'>
+    <div className="Travelelers-homepage-div">
+      <Travelers UserData={UserData} setUserData={setUserData}/>
+    </div>
+    {NoGuild && (<div style={{marginLeft: '200px', marginTop: '120px'}} className="No-request">You Are Not In A Guild</div>)}
+    {!NoGuild && (
+      <div style={{width: '100vw'}}>
+        <div className="All-Guilds-content-div">
+          <h1>Owned Guilds</h1>
+          <div className="guild-container">
             {OwnedGuilds.map((Guild) => (
               <Link key={Guild._id || Guild.id} to={`/Guild/${Guild.guildName}`}>
                 {/* Link to another page with the guild name as a parameter */}
-                <div className="companion-req-item">
+                <div className="guild-item">
                   <p>{Guild.guildName}</p>
                   <p>Guild Moto: {Guild.guildMoto}</p>
-                  <p></p>
+                  <p>Guild bio: {Guild.bio}</p>
                 </div>
               </Link>
             ))}
           </div>
-          <div style={{marginTop: '10px'}} className="CompReq-content-div">
-            <h1>Joined Guilds</h1>
-            {JoinedGuilds.map((Guild) => (
-              <Link key={Guild._id || Guild.id} to={`/Guild/${Guild.guildName}`}>
+        </div>
+        <div style={{marginTop: '10px'}} className="All-Guilds-content-div">
+          <h1 style={{marginTop: '-60px'}}>Joined Guilds</h1>
+          <div className="guild-container">
+            {JoinedGuilds.filter((Guild) => !UserData.guildsOwned.includes(Guild.id || Guild._id)).map((FilteredGuild) => (
+              <Link key={FilteredGuild._id || FilteredGuild.id} to={`/Guild/${FilteredGuild.guildName}`}>
                 {/* Link to another page with the guild name as a parameter */}
-                <div className="companion-req-item">
-                  <p>{Guild.guildName}</p>
-                  <p>Guild Moto: {Guild.guildMoto}</p>
+                <div className="guild-item">
+                  <p>{FilteredGuild.guildName}</p>
+                  <p>Guild Moto: {FilteredGuild.guildMoto}</p>
                   <p></p>
                 </div>
               </Link>
             ))}
           </div>
         </div>
-      )}
-    </div>
-  );
+      </div>
+    )}
+  </div>
+);
 };
 
 export default AllGuilds;
