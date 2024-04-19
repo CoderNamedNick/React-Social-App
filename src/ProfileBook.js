@@ -142,7 +142,7 @@ const ProfileBook = ({ UserData, setUserData }) => {
                   </div>
                 </div>
                 <p>Traveler Since: {UserData.AccDate ? UserData.AccDate.substring(0, 10) : ''}</p>
-                {ShowColors && (<div onClick={SaveColor}>Save color</div>)}
+                {ShowColors && (<div className="Save-color-btn" onClick={SaveColor}>Save color</div>)}
               </div>
               <h4 style={{bottom: 0}} onClick={Editprofile} className="Edit-PB">
                 Edit ProfileBook
@@ -154,7 +154,7 @@ const ProfileBook = ({ UserData, setUserData }) => {
             {ShowColors && (
               <div className="Color-Div">
                 {colors.map((color, index) => (
-                  <div key={index} onClick={() => changeBackgroundColor(color.name, color.color1, color.color2)}>
+                  <div style={{cursor: "pointer"}} key={index} onClick={() => changeBackgroundColor(color.name, color.color1, color.color2)}>
                     {color.name}
                   </div>
                 ))}
