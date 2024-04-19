@@ -20,7 +20,8 @@ const Travelers = ({ UserData, setUserData }) => {
         }
         const companionDataPromises = UserData.companions.map(async (id) => {
           const userData = await fetchUserDataById(id);
-          return { id, userData }; // Store ID along with user data
+          const messageCount = await fetchMessageCount(id); // Fetch message count for each companion
+          return { id, userData, messageCount }; // Store ID, user data, and message count
         });
         const companionData = await Promise.all(companionDataPromises);
         setCompanionsData(companionData);
@@ -41,6 +42,18 @@ const Travelers = ({ UserData, setUserData }) => {
     const response = await fetch(`http://localhost:5000/Users/id/${id}`);
     const userData = await response.json();
     return userData;
+  };
+
+  const fetchMessageCount = async (companionId) => {
+    const response = await fetch('http://localhost:5000/Users/messages/count', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ companionId }),
+    });
+    const messageCountData = await response.json();
+    return messageCountData.count;
   };
 
   const handleSearchChange = (event) => {
@@ -77,7 +90,7 @@ const Travelers = ({ UserData, setUserData }) => {
         <div className="Travelers-homepage-div" style={{ width }}>
           <Link to="/FindCompanions"><div className="Travelers-hompage-search-h2">Find Travelers</div></Link>
           <br />
-          <Link to="/Companion-Request"><div>Companion Requests: {UserData.CompanionRequest ? UserData.CompanionRequest.length : 0}</div></Link>
+          <Link to="/Companion-Request"><div className="Travelers-hompage-search-h2">Companion Requests: {UserData.CompanionRequest ? UserData.CompanionRequest.length : 0}</div></Link>
           <br />
           <div className="Travelers-hompage-h2">Companions</div>
           <br />
@@ -93,11 +106,12 @@ const Travelers = ({ UserData, setUserData }) => {
             <p>Loading...</p>
           ) : (
             <>
-              {filteredCompanions.map(({ id, userData }, index) => (
+              {filteredCompanions.map(({ id, userData, messageCount }, index) => (
                 <Link key={userData._id || userData.id} to={`/user/${userData.username}`}>
                   <div key={index} className="Travelers-hompage-info">
-                    <p>{userData.username}</p>
+                    <p style={{paddingTop: '10px'}}>{userData.username}</p>
                     <p style={{wordWrap: 'break-word', marginTop: '-10px'}}>Daily: {userData.dailyObj}</p>
+                    <p style={{wordWrap: 'break-word', marginTop: '-10px'}}>New Messages: {messageCount}</p> {/* Display message count */}
                   </div>
                 </Link>
               ))}
