@@ -187,13 +187,13 @@ a{
 }
 .Travelers-homepage-div{
   z-index: 10;
-  background-color: rgba(117, 56, 56, 0.212);
+  background-color: rgba(117, 56, 56, 0.288);
   width: fit-content;
   color: rgb(29, 29, 29);
   display: flex;
   flex-direction: column;
   bottom: 0;
-  padding: 10px;
+  padding-left: 10px;
   border-right: rgba(0, 0, 0, 0.678) 3px solid;
   border-bottom: rgba(0, 0, 0, 0.678) 3px solid;
 }
