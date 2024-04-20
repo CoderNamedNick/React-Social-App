@@ -34,6 +34,16 @@ const Header = ({ title, LogOut }) => {
         return "Profile Book";
       case "/FindCompanions":
         return "Find Companions";
+      case "/Companion-Request":
+        return "Companion Request";
+      case "/Block-List":
+        return "Blocked Travelers";
+      case "/Guild-Registry":
+        return "Guild Registry";
+      case "/All-Guilds":
+        return "Guild Connections";
+      case "/Join-Guild":
+        return "Join A Guild";
       default:
         return "TAVERN"; // Default title
     }

@@ -187,7 +187,7 @@ a{
 }
 .Travelers-homepage-div{
   z-index: 10;
-  background-color: rgba(117, 56, 56, 0.288);
+  background-color: rgba(117, 56, 56, 0.384);
   width: fit-content;
   color: rgb(29, 29, 29);
   display: flex;
@@ -211,7 +211,6 @@ a{
 .Travelers-hompage-h2{
   font-size: 25px;
   margin-left: -10px;
-  padding-left: 10px;
   padding-top: 30px;
   padding-bottom: 5px;
   border-bottom: 2px black solid;
@@ -477,6 +476,7 @@ a{
   flex-direction: column;
   width: 100%;
 }
+
 .Trav-negatives{
   display: flex;
   flex-direction: row;
@@ -570,7 +570,7 @@ a{
   border-radius: 10px;
   padding: 10px; 
   margin-bottom: 20px;
-  color: rgb(224, 217, 217);
+  color: rgb(58, 52, 52);
   width: 100%; /* Ensures the item stretches horizontally */
 }
 .findable-guild-item{

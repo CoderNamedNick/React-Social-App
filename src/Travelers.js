@@ -11,6 +11,7 @@ const Travelers = ({ UserData, setUserData }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [showMore, setShowMore] = useState(false);
   const [width, setWidth] = useState(140); // Initial width
+  
 
   useEffect(() => {
     const fetchCompanionData = async () => {

@@ -63,7 +63,8 @@ const AllGuilds = ({ UserData, setUserData }) => {
                 <div className="guild-item">
                   <p>{Guild.guildName}</p>
                   <p>Guild Moto: {Guild.guildMoto}</p>
-                  <p>Guild bio: {Guild.bio}</p>
+                  <p>Guild Members: {Guild.joinedTravelers.length}</p>
+                  <p>Guild Post: {Guild.guildPost.length}</p>
                 </div>
               </Link>
             ))}
@@ -78,7 +79,8 @@ const AllGuilds = ({ UserData, setUserData }) => {
                 <div className="guild-item">
                   <p>{FilteredGuild.guildName}</p>
                   <p>Guild Moto: {FilteredGuild.guildMoto}</p>
-                  <p></p>
+                  <p>Guild bio: {FilteredGuild.bio}</p>
+                  <p>Guild Members: {FilteredGuild.joinedTravelers.length}</p>
                 </div>
               </Link>
             ))}
