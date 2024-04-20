@@ -4,6 +4,9 @@ import { Link } from "react-router-dom";
 const JoinAGuild = ({ UserData, setUserData }) => {
   const [AllGuilds, setAllGuilds] = useState([]);
   const [expandedGuild, setExpandedGuild] = useState(null);
+  const [joinedGuilds, setJoinedGuilds] = useState([]);
+  const [requestedGuilds, setRequestedGuilds] = useState([]);
+
   const colors = [
     { name: 'blue', color1: '#F5F6FC', color2: '#0F2180' },
     { name: 'green', color1: '#9FE5A6', color2: '#0F6617' },
@@ -13,6 +16,7 @@ const JoinAGuild = ({ UserData, setUserData }) => {
     { name: 'orange', color1: '#F6AF75', color2: '#EA6A00' },
     { name: 'grey', color1: '#D3D3D3', color2: '#4D4545' },
   ];
+
   useEffect(() => {
     const fetchAllGuilds = async () => {
       try {
@@ -29,6 +33,16 @@ const JoinAGuild = ({ UserData, setUserData }) => {
     fetchAllGuilds();
   }, []);
 
+  useEffect(() => {
+    // Assuming UserData.guildsJoined is an array of joined guild IDs
+    setJoinedGuilds(UserData.guildsJoined || []);
+  }, [UserData]);
+
+  useEffect(() => {
+    // Assuming UserData.requestedGuilds is an array of guild IDs to which the user has sent join requests
+    setRequestedGuilds(UserData.requestedGuilds || []);
+  }, [UserData]);
+
   const getGuildColors = (guildColor) => {
     const selectedColorData = colors.find(color => color.name === guildColor);
     return selectedColorData ? `linear-gradient(to top, ${selectedColorData.color1}, ${selectedColorData.color2})` : '';
@@ -36,6 +50,62 @@ const JoinAGuild = ({ UserData, setUserData }) => {
 
   const handleGuildBioClick = (guildId) => {
     setExpandedGuild(expandedGuild === guildId ? null : guildId);
+  };
+
+  const handleRequestToJoinClick = async (guildId) => {
+    try {
+      const response = await fetch(`http://localhost:5000/Guilds/${guildId}/Join-Request`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          TravelerId: UserData.id || UserData._id, // Assuming UserData has the traveler's ID
+        }),
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to send join request');
+      }
+      const data = await response.json(); // assuming the response includes both user and guild data
+  
+      // Update UserData with the user data from the response
+      setUserData(data.user);
+      console.log('Join request sent successfully');
+      // Optionally, you can update the UI or state to reflect the request sent
+      setRequestedGuilds([...requestedGuilds, guildId]); // Update the list of requested guilds
+    } catch (error) {
+      console.error('Error sending join request:', error);
+      // Handle error: display error message to user or retry request
+    }
+  };
+
+  const handleJoinGuildClick = async (guildId) => {
+    try {
+      const response = await fetch(`http://localhost:5000/Guilds/${guildId}/Join`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          TravelerId: UserData.id || UserData._id, // Assuming UserData has the traveler's ID
+        }),
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to send join request');
+      }
+      const data = await response.json(); // assuming the response includes both user and guild data
+  
+      // Update UserData with the user data from the response
+      setUserData(data.user);
+      console.log('Joined successfully');
+      // Optionally, you can update the UI or state to reflect the request sent
+      setJoinedGuilds([...joinedGuilds, guildId]); // Update the list of joined guilds
+    } catch (error) {
+      console.error('Error sending join request:', error);
+      // Handle error: display error message to user or retry request
+    }
   };
 
   return (
@@ -50,8 +120,9 @@ const JoinAGuild = ({ UserData, setUserData }) => {
       <br/>
       <h1>Findable Guilds</h1>
       {AllGuilds.filter(guild => 
-        !UserData.guildsJoined.includes(guild.id || guild._id) && 
+        !joinedGuilds.includes(guild.id || guild._id) && 
         guild.Findable &&
+        !guild.joinedTravelers.includes(UserData.id) &&
         !guild.bannedTravelers.includes(UserData.id) &&
         !guild.bannedTravelers.includes(UserData._id)
       ).map((guild) => (
@@ -65,7 +136,7 @@ const JoinAGuild = ({ UserData, setUserData }) => {
               <>
                 <h2>{guild.guildName}</h2>
                 <p style={{ overflowWrap: 'break-word' }}>Guild Moto: {guild.guildMoto}</p>
-                <p>{guild.RequestToJoin ? 'Request to Join' : 'Open For All To Join'}</p>
+                <p>{guild.RequestToJoin ? (requestedGuilds.includes(guild.id) ? 'Requested To Join' : 'Request to Join') : 'Open For All To Join'}</p>
               </>
             )}
             {expandedGuild === guild.id && (
@@ -79,8 +150,16 @@ const JoinAGuild = ({ UserData, setUserData }) => {
             <p style={{paddingBottom: '10px', cursor: "pointer"}} onClick={() => handleGuildBioClick(guild.id)}>
               {expandedGuild === guild.id ? 'Hide Guild Bio' : 'Read Guilds Bio'}
             </p>
-            <p style={{paddingBottom: '10px', cursor: "pointer"}}>Join Guild</p>
             <p style={{paddingBottom: '10px'}}>Guild Members: {guild.joinedTravelers.length}</p>
+            {guild.RequestToJoin ? (
+              <p style={{paddingBottom: '10px', cursor: "pointer"}} onClick={() => handleRequestToJoinClick(guild.id || guild._id)}>
+                {requestedGuilds.includes(guild.id) ? 'Requested To Join' : 'Request to Join'}
+              </p>
+            ) : (
+              <p style={{paddingBottom: '10px', cursor: "pointer"}} onClick={() => handleJoinGuildClick(guild.id || guild._id)}>
+                {joinedGuilds.includes(guild.id) ? 'Joined' : 'Join Guild'}
+              </p>
+            )}
           </div>
         </div>
       ))}
