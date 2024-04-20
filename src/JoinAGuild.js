@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 
 const JoinAGuild = ({ UserData, setUserData }) => {
   const [AllGuilds, setAllGuilds] = useState([]);
+  const [expandedGuild, setExpandedGuild] = useState(null);
   const colors = [
     { name: 'blue', color1: '#F5F6FC', color2: '#0F2180' },
     { name: 'green', color1: '#9FE5A6', color2: '#0F6617' },
@@ -12,7 +13,6 @@ const JoinAGuild = ({ UserData, setUserData }) => {
     { name: 'orange', color1: '#F6AF75', color2: '#EA6A00' },
     { name: 'grey', color1: '#D3D3D3', color2: '#4D4545' },
   ];
-
   useEffect(() => {
     const fetchAllGuilds = async () => {
       try {
@@ -22,7 +22,6 @@ const JoinAGuild = ({ UserData, setUserData }) => {
         }
         const allGuildsData = await response.json();
         setAllGuilds(allGuildsData);
-        console.log(allGuildsData)
       } catch (error) {
         console.error('Error fetching all guilds:', error);
       }
@@ -33,6 +32,10 @@ const JoinAGuild = ({ UserData, setUserData }) => {
   const getGuildColors = (guildColor) => {
     const selectedColorData = colors.find(color => color.name === guildColor);
     return selectedColorData ? `linear-gradient(to top, ${selectedColorData.color1}, ${selectedColorData.color2})` : '';
+  };
+
+  const handleGuildBioClick = (guildId) => {
+    setExpandedGuild(expandedGuild === guildId ? null : guildId);
   };
 
   return (
@@ -46,20 +49,41 @@ const JoinAGuild = ({ UserData, setUserData }) => {
       <br/>
       <br/>
       <h1>Findable Guilds</h1>
-      <div>
-        {AllGuilds.filter(guild => 
-          !UserData.guildsJoined.includes(guild.id || guild._id) && 
-          guild.Findable &&
-          !guild.bannedTravelers.includes(UserData.id) &&
-          !guild.bannedTravelers.includes(UserData._id)
-        ).map((guild) => (
-          <div style={{ background: getGuildColors(guild.guildColor) }} className="findable-guild-item" key={guild.id || guild._id}>
-            <p>{guild.guildName}</p>
-            <p>Guild Moto: {guild.guildMoto}</p>
-            <p style={{overflowWrap: 'break-word'}}>Guild bio: {guild.bio}</p>
+      {AllGuilds.filter(guild => 
+        !UserData.guildsJoined.includes(guild.id || guild._id) && 
+        guild.Findable &&
+        !guild.bannedTravelers.includes(UserData.id) &&
+        !guild.bannedTravelers.includes(UserData._id)
+      ).map((guild) => (
+        <div 
+          className="findable-guild-item" 
+          key={guild.id || guild._id} 
+          style={{ background: getGuildColors(guild.guildColor), display: 'flex', justifyContent: 'space-between' }}
+        >
+          <div className="findable-guild-item-left" style={{ flex: '1', maxWidth: '73%' }}>
+            {expandedGuild !== guild.id && (
+              <>
+                <h2>{guild.guildName}</h2>
+                <p style={{ overflowWrap: 'break-word' }}>Guild Moto: {guild.guildMoto}</p>
+                <p>{guild.RequestToJoin ? 'Request to Join' : 'Open For All To Join'}</p>
+              </>
+            )}
+            {expandedGuild === guild.id && (
+              <>
+                <h3>Guild Bio</h3>
+                <p style={{ overflowWrap: 'break-word' }}>{guild.bio}</p>
+              </>
+            )}
           </div>
-        ))}
-      </div>
+          <div className="findable-guild-item-right" style={{ flex: '0 0 20%', minWidth: '20%', textAlign: 'right', maxWidth: '20%', }}>
+            <p style={{paddingBottom: '10px', cursor: "pointer"}} onClick={() => handleGuildBioClick(guild.id)}>
+              {expandedGuild === guild.id ? 'Hide Guild Bio' : 'Read Guilds Bio'}
+            </p>
+            <p style={{paddingBottom: '10px', cursor: "pointer"}}>Join Guild</p>
+            <p style={{paddingBottom: '10px'}}>Guild Members: {guild.joinedTravelers.length}</p>
+          </div>
+        </div>
+      ))}
     </div>
   );
 };

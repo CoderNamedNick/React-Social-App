@@ -117,14 +117,55 @@ a{
 }
 
 .Header-logo {
-  width: 200px; 
+  width: 220px; 
   height: 100px;
 }
-
+.header-title{
+  font-family: "MedievalSharp", cursive;
+  font-weight: 500;
+  font-style: normal;
+  font-size: 36px;
+}
 .Header-title {
   flex: 1;
-  padding-right: 70px;
+  padding-right: 100px;
   text-align: center; 
+}
+@media screen and (max-width: 711px) {
+  .Header-logo {
+    width: 180px; 
+    height: 100px;
+  }
+  .header-title{
+    font-family: "MedievalSharp", cursive;
+    font-weight: 500;
+    font-style: normal;
+    padding-right: 50px;
+    font-size: 29px;
+  }
+  .Header-title {
+    flex: 1;
+    padding-right: 50px;
+    text-align: center; 
+  }
+}
+@media screen and (max-width: 621px) {
+  .Header-logo {
+    width: 180px; 
+    height: 100px;
+  }
+  .header-title{
+    font-family: "MedievalSharp", cursive;
+    font-weight: 500;
+    font-style: normal;
+    padding-right: 0px;
+    font-size: 29px;
+  }
+  .Header-title {
+    flex: 1;
+    padding-right: 30px;
+    text-align: center; 
+  }
 }
 
 .Header-menu {
@@ -578,9 +619,24 @@ a{
   font-size: 18px;
   font-weight: 700;
   border-radius: 10px;
-  margin-left: 3%;
+  margin-left: 0%;
   padding: 10px; 
   margin-bottom: 20px;
   color: rgb(8, 8, 8);
-  width: 90%; /* Ensures the item stretches horizontally */
+  width: 90%; 
+  display: flex;
+  flex-direction: row;
+}
+
+.Join-A-Guild-main-div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  gap: 40px;
+  height: 100vh;
+  background: linear-gradient(to bottom, #87d8f1bb,  #1571883a );
+  background-repeat: no-repeat;
+  background-attachment: fixed; 
+  overflow-y: auto;
 }

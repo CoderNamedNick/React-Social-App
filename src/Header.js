@@ -54,7 +54,7 @@ const Header = ({ title, LogOut }) => {
       <div className="Header-Main-Div">
         <Link to='/HomePage'><img src={Logo} alt="TAVERN" className="Header-logo"></img></Link>
         <div className="Header-title">
-          <h1 className="medievalsharp-regular">{title || getTitle()}</h1> 
+          <h1 className="header-title">{title || getTitle()}</h1> 
         </div>
         <img onClick={menuClick} src={Menu} alt="Menu" className="Header-menu"></img>
       </div>
