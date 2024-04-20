@@ -79,6 +79,7 @@ const JoinAGuild = ({ UserData, setUserData }) => {
       // Handle error: display error message to user or retry request
     }
   };
+  console.log(requestedGuilds)
 
   const handleJoinGuildClick = async (guildId) => {
     try {
@@ -123,6 +124,9 @@ const JoinAGuild = ({ UserData, setUserData }) => {
         !joinedGuilds.includes(guild.id || guild._id) && 
         guild.Findable &&
         !guild.joinedTravelers.includes(UserData.id) &&
+        !guild.joinedTravelers.includes(UserData._id) &&
+        !requestedGuilds.includes(guild.id) &&
+        !requestedGuilds.includes(guild._id) &&
         !guild.bannedTravelers.includes(UserData.id) &&
         !guild.bannedTravelers.includes(UserData._id)
       ).map((guild) => (
@@ -151,11 +155,12 @@ const JoinAGuild = ({ UserData, setUserData }) => {
               {expandedGuild === guild.id ? 'Hide Guild Bio' : 'Read Guilds Bio'}
             </p>
             <p style={{paddingBottom: '10px'}}>Guild Members: {guild.joinedTravelers.length}</p>
-            {guild.RequestToJoin ? (
-              <p style={{paddingBottom: '10px', cursor: "pointer"}} onClick={() => handleRequestToJoinClick(guild.id || guild._id)}>
+            {guild.RequestToJoin && (
+              <p style={{paddingBottom: '10px', cursor: requestedGuilds.includes(guild.id) ? "default" : "pointer", color: requestedGuilds.includes(guild.id) ? "#999" : "inherit"}} onClick={() => !requestedGuilds.includes(guild.id) && handleRequestToJoinClick(guild.id || guild._id)}>
                 {requestedGuilds.includes(guild.id) ? 'Requested To Join' : 'Request to Join'}
               </p>
-            ) : (
+            )}
+            {!guild.RequestToJoin && (
               <p style={{paddingBottom: '10px', cursor: "pointer"}} onClick={() => handleJoinGuildClick(guild.id || guild._id)}>
                 {joinedGuilds.includes(guild.id) ? 'Joined' : 'Join Guild'}
               </p>

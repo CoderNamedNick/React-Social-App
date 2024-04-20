@@ -5,6 +5,7 @@ import Travelers from "./Travelers";
 const AllGuilds = ({ UserData, setUserData }) => {
   const [OwnedGuilds, setOwnedGuilds] = useState([]);
   const [JoinedGuilds, setJoinedGuilds] = useState([]);
+  const [RequestedGuilds, setRequestedGuilds] = useState([]);
   const [NoGuild, setNoGuild] = useState(false);
 
   useEffect(() => {
@@ -33,10 +34,21 @@ const AllGuilds = ({ UserData, setUserData }) => {
         const joinedGuildsData = await Promise.all(joinedGuildsPromises);
         setJoinedGuilds(joinedGuildsData);
       }
+
+      if (UserData.requestedGuilds) {
+        const requestedGuildsPromises = UserData.requestedGuilds.map(async (id) => {
+          // Assuming you have a function to fetch guild data by ID, replace `fetchGuildDataById` with that function
+          const guildData = await fetchGuildDataById(id);
+          return guildData;
+        });
+
+        const requestedGuildsData = await Promise.all(requestedGuildsPromises);
+        setRequestedGuilds(requestedGuildsData);
+      }
     };
 
     fetchGuildData();
-  }, [UserData.guildsOwned, UserData.guildsJoined]);
+  }, [UserData.guildsOwned, UserData.guildsJoined, UserData.requestedGuilds ]);
 
   // Function to fetch guild data by ID (replace this with your actual implementation)
   const fetchGuildDataById = async (id) => {
@@ -83,6 +95,19 @@ const AllGuilds = ({ UserData, setUserData }) => {
                   <p>Guild Members: {FilteredGuild.joinedTravelers.length}</p>
                 </div>
               </Link>
+            ))}
+          </div>
+        </div>
+        <div style={{marginTop: '10px'}} className="All-Guilds-content-div">
+          <h1 style={{marginTop: '-60px'}}>Requested To Join Guilds</h1>
+          <div className="guild-container">
+            {RequestedGuilds.map((Guild) => (
+              <div className="guild-item">
+                <p>{Guild.guildName}</p>
+                <p>Guild Moto: {Guild.guildMoto}</p>
+                <p>Guild Members: {Guild.joinedTravelers.length}</p>
+                <p style={{cursor: 'pointer'}}>Cancel Request</p>
+              </div>
             ))}
           </div>
         </div>
