@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 const ProfileBook = ({ UserData, setUserData }) => {
   const [EditProfile, setEditProfile] = useState(false);
   const [ShowColors, setShowColors] = useState(false);
+  const [JoinedGuilds, setJoinedGuilds] = useState([]);
   const [color, setcolor] = useState('');
   const colors = 
   [
@@ -48,6 +49,32 @@ const ProfileBook = ({ UserData, setUserData }) => {
     });
   };
 
+  useEffect(() => {
+    const fetchGuildData = async () => {
+      if (UserData.guildsJoined) {
+        
+        const joinedGuildsPromises = UserData.guildsJoined.map(async (id) => {
+          // Assuming you have a function to fetch guild data by ID, replace `fetchGuildDataById` with that function
+          const guildData = await fetchGuildDataById(id);
+          return guildData;
+        });
+
+        const joinedGuildsData = await Promise.all(joinedGuildsPromises);
+        setJoinedGuilds(joinedGuildsData);
+      }
+
+    };
+    fetchGuildData();
+  }, [UserData.guildsJoined]);
+
+
+  // Function to fetch guild data by ID (replace this with your actual implementation)
+  const fetchGuildDataById = async (id) => {
+    // Example fetch call
+    const response = await fetch(`http://localhost:5000/Guilds/id/${id}`);
+    const guildData = await response.json();
+    return guildData;
+  };
 
   const saveProfile = () => {
     console.log(UserData.id)
@@ -212,13 +239,19 @@ const ProfileBook = ({ UserData, setUserData }) => {
         <div className="ProfileBook-guilds-div">
           <h2>Guilds Traveler is part of</h2>
           {/*loop through user.Guilds array and then display guilds in this format */}
-          <div className="PB-guilds-div">
-            <div style={{ paddingLeft: "20px" }}>
-              <h1 className="PB-guilds-name">GuildName</h1>
-              <h5># of guild Members</h5>
+          {JoinedGuilds.map((Guild) => (
+            <div className="PB-guilds-div" style={{ display: 'flex', marginBottom: '20px' }}>
+              <div style={{ flex: '0 0 30%', paddingLeft: "20px" }}>
+                <h1 className="PB-guilds-name">{Guild.guildName}</h1>
+                <h4># of guild Members: {Guild.joinedTravelers.length}</h4>
+                <h5>Guild Since: {Guild.guildDate ? Guild.guildDate.substring(0, 10) : ''}</h5>
+              </div>
+              <div style={{ flex: '1', marginLeft: '50px', paddingRight: '10px' }}>
+                <p style={{ fontSize: '20px' }}>Guild Bio:</p>
+                <p style={{ fontSize: '20px' }}>{Guild.bio}</p>
+              </div>
             </div>
-            <p>Guild Bio</p>
-          </div>
+          ))}
         </div>
       </div>
     </div>

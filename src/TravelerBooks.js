@@ -260,7 +260,7 @@ const TravelersBooks = ({UserData, setUserData}) => {
               <h2>Daily Objective: </h2>
               <div className="PB-dailyObj" style={{ maxWidth: '200px', wordWrap: 'break-word' }}>{userDetails.dailyObj}</div>
               <div>
-                <p>Bio:</p>
+                <p style={{display: 'inline-block'}}>Bio:</p>
                 <div className="Traveler-Bio" style={{ maxWidth: '300px', wordWrap: 'break-word', marginTop: '-10px' }}>
                   {userDetails.bio}
                 </div>
