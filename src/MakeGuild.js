@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 const MakeGuild = ({ UserData, setUserData }) => {
   const [errorMessage, setErrorMessage] = useState(null);
   const [GuildMade, setGuildMade] = useState(false);
+  const [Threeguilds, setThreeguilds] = useState(false);
   const [formData, setFormData] = useState({
     guildName: "",
     guildMoto: "",
@@ -11,6 +12,12 @@ const MakeGuild = ({ UserData, setUserData }) => {
     RequestToJoin: false,
     Findable: true,
   });
+
+  useEffect(() => {
+    if (UserData.guildsOwned.length === 3) {
+      setThreeguilds(true)
+    }
+  }, []);
 
   const handleChange = (e) => {
     const { name, type, checked } = e.target;
@@ -65,7 +72,15 @@ const MakeGuild = ({ UserData, setUserData }) => {
         <br/>
         You can only be a "Guild Master" of up to 3 guilds.
       </p>
-      {!GuildMade && (
+      {Threeguilds && (
+        <div>
+          <br/>
+          <br/>
+          <br/>
+          <h1>You Already Own Three Guilds</h1>
+        </div>
+      )}
+      {!Threeguilds && !GuildMade && (
       <div>
         <h1 style={{ textAlign: 'center' }}>Guild Registry</h1>
         <form onSubmit={handleSubmit} className="Guild-form">
