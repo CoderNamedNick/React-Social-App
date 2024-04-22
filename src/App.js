@@ -36,7 +36,7 @@ function App() {
   return (
     <BrowserRouter>
       <div className="App">
-        {loggedIn && <Header LogOut={LogOut}/>}
+        {loggedIn && <Header UserData={UserData} setUserData={setUserData} LogOut={LogOut}/>}
         <div>
           {!signup && !loggedIn && (
             <Routes>

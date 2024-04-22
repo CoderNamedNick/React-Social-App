@@ -3,7 +3,7 @@ import { useLocation, Link } from "react-router-dom";
 import Logo from './images/Tavern-logo.png'
 import Menu from './icons/menu.png'
 
-const Header = ({ title, LogOut }) => {
+const Header = ({ title, LogOut, UserData, setUserData }) => {
   const [showMenu, setShowMenu] = useState(false);
   const location = useLocation();
 
@@ -62,10 +62,11 @@ const Header = ({ title, LogOut }) => {
         <h2>Tavern Menu</h2>
         <div>
           <Link to="/ProfileBook"><div className="Menu-p-s">Profile Book</div></Link>
-          <Link to="/Join-Guild"><div className="Menu-p-s">Join A Guild</div></Link>
-          <div className="Menu-p-s">Tavern News</div>
-          <Link to="/Guild-Registry"><div className="Menu-p-s">Make A Guild</div></Link>
+          <div className="Menu-p-s">Messages <span className="messages-span">{UserData.messages.length}</span></div>
           <div className="Menu-p-s">Form a Party</div>
+          <Link to="/Join-Guild"><div className="Menu-p-s">Join A Guild</div></Link>
+          <Link to="/Guild-Registry"><div className="Menu-p-s">Make A Guild</div></Link>
+          <div className="Menu-p-s">Tavern News</div>
           <Link to="/Block-List"><div className="Menu-p-s">Blocked Travelers</div></Link>
           <Link to="/Login"><p className="menu-leave"onClick={LogOut}>Leave the Tavern</p></Link>
         </div>

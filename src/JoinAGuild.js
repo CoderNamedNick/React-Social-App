@@ -6,6 +6,7 @@ const JoinAGuild = ({ UserData, setUserData }) => {
   const [expandedGuild, setExpandedGuild] = useState(null);
   const [joinedGuilds, setJoinedGuilds] = useState([]);
   const [requestedGuilds, setRequestedGuilds] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
 
   const colors = [
     { name: 'blue', color1: '#F5F6FC', color2: '#0F2180' },
@@ -34,12 +35,10 @@ const JoinAGuild = ({ UserData, setUserData }) => {
   }, []);
 
   useEffect(() => {
-    // Assuming UserData.guildsJoined is an array of joined guild IDs
     setJoinedGuilds(UserData.guildsJoined || []);
   }, [UserData]);
 
   useEffect(() => {
-    // Assuming UserData.requestedGuilds is an array of guild IDs to which the user has sent join requests
     setRequestedGuilds(UserData.requestedGuilds || []);
   }, [UserData]);
 
@@ -60,26 +59,21 @@ const JoinAGuild = ({ UserData, setUserData }) => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          TravelerId: UserData.id || UserData._id, // Assuming UserData has the traveler's ID
+          TravelerId: UserData.id || UserData._id,
         }),
       });
       
       if (!response.ok) {
         throw new Error('Failed to send join request');
       }
-      const data = await response.json(); // assuming the response includes both user and guild data
-  
-      // Update UserData with the user data from the response
+      const data = await response.json();
       setUserData(data.user);
       console.log('Join request sent successfully');
-      // Optionally, you can update the UI or state to reflect the request sent
-      setRequestedGuilds([...requestedGuilds, guildId]); // Update the list of requested guilds
+      setRequestedGuilds([...requestedGuilds, guildId]);
     } catch (error) {
       console.error('Error sending join request:', error);
-      // Handle error: display error message to user or retry request
     }
   };
-  console.log(requestedGuilds)
 
   const handleJoinGuildClick = async (guildId) => {
     try {
@@ -89,24 +83,24 @@ const JoinAGuild = ({ UserData, setUserData }) => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          TravelerId: UserData.id || UserData._id, // Assuming UserData has the traveler's ID
+          TravelerId: UserData.id || UserData._id,
         }),
       });
       
       if (!response.ok) {
         throw new Error('Failed to send join request');
       }
-      const data = await response.json(); // assuming the response includes both user and guild data
-  
-      // Update UserData with the user data from the response
+      const data = await response.json();
       setUserData(data.user);
       console.log('Joined successfully');
-      // Optionally, you can update the UI or state to reflect the request sent
-      setJoinedGuilds([...joinedGuilds, guildId]); // Update the list of joined guilds
+      setJoinedGuilds([...joinedGuilds, guildId]);
     } catch (error) {
       console.error('Error sending join request:', error);
-      // Handle error: display error message to user or retry request
     }
+  };
+
+  const handleSearchInputChange = (event) => {
+    setSearchQuery(event.target.value);
   };
 
   return (
@@ -119,6 +113,13 @@ const JoinAGuild = ({ UserData, setUserData }) => {
       </p>
       <br/>
       <br/>
+      <input
+        type="text"
+        placeholder="Search Guilds..."
+        value={searchQuery}
+        onChange={handleSearchInputChange}
+        style={{ marginBottom: '20px', width: '240px', padding: '10px', borderRadius: '10px', border: 'black 3px solid'}}
+      />
       <h1>Findable Guilds</h1>
       {AllGuilds.filter(guild => 
         !joinedGuilds.includes(guild.id || guild._id) && 
@@ -128,7 +129,12 @@ const JoinAGuild = ({ UserData, setUserData }) => {
         !requestedGuilds.includes(guild.id) &&
         !requestedGuilds.includes(guild._id) &&
         !guild.bannedTravelers.includes(UserData.id) &&
-        !guild.bannedTravelers.includes(UserData._id)
+        !guild.bannedTravelers.includes(UserData._id) &&
+        (
+          guild.guildName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          guild.guildMoto.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          guild.bio.toLowerCase().includes(searchQuery.toLowerCase())
+        )
       ).map((guild) => (
         <div 
           className="findable-guild-item" 
