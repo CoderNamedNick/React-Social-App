@@ -7,6 +7,8 @@ const FindTravelers = ({UserData, setUserData}) => {
   const [Nocompanions, setNocompanions] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [allUsers, setAllUsers] = useState([]);
+  const [searchTermTravelers, setSearchTermTravelers] = useState("");
+  const [filteredTravelers, setFilteredTravelers] = useState([]);
 
   useEffect(() => {
     // Function to fetch all users
@@ -59,7 +61,7 @@ const FindTravelers = ({UserData, setUserData}) => {
     const userData = await response.json();
     return userData;
   };
-
+// for companions
   const handleSearchChange = (event) => {
     const term = event.target.value;
     setSearchTerm(term);
@@ -72,6 +74,19 @@ const FindTravelers = ({UserData, setUserData}) => {
     );
     setFilteredCompanions(filtered);
   };
+// for Travelers
+  const handleSearchTravelersChange = (event) => {
+    const term = event.target.value;
+    setSearchTermTravelers(term);
+    filterTravelers(term);
+  };
+
+  const filterTravelers = (searchTerm) => {
+    const filtered = allUsers.filter((traveler) =>
+      traveler.username.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    setFilteredTravelers(filtered); // Update filtered travelers
+  };;
 
   const handleAccPrivChange = (newValue) => {
     const updatedUserData = { ...UserData, AccPrivate: newValue };
@@ -115,28 +130,40 @@ const FindTravelers = ({UserData, setUserData}) => {
 
   return (
     <div className="Find-travelers-main-div">
-      <h1 style={{paddingTop: '118px'}}>Current Companions</h1>
+      <h1 style={{ paddingTop: '118px' }}>Current Companions</h1>
+      {/* Search bar for companions */}
       <input
         style={{ marginBottom: '5px' }}
         type="text"
         value={searchTerm}
         onChange={handleSearchChange}
-        placeholder="Search by name"
+        placeholder="Search companions by name"
         className="Travelers-hompage-search"
       />
       <div>
         <div className="Current-Companions-grid">
+          {/* Render filtered companions based on search term */}
           {filteredCompanions.map((companion, index) => (
             <Link key={companion._id || companion.id} to={`/user/${companion.userData.username}`}>
               <div key={companion._id || companion.id} className="companion-item">
                 <p>{companion.userData.username}</p>
-                <p style={{wordWrap: 'break-word'}}>Daily Objective: {companion.userData.dailyObj}</p>
+                <p style={{ wordWrap: 'break-word' }}>Daily Objective: {companion.userData.dailyObj}</p>
                 <p>Traveler Since: {companion.userData.AccDate ? companion.userData.AccDate.substring(0, 10) : ''}</p>
               </div>
             </Link>
           ))}
         </div>
       </div>
+      {/* Search bar for travelers */}
+      <h1>Search Travelers</h1>
+      <input
+        style={{ marginBottom: '5px' }}
+        type="text"
+        value={searchTermTravelers}
+        onChange={handleSearchTravelersChange}
+        placeholder="Search travelers by name"
+        className="Travelers-hompage-search"
+      />
       <div>
         {UserData.AccPrivate ? (
           <div className="acc-status-div">
@@ -149,41 +176,39 @@ const FindTravelers = ({UserData, setUserData}) => {
             <span className="Find-C-Span" onClick={() => handleAccPrivChange(true)}>Make Account Private</span>
           </div>
         )}
-        <div style={{marginTop: '50px'}} className="Current-Companions-grid"> {/*Get all and then filter with findable accounts Also A grid*/}
-        {allUsers
-          .map((traveler) => {
-            // Check if the traveler's id matches UserData id or if their account is private
-            if (traveler.username === UserData.username || traveler.AccPrivate) {
-              // Skip rendering this traveler
-              return null;
-            }
-            if (UserData.BlockedTravelers.includes(traveler.id || traveler._id)) {
-              // Skip rendering this traveler
-              return null;
-            }
-            if (UserData.companions.includes(traveler.id || traveler._id)) {
-              // Skip rendering this traveler
-              return null;
-            }
-            return traveler;
-          })
-          .filter((traveler) => traveler !== null)
-          .sort((a, b) => {
-            // Sort based on age difference with UserData
-            const ageDifferenceA = calculateAgeDifference(a.birthdate, UserData.birthdate);
-            const ageDifferenceB = calculateAgeDifference(b.birthdate, UserData.birthdate);
-            return ageDifferenceA - ageDifferenceB;
-          })
-          .map((traveler) => (
-            <Link key={traveler._id || traveler.id} to={`/user/${traveler.username}`}>
-              {/* Link to another page with the username as a parameter */}
-              <div className="companion-item">
-                <p>{traveler.username}</p>
-                <p style={{wordWrap: 'break-word'}}>Daily Objective: {traveler.dailyObj}</p>
-                <p>Traveler Since: {traveler.AccDate ? traveler.AccDate.substring(0, 10) : ''}</p>
-              </div>
-            </Link>
-          ))}
+        <div style={{ marginTop: '50px' }} className="Current-Companions-grid"> {/* Get all and then filter with findable accounts Also A grid */}
+          {/* Render filtered travelers based on filters and search term */}
+          {allUsers
+            .map((traveler) => {
+              // Apply filters
+              if (
+                traveler.AccPrivate === true ||
+                traveler.username === UserData.username || // Skip user's own profile
+                UserData.BlockedTravelers.includes(traveler.id || traveler._id) || // Skip blocked travelers
+                UserData.companions.includes(traveler.id || traveler._id) || // Skip user's companions
+                (searchTermTravelers && !traveler.username.toLowerCase().includes(searchTermTravelers.toLowerCase())) // Skip if search term doesn't match
+              ) {
+                return null;
+              }
+              return traveler;
+            })
+            .filter((traveler) => traveler !== null)
+            .sort((a, b) => {
+              // Sort based on age difference with UserData
+              const ageDifferenceA = calculateAgeDifference(a.birthdate, UserData.birthdate);
+              const ageDifferenceB = calculateAgeDifference(b.birthdate, UserData.birthdate);
+              return ageDifferenceA - ageDifferenceB;
+            })
+            .map((traveler) => (
+              <Link key={traveler._id || traveler.id} to={`/user/${traveler.username}`}>
+                {/* Link to another page with the username as a parameter */}
+                <div className="companion-item">
+                  <p>{traveler.username}</p>
+                  <p style={{ wordWrap: 'break-word' }}>Daily Objective: {traveler.dailyObj}</p>
+                  <p>Traveler Since: {traveler.AccDate ? traveler.AccDate.substring(0, 10) : ''}</p>
+                </div>
+              </Link>
+            ))}
         </div>
       </div>
     </div>

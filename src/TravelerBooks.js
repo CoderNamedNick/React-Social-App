@@ -307,7 +307,9 @@ const TravelersBooks = ({UserData, setUserData}) => {
         <br />
         <div className="ProfileBook-guilds-div">
           <h2>Guilds Traveler is part of</h2>
-          {JoinedGuilds.map((Guild) => (
+          {JoinedGuilds
+          .filter(guild => guild.Findable === true) // Filter out the guilds where Findable is true
+          .map((Guild) => (
             <div className="PB-guilds-div" style={{ display: 'flex', marginBottom: '20px' }}>
               <div style={{ flex: '0 0 30%', paddingLeft: "20px" }}>
                 <h1 className="PB-guilds-name">{Guild.guildName}</h1>

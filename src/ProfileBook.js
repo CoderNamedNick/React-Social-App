@@ -239,7 +239,9 @@ const ProfileBook = ({ UserData, setUserData }) => {
         <div className="ProfileBook-guilds-div">
           <h2>Guilds Traveler is part of</h2>
           {/*loop through user.Guilds array and then display guilds in this format */}
-          {JoinedGuilds.map((Guild) => (
+          {JoinedGuilds
+          .filter(guild => guild.Findable === true) // Filter out the guilds where Findable is true
+          .map((Guild) => (
             <div className="PB-guilds-div" style={{ display: 'flex', marginBottom: '20px' }}>
               <div style={{ flex: '0 0 30%', paddingLeft: "20px" }}>
                 <h1 className="PB-guilds-name">{Guild.guildName}</h1>
