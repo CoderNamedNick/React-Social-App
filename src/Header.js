@@ -1,15 +1,11 @@
-import React, { useState } from "react";
+import React, {useState} from "react";
 import { useLocation, Link } from "react-router-dom";
 import Logo from './images/Tavern-logo.png'
 import Menu from './icons/menu.png'
 
-const Header = ({ title, LogOut, UserData, setUserData }) => {
+const Header = ({ title, LogOut, UserData, setUserData, messageCount }) => {
   const [showMenu, setShowMenu] = useState(false);
   const location = useLocation();
-
-  const menuClick = () => {
-    setShowMenu(!showMenu);
-  };
 
   // Function to get the title based on the current route
   const getTitle = () => {
@@ -49,6 +45,10 @@ const Header = ({ title, LogOut, UserData, setUserData }) => {
     }
   };
 
+  const menuClick = () => {
+    setShowMenu(!showMenu);
+  };
+
   return( 
     <div className="Header">
       <div className="Header-Main-Div">
@@ -62,7 +62,7 @@ const Header = ({ title, LogOut, UserData, setUserData }) => {
         <h2>Tavern Menu</h2>
         <div>
           <Link to="/ProfileBook"><div className="Menu-p-s">Profile Book</div></Link>
-          <div className="Menu-p-s">Messages <span className="messages-span">{UserData.messages.length}</span></div>
+          <div className="Menu-p-s">Messages <span className="messages-span">{messageCount}</span></div>
           <div className="Menu-p-s">Form a Party</div>
           <Link to="/Join-Guild"><div className="Menu-p-s">Join A Guild</div></Link>
           <Link to="/Guild-Registry"><div className="Menu-p-s">Make A Guild</div></Link>

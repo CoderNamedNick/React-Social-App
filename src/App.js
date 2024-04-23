@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import WebSocketManager from './WebSocketManager';
 import LoginPage from "./Login";
 import SignUpPage from "./Signup";
 import HomePage from "./Homepage";
@@ -16,9 +17,7 @@ import JoinAGuild from "./JoinAGuild";
 function App() {
   const [loggedIn, setLoggedIn] = useState(false);
   const [signup, setSignup] = useState(false);
-  const [UserData, setUserData] = useState({})
-  
-  //Make usestate to handle fecth and save in state variable to then pass it down
+  const [UserData, setUserData] = useState({});
 
   const handleSignupClick = () => {
     setSignup(true);
@@ -26,55 +25,60 @@ function App() {
 
   const handleLogin = () => {
     setLoggedIn(true);
-    //USE FETCH HOOK HERE
+    // Perform any necessary operations after login
   };
+
   const LogOut = () => {
     setLoggedIn(false);
-    setSignup(true)
-  }
+    setSignup(true);
+  };
 
   return (
     <BrowserRouter>
-      <div className="App">
-        {loggedIn && <Header UserData={UserData} setUserData={setUserData} LogOut={LogOut}/>}
-        <div>
-          {!signup && !loggedIn && (
-            <Routes>
-              <Route
-                path="/"
-                element={<LoginPage onSignupClick={handleSignupClick} onLogin={handleLogin} UserData={UserData} setUserData={setUserData} />}
-                exact
-              />
-            </Routes>
-          )}
-          {signup && !loggedIn && (
-            <Routes>
-              <Route
-                path="/SignUp"
-                element={<SignUpPage onSignupSuccess={handleLogin} UserData={UserData} setUserData={setUserData} />}
-              />
-              <Route
-                path="/Login"
-                element={<LoginPage onSignupClick={handleSignupClick} onLogin={handleLogin} UserData={UserData} setUserData={setUserData} />}
-                exact
-              />
-            </Routes>
-          )}
-          {loggedIn && (
-            <Routes>
-              <Route path="/HomePage" element={<HomePage UserData={UserData} setUserData={setUserData}/>} />
-              <Route path="/ProfileBook" element={<ProfileBook UserData={UserData} setUserData={setUserData}/>} />
-              <Route path="/FindCompanions" element={<FindTravelers UserData={UserData} setUserData={setUserData}/>} />
-              <Route path="/Companion-Request" element={<CompanionReq UserData={UserData} setUserData={setUserData}/>} />
-              <Route path="/Block-List" element={<BlockList UserData={UserData} setUserData={setUserData}/>} />
-              <Route path="/user/:username" element={<TravelersBooks UserData={UserData} setUserData={setUserData}/>} />
-              <Route path="/Guild-Registry" element={<MakeGuild UserData={UserData} setUserData={setUserData}/>} />
-              <Route path="/All-Guilds" element={<AllGuilds UserData={UserData} setUserData={setUserData}/>} />
-              <Route path="/Join-Guild" element={<JoinAGuild UserData={UserData} setUserData={setUserData}/>} />
-            </Routes>
-          )}
-        </div>
-      </div>
+      <WebSocketManager>
+        {messageCount => ( // Provide a function as children to WebSocketManager
+          <div className="App">
+            {loggedIn && <Header UserData={UserData} setUserData={setUserData} LogOut={LogOut} messageCount={messageCount} />}
+            <div>
+              {!signup && !loggedIn && (
+                <Routes>
+                  <Route
+                    path="/"
+                    element={<LoginPage onSignupClick={handleSignupClick} onLogin={handleLogin} UserData={UserData} setUserData={setUserData} />}
+                    exact
+                  />
+                </Routes>
+              )}
+              {signup && !loggedIn && (
+                <Routes>
+                  <Route
+                    path="/SignUp"
+                    element={<SignUpPage onSignupSuccess={handleLogin} UserData={UserData} setUserData={setUserData} />}
+                  />
+                  <Route
+                    path="/Login"
+                    element={<LoginPage onSignupClick={handleSignupClick} onLogin={handleLogin} UserData={UserData} setUserData={setUserData} />}
+                    exact
+                  />
+                </Routes>
+              )}
+              {loggedIn && (
+                <Routes>
+                  <Route path="/HomePage" element={<HomePage UserData={UserData} setUserData={setUserData} />} />
+                  <Route path="/ProfileBook" element={<ProfileBook UserData={UserData} setUserData={setUserData} />} />
+                  <Route path="/FindCompanions" element={<FindTravelers UserData={UserData} setUserData={setUserData} />} />
+                  <Route path="/Companion-Request" element={<CompanionReq UserData={UserData} setUserData={setUserData} />} />
+                  <Route path="/Block-List" element={<BlockList UserData={UserData} setUserData={setUserData} />} />
+                  <Route path="/user/:username" element={<TravelersBooks UserData={UserData} setUserData={setUserData} />} />
+                  <Route path="/Guild-Registry" element={<MakeGuild UserData={UserData} setUserData={setUserData} />} />
+                  <Route path="/All-Guilds" element={<AllGuilds UserData={UserData} setUserData={setUserData} />} />
+                  <Route path="/Join-Guild" element={<JoinAGuild UserData={UserData} setUserData={setUserData} />} />
+                </Routes>
+              )}
+            </div>
+          </div>
+        )}
+      </WebSocketManager>
     </BrowserRouter>
   );
 }
