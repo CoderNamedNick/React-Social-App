@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import Logo from './images/Tavern-logo.png'
+import Logo from './images/Tavern-logo.png';
+import WebSocketManager from './WebSocketManager'; // Import WebSocketManager component
 
 const LoginPage = ({ onSignupClick, onLogin, UserData, setUserData }) => {
   const [email, setEmail] = useState('');
@@ -21,12 +22,17 @@ const LoginPage = ({ onSignupClick, onLogin, UserData, setUserData }) => {
       if (response.ok) {
         // If response is OK, user is authenticated
         setMessage('Login successful');
-        // Get user data from the response
+        // Get user data from the response, including the token
         const userData = await response.json();
-        // Update UserData state with the logged-in user data
         setUserData(userData.user);
-        // Trigger the onLogin callback if needed
-        onLogin();
+        const { token } = userData; // Extract token from user data
+
+        // Store the token in Session Storage
+        sessionStorage.setItem('token', token);
+
+        // Trigger the onLogin callback with the token
+        onLogin(token);
+
         // Navigate to home page
         navigate('/HomePage');
       } else {
@@ -49,7 +55,7 @@ const LoginPage = ({ onSignupClick, onLogin, UserData, setUserData }) => {
         <h2 className="loginlink medievalsharp-regular" onClick={handleLogin}>LOG IN!</h2>
         <p className="new-p-login medievalsharp-regular">New? <Link to="/SignUp"><span className="signuplink" onClick={onSignupClick}>Sign Up</span></Link></p>
       </div>
-      <p>{message}</p> {/* Display the message from backend */}
+      <p>{message}</p> 
     </div>
   )
 }

@@ -61,6 +61,8 @@ const HomePage = ({UserData, setUserData}) => {
     }, 3000); // Clear message after 3 seconds
   };
 
+  const token = sessionStorage.getItem('token');
+  console.log('Token:', token);
 
   return (
     <div className='Homepage-main-div'>
