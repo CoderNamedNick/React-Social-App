@@ -5,46 +5,41 @@ const Messages = ({ UserData, setUserData }) => {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    const token = sessionStorage.getItem('token'); // Retrieve token from Session Storage
+    const token = sessionStorage.getItem('token');
     console.log('Token:', token);
     if (!token) {
       console.error('Token not found in Session Storage');
       return;
     }
-
-    // Establish WebSocket connection
+  
     const newSocket = new WebSocket('ws://localhost:5000');
-
-    // Event listener for when the connection is established
+  
     newSocket.addEventListener('open', event => {
       console.log('WebSocket connection established');
       
-      // Send the token in the WebSocket headers
-      newSocket.send(JSON.stringify({ token }));
+      // Send a message requesting user data and messages
+      newSocket.send(JSON.stringify({ type: 'userDataAndMessages', token }));
     });
-
-    // Event listener for incoming messages from the server
+  
     newSocket.addEventListener('message', event => {
       const data = JSON.parse(event.data);
-      if (data.user) {
-        // Update user state with user-specific data received from the server
-        setUser(data.user);
-        console.log('data.user', data.user)
+      if (data.userData && data.messages) {
+        // Handle user data and messages received from the server
+        console.log('Received user data:', data.userData);
+        setUser(data.userData)
+        console.log('Received messages:', data.messages);
       } else {
         // Handle other types of messages received from the server
         console.log('Received message:', data);
       }
     });
-
-    // Event listener for errors
+  
     newSocket.addEventListener('error', event => {
       console.error('WebSocket error:', event);
     });
-
-    // Store the WebSocket instance in state
+  
     setSocket(newSocket);
-
-    // Clean up WebSocket connection when the component unmounts
+  
     return () => {
       newSocket.close();
     };
