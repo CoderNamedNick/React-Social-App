@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Resizable } from 'react-resizable';
 import 'react-resizable/css/styles.css';
 import { Link } from "react-router-dom";
+import { io } from "socket.io-client";
 
 const Travelers = ({ UserData, setUserData }) => {
   const [companionsData, setCompanionsData] = useState([]);
@@ -11,7 +12,45 @@ const Travelers = ({ UserData, setUserData }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [showMore, setShowMore] = useState(false);
   const [width, setWidth] = useState(140); // Initial width
+  const [socket, setSocket] = useState(null);
+
+  useEffect(() => {
+    // Establish Socket connection
+    const newSocket = io('http://localhost:5000');
+    setSocket(newSocket);
   
+    newSocket.on('connect', () => {
+      console.log('connected');
+      //FIX THIS FIX THIS FIX THIS
+      // Retrieve user ID from session storage or wherever it's stored
+      const userId = UserData.id || UserData._id; // Assuming the user ID is stored in session storage
+  
+      // If user ID exists, emit it to the server to get the initial message count for each companion
+      if (userId) {
+        // Iterate over companions and emit 'message-count' event for each companion
+        companionsData.forEach(companion => {
+          newSocket.emit('message-count', (userId, companion.id ));
+        });
+      }
+    });
+  
+    // Handle message count responses for each companion
+    newSocket.on('message-count-response', messageCountData => {
+      // Update the message count for the corresponding companion
+      const updatedCompanionsData = companionsData.map(companion => {
+        if (messageCountData[companion.id]) {
+          companion.messageCount = messageCountData[companion.id];
+        }
+        return companion;
+      });
+      setCompanionsData(updatedCompanionsData);
+    });
+  
+    // Clean up the socket connection when component unmounts
+    return () => {
+      newSocket.disconnect();
+    };
+  }, [companionsData]);
 
   useEffect(() => {
     const fetchCompanionData = async () => {
@@ -21,8 +60,7 @@ const Travelers = ({ UserData, setUserData }) => {
         }
         const companionDataPromises = UserData.companions.map(async (id) => {
           const userData = await fetchUserDataById(id);
-          const messageCount = await fetchMessageCount(id); // Fetch message count for each companion
-          return { id, userData, messageCount }; // Store ID, user data, and message count
+          return { id, userData }; // Store ID and user data
         });
         const companionData = await Promise.all(companionDataPromises);
         setCompanionsData(companionData);
@@ -43,18 +81,6 @@ const Travelers = ({ UserData, setUserData }) => {
     const response = await fetch(`http://localhost:5000/Users/id/${id}`);
     const userData = await response.json();
     return userData;
-  };
-
-  const fetchMessageCount = async (companionId) => {
-    const response = await fetch('http://localhost:5000/Users/messages/count', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ companionId }),
-    });
-    const messageCountData = await response.json();
-    return messageCountData.count;
   };
 
   const handleSearchChange = (event) => {
@@ -112,7 +138,7 @@ const Travelers = ({ UserData, setUserData }) => {
                   <div key={index} className="Travelers-hompage-info">
                     <p style={{paddingTop: '10px'}}>{userData.username}</p>
                     <p style={{wordWrap: 'break-word', marginTop: '-10px'}}>Daily: {userData.dailyObj}</p>
-                    <p style={{wordWrap: 'break-word', marginTop: '-10px'}}>New Messages: {messageCount}</p> {/* Display message count */}
+                    <p style={{wordWrap: 'break-word', marginTop: '-10px'}}>New Messages: {messageCount || 0}</p> {/* Display message count */}
                   </div>
                 </Link>
               ))}

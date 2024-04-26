@@ -59,11 +59,11 @@ const Header = ({ title, LogOut, UserData, setUserData }) => {
   
       // If user ID exists, emit it to the server to get the initial message count
       if (userId) {
-        socket.emit('message-count', userId);
+        socket.emit('Converstaion-count', userId);
       }
     });
   
-    socket.on('message-count-response', unreadMessageCount => {
+    socket.on('Converstaion-count-response', unreadMessageCount => {
       setMessageCount(unreadMessageCount);
     });
   
@@ -86,7 +86,7 @@ const Header = ({ title, LogOut, UserData, setUserData }) => {
         <h2>Tavern Menu</h2>
         <div>
           <Link to="/ProfileBook"><div className="Menu-p-s">Profile Book</div></Link>
-          <Link to="/Messages"><div className="Menu-p-s">Messages <span className="messages-span">{messageCount}</span></div></Link>
+          <Link to="/Messages"><div className="Menu-p-s">Conversations<span className="messages-span">{messageCount}</span></div></Link>
           <div className="Menu-p-s">Form a Party</div>
           <Link to="/Join-Guild"><div className="Menu-p-s">Join A Guild</div></Link>
           <Link to="/Guild-Registry"><div className="Menu-p-s">Make A Guild</div></Link>
