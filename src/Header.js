@@ -2,12 +2,12 @@ import React, { useState, useEffect } from "react";
 import { useLocation, Link } from "react-router-dom";
 import Logo from './images/Tavern-logo.png'
 import Menu from './icons/menu.png'
+import { io } from "socket.io-client"
 
 const Header = ({ title, LogOut, UserData, setUserData }) => {
   const [showMenu, setShowMenu] = useState(false);
   const [messageCount, setMessageCount] = useState(0);
   const location = useLocation();
-  const [socket, setSocket] = useState(null);
 
   // Function to get the title based on the current route
   const getTitle = () => {
@@ -48,35 +48,25 @@ const Header = ({ title, LogOut, UserData, setUserData }) => {
   };
 
   useEffect(() => {
-    // Establish WebSocket connection
-    const newSocket = new WebSocket('ws://localhost:5000');
-
-    newSocket.addEventListener('open', event => {
-      console.log('WebSocket connection established');
-      
-      // Send message to request message count
-      const token = sessionStorage.getItem('token');
-      newSocket.send(JSON.stringify({ type: 'messageCount', token }));
-    });
-
-    newSocket.addEventListener('message', event => {
-      const data = JSON.parse(event.data);
-      if (data.messageCount !== undefined) {
-        console.log('Received message count:', data.messageCount);
-        setMessageCount(data.messageCount);
+    // Establish Socket connection
+    const socket = io('http://localhost:5000');
+  
+    socket.on('connect', () => {
+      console.log('connected');
+  
+      // Retrieve user ID from session storage or wherever it's stored
+      const userId =  UserData.id || UserData._id // Assuming the user ID is stored in session storage
+  
+      // If user ID exists, emit it to the server to get the initial message count
+      if (userId) {
+        socket.emit('message-count', userId);
       }
     });
-
-    newSocket.addEventListener('error', event => {
-      console.error('WebSocket error:', event);
+  
+    socket.on('message-count-response', unreadMessageCount => {
+      setMessageCount(unreadMessageCount);
     });
-
-    setSocket(newSocket);
-
-    // Clean up WebSocket connection
-    return () => {
-      newSocket.close();
-    };
+  
   }, []);
 
   const menuClick = () => {
