@@ -15,13 +15,13 @@ const Travelers = ({ UserData, setUserData }) => {
   const [socket, setSocket] = useState(null);
 
   useEffect(() => {
+    
     // Establish Socket connection
     const newSocket = io('http://localhost:5000');
     setSocket(newSocket);
   
     newSocket.on('connect', () => {
       console.log('connected');
-      //FIX THIS FIX THIS FIX THIS
       // Retrieve user ID from session storage or wherever it's stored
       const userId = UserData.id || UserData._id; // Assuming the user ID is stored in session storage
   
@@ -29,13 +29,14 @@ const Travelers = ({ UserData, setUserData }) => {
       if (userId) {
         // Iterate over companions and emit 'message-count' event for each companion
         companionsData.forEach(companion => {
-          newSocket.emit('message-count', (userId, companion.id ));
+          newSocket.emit('message-count', userId, companion.id );
         });
       }
     });
   
     // Handle message count responses for each companion
     newSocket.on('message-count-response', messageCountData => {
+      console.log('got message count')
       // Update the message count for the corresponding companion
       const updatedCompanionsData = companionsData.map(companion => {
         if (messageCountData[companion.id]) {
@@ -50,7 +51,7 @@ const Travelers = ({ UserData, setUserData }) => {
     return () => {
       newSocket.disconnect();
     };
-  }, [companionsData]);
+  }, [companionsData.id]);
 
   useEffect(() => {
     const fetchCompanionData = async () => {
