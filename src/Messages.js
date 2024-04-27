@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
 const Messages = ({ UserData, setUserData }) => {
+  const [noCompanions, setNocompanions] = useState(false);
 
 
   // then make the emit for the socket, be with the send message
@@ -11,14 +12,12 @@ const Messages = ({ UserData, setUserData }) => {
   }, []); // make socket connection
 
   return (
-    <div>
-      <br/>
-      <br/>
-      <br/>
-      <br/>
-      <h2>User Data</h2>
-      <h2>Messages</h2>
-      {/* Your Messages component JSX */}
+    <div className='Conversations-main-div'>
+      {!noCompanions && (
+        <div style={{paddingTop: '114px'}}>
+        <h1>Current Conversations</h1>
+      </div>
+      )}
     </div>
   );
 };
