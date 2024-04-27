@@ -7,6 +7,7 @@ import { io } from "socket.io-client"
 const Header = ({ title, LogOut, UserData, setUserData }) => {
   const [showMenu, setShowMenu] = useState(false);
   const [messageCount, setMessageCount] = useState(0);
+  const [socket, setSocket] = useState(null);
   const location = useLocation();
 
   // Function to get the title based on the current route
@@ -19,6 +20,7 @@ const Header = ({ title, LogOut, UserData, setUserData }) => {
       // Return a custom title with the username
       return `${username}'s Profile Book`;
     }
+
 
     // For other routes, provide default titles
     switch (location.pathname) {
@@ -47,9 +49,22 @@ const Header = ({ title, LogOut, UserData, setUserData }) => {
     }
   };
 
+    // Function to emit a message when the location is '/Messages'
+    const emitMessageOnMessagesPage = () => {
+      //this will send an emit when on Message page
+      if (location.pathname === '/Messages') {
+        socket.emit('SomeEvent', /* data to send */);
+      }
+    };
+
+    useEffect(() => {
+      emitMessageOnMessagesPage(); // Emit message when component mounts or when location changes
+    }, [socket, location.pathname]);
+
   useEffect(() => {
     // Establish Socket connection
     const socket = io('http://localhost:5000');
+    setSocket(socket)
   
     socket.on('connect', () => {
       console.log('connected');
