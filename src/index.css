@@ -664,3 +664,26 @@ a{
   background-attachment: fixed; 
   overflow-y: auto;
 }
+.Convo-companion-map-div{
+  padding: 10px;
+  border: solid black 1px;
+  font-size: 24px;
+}
+.Convos-div{
+  padding-top: 114px;
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+} 
+.convo-window-main-div{
+  position: fixed;
+  right: 5%;
+  top: 150px;
+  left: 5%;
+  bottom: 5%;
+  background-color: #1a1b1b0a;
+  padding: 20px;
+  border: black solid 5px;
+  border-radius: 5%;
+}
