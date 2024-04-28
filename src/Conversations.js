@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-const Messages = ({ UserData, setUserData }) => {
+const Conversations = ({ UserData, setUserData }) => {
   const [noCompanions, setNocompanions] = useState(false);
   const [Conversations, setConversations] = useState([]);
   const [companionsData, setCompanionsData] = useState([]);
@@ -92,4 +92,4 @@ const Messages = ({ UserData, setUserData }) => {
   );
 };
 
-export default Messages;
+export default Conversations;

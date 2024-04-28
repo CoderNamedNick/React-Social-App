@@ -659,7 +659,7 @@ a{
   width: 100%;
   gap: 40px;
   height: 100vh;
-  background: linear-gradient(to bottom, #bb80eb, #641094);
+  background: linear-gradient(to bottom, #c5daee4b, #266bc5);
   background-repeat: no-repeat;
   background-attachment: fixed; 
   overflow-y: auto;

@@ -13,7 +13,7 @@ import CompanionReq from "./CompanionReq";
 import MakeGuild from "./MakeGuild";
 import AllGuilds from "./AllGuilds";
 import JoinAGuild from "./JoinAGuild";
-import Messages from "./Messages";
+import Conversations from "./Conversations";
 
 function App() {
   const [loggedIn, setLoggedIn] = useState(false);
@@ -72,7 +72,7 @@ function App() {
               <Route path="/Guild-Registry" element={<MakeGuild UserData={UserData} setUserData={setUserData} />} />
               <Route path="/All-Guilds" element={<AllGuilds UserData={UserData} setUserData={setUserData} />} />
               <Route path="/Join-Guild" element={<JoinAGuild UserData={UserData} setUserData={setUserData} />} />
-              <Route path="/Messages" element={<Messages UserData={UserData} setUserData={setUserData} />} />
+              <Route path="/Conversations" element={<Conversations UserData={UserData} setUserData={setUserData} />} />
             </Routes>
           )}
         </div>
