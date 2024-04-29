@@ -61,28 +61,31 @@ const Header = ({ title, LogOut, UserData, setUserData }) => {
       emitMessageOnMessagesPage(); // Emit message when component mounts or when location changes
     }, [socket, location.pathname]);
 
-  useEffect(() => {
-    // Establish Socket connection
-    const socket = io('http://localhost:5000');
-    setSocket(socket)
-  
-    socket.on('connect', () => {
-      console.log('connected');
-  
-      // Retrieve user ID from session storage or wherever it's stored
-      const userId =  UserData.id || UserData._id // Assuming the user ID is stored in session storage
-  
-      // If user ID exists, emit it to the server to get the initial message count
-      if (userId) {
-        socket.emit('Converstaion-count', userId);
-      }
-    });
-  
-    socket.on('Converstaion-count-response', unreadMessageCount => {
-      setMessageCount(unreadMessageCount);
-    });
-  
-  }, []);
+    useEffect(() => {
+      // Establish Socket connection
+      const socket = io('http://localhost:5000');
+      setSocket(socket)
+    
+      socket.on('connect', () => {
+        console.log('connected');
+    
+        // Retrieve user ID from session storage or wherever it's stored
+        const userId = UserData.id || UserData._id; // Assuming the user ID is stored in session storage
+    
+        // If user ID exists, emit it to the server to get the initial message count
+        if (userId) {
+          socket.emit('Conversation-count', userId, (unreadConversationCount) => {
+            console.log('got Conversation count response', unreadConversationCount);
+            setMessageCount(unreadConversationCount); // Update message count based on the initial response
+          });
+        }
+      });
+      // Clean up socket connection when component unmounts
+      return () => {
+        socket.disconnect();
+      };
+    
+    }, []);
 
   const menuClick = () => {
     setShowMenu(!showMenu);

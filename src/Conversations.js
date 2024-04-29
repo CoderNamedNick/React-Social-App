@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { io } from 'socket.io-client';
 
 const Conversations = ({ UserData, setUserData }) => {
   const [noCompanions, setNoCompanions] = useState(false);
@@ -9,7 +8,6 @@ const Conversations = ({ UserData, setUserData }) => {
   const [showConvoWindow, setShowConvoWindow] = useState(false);
   const [Convocompanion, setConvocompanion] = useState('');
   const [Convocompanionid, setConvocompanionid] = useState('');
-  const [socket, setSocket] = useState(null);
   const [formData, setFormData] = useState({
     message: '',
   });
@@ -18,28 +16,6 @@ const Conversations = ({ UserData, setUserData }) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
-
-  useEffect(() => {
-    // Establish Socket connection
-    const socket = io('http://localhost:5000');
-    setSocket(socket);
-
-    socket.on('connect', () => {
-      console.log('connected');
-    });
-
-    socket.on('new-message', (message) => {
-      // Handle new message received by sender
-      console.log('New message received:', message);
-      // You can update state or perform other actions as needed
-      fetchConversations();
-    });
-
-    return () => {
-      // Clean up socket connection when component unmounts
-      socket.disconnect();
-    };
-  }, []);
 
   useEffect(() => {
     // Fetch user conversations when component mounts
@@ -60,9 +36,9 @@ const Conversations = ({ UserData, setUserData }) => {
         setConversations(data.conversations);
         setNoCompanions(data.conversations.length === 0);
       })
-      .catch(error => {
-        console.error('Error fetching conversations:', error);
-      });
+    .catch(error => {
+      console.error('Error fetching conversations:', error);
+    });
   };
 
   useEffect(() => {
@@ -98,10 +74,31 @@ const Conversations = ({ UserData, setUserData }) => {
     setFormData({ message: '' }); // Reset message content
   };
 
-  const startNewConvo = () => {
-    socket.emit('sending-A-Message', UserData.id || UserData._id, Convocompanionid, formData.message);
-    setShowConvoWindow(false);
-    setFormData({ message: '' }); // Reset message content
+  const startNewConvo = async () => {
+    console.log(UserData.id || UserData._id, Convocompanionid, formData.message)
+    try {
+      const response = await fetch(`http://localhost:5000/Messages/messages/${UserData.id || UserData._id}/send/${Convocompanionid}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ content: formData.message })
+      });
+      if (response.ok) {
+        const data = await response.json();
+        console.log('Post successful:', data);
+        // Handle success, update state or show a success message
+        setShowConvoWindow(false);
+        setFormData({ message: '' }); // Reset message content
+      } else {
+        console.error('Error posting to API:', response.statusText);
+        // Handle error, show an error message
+      }
+    } catch (error) {
+      console.error('Error posting to API:', error.message);
+      // Handle error, show an error message
+    }
+    fetchConversations()
   };
 
   return (
@@ -132,10 +129,11 @@ const Conversations = ({ UserData, setUserData }) => {
           <div>
             <h1>Current Conversations</h1>
             {Conversations.map(Convo => {
-              const otherMessengers = Convo.messengers.filter(messengerId => messengerId !== UserData.id && messengerId !== UserData._id);
+              // Check if Convo.UserNames is defined before filtering
+              const otherUsernames = Convo.UserNames ? Convo.UserNames.filter(username => username !== UserData.username) : [];
               return (
                 <div style={{ backgroundColor: 'white' }} key={Convo.id || Convo._id}>
-                  <h3>Convo With: {otherMessengers.join(', ')}</h3>
+                  <h3>Convo With: {otherUsernames.join(', ')}</h3>
                 </div>
               );
             })}
