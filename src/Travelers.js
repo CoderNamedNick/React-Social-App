@@ -13,45 +13,44 @@ const Travelers = ({ UserData, setUserData }) => {
   const [showMore, setShowMore] = useState(false);
   const [width, setWidth] = useState(140); // Initial width
   const [socket, setSocket] = useState(null);
+  
 
+  // Effect for establishing the socket connection
   useEffect(() => {
-    
-    // Establish Socket connection
     const newSocket = io('http://localhost:5000');
     setSocket(newSocket);
-  
-    newSocket.on('connect', () => {
-      console.log('connected');
-      // Retrieve user ID from session storage or wherever it's stored
-      const userId = UserData.id || UserData._id; // Assuming the user ID is stored in session storage
-  
-      // If user ID exists, emit it to the server to get the initial message count for each companion
-      if (userId) {
-        // Iterate over companions and emit 'message-count' event for each companion
-        companionsData.forEach(companion => {
-          newSocket.emit('message-count', userId, companion.id );
-        });
-      }
-    });
-  
-    // Handle message count responses for each companion
-    newSocket.on('message-count-response', messageCountData => {
-      console.log('got message count')
-      // Update the message count for the corresponding companion
-      const updatedCompanionsData = companionsData.map(companion => {
-        if (messageCountData[companion.id]) {
-          companion.messageCount = messageCountData[companion.id];
-        }
-        return companion;
-      });
-      setCompanionsData(updatedCompanionsData);
-    });
-  
+
     // Clean up the socket connection when component unmounts
     return () => {
       newSocket.disconnect();
     };
-  }, [companionsData.id]);
+  }, []);
+
+  // Effect for fetching the initial message count for each companion
+  useEffect(() => {
+    if (socket) {
+      socket.on('connect', () => {
+        console.log('connected');
+        const userId = UserData.id || UserData._id;
+
+        if (userId) {
+          companionsData.forEach(companion => {
+            socket.emit('message-count', userId, companion.id, (unreadMessageCount) => {
+              console.log('got Message count response', unreadMessageCount);
+              setCompanionsData(prevData => {
+                return prevData.map(companionData => {
+                  if (companionData.id === companion.id) {
+                    return { ...companionData, messageCount: unreadMessageCount };
+                  }
+                  return companionData;
+                });
+              });
+            });
+          });
+        }
+      });
+    }
+  }, [socket, UserData.id, companionsData]);
 
   useEffect(() => {
     const fetchCompanionData = async () => {
