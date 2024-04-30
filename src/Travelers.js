@@ -33,7 +33,8 @@ const Travelers = ({ UserData, setUserData }) => {
         console.log('connected');
         const userId = UserData.id || UserData._id;
 
-        if (userId) {
+        if (userId && companionsData.length > 0) {
+          console.log('user id')
           companionsData.forEach(companion => {
             socket.emit('message-count', userId, companion.id, (unreadMessageCount) => {
               console.log('got Message count response', unreadMessageCount);
@@ -51,6 +52,33 @@ const Travelers = ({ UserData, setUserData }) => {
       });
     }
   }, [socket, UserData.id, companionsData]);
+
+  // Effect for listening to socket events and updating message count
+  useEffect(() => {
+    if (socket) {
+      // Define a function to handle incoming message count updates
+      const userId = UserData.id || UserData._id;
+      
+      const handleNewMessageCount = (userId, companionId, unreadMessageCount) => {
+        setCompanionsData(prevData => {
+          return prevData.map(companionData => {
+            if (companionData.id === companionId) {
+              return { ...companionData, messageCount: unreadMessageCount };
+            }
+            return companionData;
+          });
+        });
+      };
+
+      // Listen for the 'message-count-update' event from the server
+      socket.on('message-count-update', handleNewMessageCount);
+
+      // Clean up event listener when component unmounts
+      return () => {
+        socket.off('message-count-update', handleNewMessageCount);
+      };
+    }
+  }, [socket, setCompanionsData]);
 
   useEffect(() => {
     const fetchCompanionData = async () => {
