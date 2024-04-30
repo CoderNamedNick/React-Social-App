@@ -32,6 +32,7 @@ const Travelers = ({ UserData, setUserData }) => {
       socket.on('connect', () => {
         console.log('connected');
         const userId = UserData.id || UserData._id;
+        socket.emit('storeUserIdForMessages', userId);
 
         if (userId && companionsData.length > 0) {
           console.log('user id')
@@ -54,30 +55,32 @@ const Travelers = ({ UserData, setUserData }) => {
   }, [socket, UserData.id, companionsData]);
 
   // Effect for listening to socket events and updating message count
+
   useEffect(() => {
     if (socket) {
-      // Define a function to handle incoming message count updates
-      const userId = UserData.id || UserData._id;
-      
-      const handleNewMessageCount = (userId, companionId, unreadMessageCount) => {
+      // Listen for socket event indicating message count update
+      socket.on('message-count-update', (userId, unreadMessageCount) => {
+        console.log('Message count updated for user:', userId, 'New count:', unreadMessageCount);
+        
+        // Update the message count for the corresponding companion
         setCompanionsData(prevData => {
           return prevData.map(companionData => {
-            if (companionData.id === companionId) {
+            // Check if the companion ID matches the user ID for which the message count was updated
+            if (companionData.id === userId) {
               return { ...companionData, messageCount: unreadMessageCount };
             }
             return companionData;
           });
         });
-      };
-
-      // Listen for the 'message-count-update' event from the server
-      socket.on('message-count-update', handleNewMessageCount);
-
-      // Clean up event listener when component unmounts
-      return () => {
-        socket.off('message-count-update', handleNewMessageCount);
-      };
+      });
     }
+  
+    // Clean up event listener when component unmounts
+    return () => {
+      if (socket) {
+        socket.off('message-count-update');
+      }
+    };
   }, [socket, setCompanionsData]);
 
   useEffect(() => {

@@ -71,7 +71,7 @@ const Header = ({ title, LogOut, UserData, setUserData }) => {
     
         // Retrieve user ID from session storage or wherever it's stored
         const userId = UserData.id || UserData._id; // Assuming the user ID is stored in session storage
-        socket.emit('storeUserId', userId);
+        socket.emit('storeUserIdForConvos', userId);
         // If user ID exists, emit it to the server to get the initial message count
         if (userId) {
           socket.emit('Conversation-count', userId, (unreadConversationCount) => {
