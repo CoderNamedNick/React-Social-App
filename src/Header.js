@@ -71,7 +71,7 @@ const Header = ({ title, LogOut, UserData, setUserData }) => {
     
         // Retrieve user ID from session storage or wherever it's stored
         const userId = UserData.id || UserData._id; // Assuming the user ID is stored in session storage
-    
+        socket.emit('storeUserId', userId);
         // If user ID exists, emit it to the server to get the initial message count
         if (userId) {
           socket.emit('Conversation-count', userId, (unreadConversationCount) => {
@@ -86,6 +86,23 @@ const Header = ({ title, LogOut, UserData, setUserData }) => {
       };
     
     }, []);
+
+    useEffect(() => {
+      if (socket) {
+        // Listen for socket event indicating conversation count update
+        socket.on('convo-count-update', (unreadConversationCount) => {
+          console.log('Conversation count updated:', unreadConversationCount);
+          setMessageCount(unreadConversationCount); // Update message count based on the updated response
+        });
+      }
+    
+      // Clean up event listener when component unmounts
+      return () => {
+        if (socket) {
+          socket.off('convo-count-update');
+        }
+      };
+    }, [socket]);
 
   const menuClick = () => {
     setShowMenu(!showMenu);

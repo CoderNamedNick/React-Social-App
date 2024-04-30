@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { io } from 'socket.io-client';
 
 const Conversations = ({ UserData, setUserData }) => {
   const [noCompanions, setNoCompanions] = useState(false);
@@ -8,9 +9,25 @@ const Conversations = ({ UserData, setUserData }) => {
   const [showConvoWindow, setShowConvoWindow] = useState(false);
   const [Convocompanion, setConvocompanion] = useState('');
   const [Convocompanionid, setConvocompanionid] = useState('');
+  const [socket, setSocket] = useState(null);
   const [formData, setFormData] = useState({
     message: '',
   });
+
+  useEffect(() => {
+    // Establish Socket connection
+    const socket = io('http://localhost:5000');
+    setSocket(socket)
+  
+    socket.on('connect', () => {
+      console.log('connected');
+    });
+    // Clean up socket connection when component unmounts
+    return () => {
+      socket.disconnect();
+    };
+  
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -87,6 +104,15 @@ const Conversations = ({ UserData, setUserData }) => {
       if (response.ok) {
         const data = await response.json();
         console.log('Post successful:', data);
+  
+        // Emit socket event to the companion
+        if (socket) {
+          const userId = UserData.id || UserData._id
+          const companionId = Convocompanionid
+          socket.emit('new-convo', userId, companionId );
+          console.log('new convo sent');
+        }
+  
         // Handle success, update state or show a success message
         setShowConvoWindow(false);
         setFormData({ message: '' }); // Reset message content
