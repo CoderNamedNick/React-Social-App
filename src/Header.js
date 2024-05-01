@@ -122,6 +122,7 @@ const Header = ({ title, LogOut, UserData, setUserData }) => {
         <div>
           <Link to="/ProfileBook"><div className="Menu-p-s">Profile Book</div></Link>
           <Link to="/Conversations"><div className="Menu-p-s">Conversations<span className="messages-span">{messageCount}</span></div></Link>
+          <Link to="/Messages"><div className="Menu-p-s">Messages</div></Link>
           <div className="Menu-p-s">Form a Party</div>
           <Link to="/Join-Guild"><div className="Menu-p-s">Join A Guild</div></Link>
           <Link to="/Guild-Registry"><div className="Menu-p-s">Make A Guild</div></Link>

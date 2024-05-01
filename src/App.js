@@ -14,6 +14,7 @@ import MakeGuild from "./MakeGuild";
 import AllGuilds from "./AllGuilds";
 import JoinAGuild from "./JoinAGuild";
 import Conversations from "./Conversations";
+import Messages from "./Messages";
 
 function App() {
   const [loggedIn, setLoggedIn] = useState(false);
@@ -73,6 +74,7 @@ function App() {
               <Route path="/All-Guilds" element={<AllGuilds UserData={UserData} setUserData={setUserData} />} />
               <Route path="/Join-Guild" element={<JoinAGuild UserData={UserData} setUserData={setUserData} />} />
               <Route path="/Conversations" element={<Conversations UserData={UserData} setUserData={setUserData} />} />
+              <Route path="/Messages" element={<Messages UserData={UserData} setUserData={setUserData} />} />
             </Routes>
           )}
         </div>
