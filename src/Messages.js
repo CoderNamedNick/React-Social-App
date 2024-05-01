@@ -11,11 +11,15 @@ const Messages = () => {
   
   return (
     <div className="main-messages-div">
-      <div>{/*Make this have padding top with flexdir row */}
-        <div className="left-side-with-Converstaions">
+      <div className="messages-div">{/*Make this have padding top with flexdir row */}
+        <div className="left-side-with-Conversations">
+          <h2>Conversations</h2>
+        
           {/*loop thru array after fetch  post convos on left side with username of person*/}
         </div>
         <div className="right-side-with-messages">
+          <h1>CLick a convo</h1>
+
           {/*on click of convo get new messages with messages box and a array getting looped thru newest messages*/}
         </div>
       </div>

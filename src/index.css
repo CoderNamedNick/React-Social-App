@@ -705,3 +705,34 @@ a{
   cursor: pointer;
   margin-top: 10px;
 }
+.main-messages-div {
+  width: 100%;
+  height: 100vh;
+  background: linear-gradient(to bottom, #68bbadc4, #26c53333);
+  background-repeat: no-repeat;
+  background-attachment: fixed; 
+  overflow-y: auto;
+}
+.messages-div {
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+}
+.left-side-with-Conversations {
+  flex: 1;
+  max-width: 20%;
+  margin-top: 108px;
+  border-right: black solid 4px;
+  background-color: rgba(255, 255, 255, 0.096);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+.right-side-with-messages {
+  flex: 4;
+  margin-top: 108px;
+  padding-left: 30px;
+  min-width: 80%;
+  background-color: rgba(14, 14, 14, 0.37); /* Just for visualization */
+}
