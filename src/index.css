@@ -687,3 +687,19 @@ a{
   border: black solid 5px;
   border-radius: 5%;
 }
+.start-new-convo-textarea{
+  margin-left:  0px;
+  font-size: 30px;
+  resize: none;
+  width: 100%;
+  height: 45vh;
+  border: 3px solid black;
+  border-radius: 20px;
+  color: white;
+  background-color: #ffffff50;
+}
+.current-convos{
+  background: linear-gradient(to right, #10589b4b, #728fb4);
+  border: 2px solid black;
+  padding: 10px;
+}

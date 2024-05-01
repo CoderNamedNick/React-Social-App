@@ -158,7 +158,7 @@ const Conversations = ({ UserData, setUserData }) => {
               // Check if Convo.UserNames is defined before filtering
               const otherUsernames = Convo.UserNames ? Convo.UserNames.filter(username => username !== UserData.username) : [];
               return (
-                <div style={{ backgroundColor: 'white' }} key={Convo.id || Convo._id}>
+                <div className='current-convos' key={Convo.id || Convo._id}>
                   <h3>Convo With: {otherUsernames.join(', ')}</h3>
                 </div>
               );
@@ -183,11 +183,12 @@ const Conversations = ({ UserData, setUserData }) => {
       )}
       {showConvoWindow && (
         <div className='convo-window-main-div'>
-          <div>
-            <h1 style={{ marginLeft: '50px', paddingTop: '50px' }}>Sending To: {Convocompanion}</h1>
+          <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'center'}}>
+            <h1 style={{alignSelf: 'center'}}>Start a conversation and Send a message</h1>
+            <h2 >Sending To: {Convocompanion}</h2>
             <br />
             <textarea
-              style={{ marginLeft: '50px', backgroundColor: '#d8d8d89a', fontSize: '30px', minWidth: '850px', minHeight: '550px', maxWidth: '850px', maxHeight: '550px' }}
+              className='start-new-convo-textarea'
               name="message"
               value={formData.message}
               onChange={handleChange}
