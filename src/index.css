@@ -702,4 +702,6 @@ a{
   background: linear-gradient(to right, #10589b4b, #728fb4);
   border: 2px solid black;
   padding: 10px;
+  cursor: pointer;
+  margin-top: 10px;
 }
