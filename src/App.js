@@ -20,6 +20,7 @@ function App() {
   const [loggedIn, setLoggedIn] = useState(false);
   const [signup, setSignup] = useState(false);
   const [UserData, setUserData] = useState({});
+  const [ClickedConvo, setClickedConvo] = useState(null)
 
   const handleSignupClick = () => {
     setSignup(true);
@@ -73,8 +74,8 @@ function App() {
               <Route path="/Guild-Registry" element={<MakeGuild UserData={UserData} setUserData={setUserData} />} />
               <Route path="/All-Guilds" element={<AllGuilds UserData={UserData} setUserData={setUserData} />} />
               <Route path="/Join-Guild" element={<JoinAGuild UserData={UserData} setUserData={setUserData} />} />
-              <Route path="/Conversations" element={<Conversations UserData={UserData} setUserData={setUserData} />} />
-              <Route path="/Messages" element={<Messages UserData={UserData} setUserData={setUserData} />} />
+              <Route path="/Conversations" element={<Conversations UserData={UserData} setUserData={setUserData} ClickedConvo={ClickedConvo} setClickedConvo={setClickedConvo} />} />
+              <Route path="/Messages" element={<Messages UserData={UserData} setUserData={setUserData} ClickedConvo={ClickedConvo} setClickedConvo={setClickedConvo} />} />
             </Routes>
           )}
         </div>

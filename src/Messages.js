@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 
-const Messages = () => {
+const Messages = ({ UserData, setUserData, ClickedConvo, setClickedConvo }) => {
   const [ConversationsArray, setConversationsArray] = useState([]);
   const [CurrentConvo, setCurrentConvo] = useState(null);
   const [messagesArray, setmessagesArray] = useState([])

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { io } from 'socket.io-client';
 
-const Conversations = ({ UserData, setUserData }) => {
+const Conversations = ({ UserData, setUserData, ClickedConvo, setClickedConvo }) => {
   const [noCompanions, setNoCompanions] = useState(false);
   const [Conversations, setConversations] = useState([]);
   const [companionsData, setCompanionsData] = useState([]);
@@ -168,7 +168,14 @@ const Conversations = ({ UserData, setUserData }) => {
           <br />
           <h2>Make A New Conversation</h2>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '7px', width: '98%', }}>
-            {companionsData.map(({ userData }, index) => (
+          {companionsData
+            .filter(({ userData }) => {
+              // Check if userData.username is not present in any of the conversation usernames
+              return !Conversations.some(Convo =>
+                Convo.UserNames && Convo.UserNames.includes(userData.username)
+              );
+            })
+            .map(({ userData }, index) => (
               <div className='Convo-companion-map-div' key={userData._id || userData.id} >
                 <h3>{userData.username}</h3>
                 <p style={{ wordWrap: 'break-word', marginTop: '-10px' }}>Daily: {userData.dailyObj}</p>
