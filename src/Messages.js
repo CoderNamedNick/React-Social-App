@@ -1,10 +1,12 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 
 const Messages = ({ UserData, setUserData, ClickedConvo, setClickedConvo }) => {
   const [ConversationsArray, setConversationsArray] = useState([]);
   const [CurrentConvo, setCurrentConvo] = useState(null);
   const [messagesArray, setmessagesArray] = useState([])
+
+  
 
   //can just do a normal fetch for convos at first on load
   //set up socket for incoming messages and convos made by other companions

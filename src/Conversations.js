@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link , useNavigate } from 'react-router-dom';
 import { io } from 'socket.io-client';
 
 const Conversations = ({ UserData, setUserData, ClickedConvo, setClickedConvo }) => {
@@ -13,6 +13,7 @@ const Conversations = ({ UserData, setUserData, ClickedConvo, setClickedConvo })
   const [formData, setFormData] = useState({
     message: '',
   });
+  const navigate = useNavigate();
 
   useEffect(() => {
     // Establish Socket connection
@@ -127,6 +128,11 @@ const Conversations = ({ UserData, setUserData, ClickedConvo, setClickedConvo })
     fetchConversations()
   };
 
+  const ConvoClicked = (ConvoData) => {
+    setClickedConvo(ConvoData);
+    navigate(`/Messages`)
+  }
+
   return (
     <div className='Conversations-main-div'>
       {!showConvoWindow && noCompanions && (
@@ -158,7 +164,7 @@ const Conversations = ({ UserData, setUserData, ClickedConvo, setClickedConvo })
               // Check if Convo.UserNames is defined before filtering
               const otherUsernames = Convo.UserNames ? Convo.UserNames.filter(username => username !== UserData.username) : [];
               return (
-                <div className='current-convos' key={Convo.id || Convo._id}>
+                <div onClick={() => {ConvoClicked(Convo)}} className='current-convos' key={Convo.id || Convo._id}>
                   <h3>Convo With: {otherUsernames.join(', ')}</h3>
                 </div>
               );
