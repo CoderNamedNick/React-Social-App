@@ -8,14 +8,13 @@ const Messages = ({ UserData, setUserData, ClickedConvo, setClickedConvo }) => {
   const [messagesArray, setmessagesArray] = useState([])
 
   useEffect(() => {
-    //setting convo companion with what convo was clicked
+    //setting Current with what convo was clicked
     console.log(ClickedConvo)
     fetchConversations()
     if (ClickedConvo === null) {
       SetNoCurrentConvo(true)
     } else{
       setCurrentConvo(ClickedConvo)
-      //setClickedConvo(null)
     }
     // when getting cliked convo compare it to fetch new array and display it on launch
   }, []);
@@ -37,6 +36,25 @@ const Messages = ({ UserData, setUserData, ClickedConvo, setClickedConvo }) => {
       console.error('Error fetching conversations:', error);
     });
   };
+
+  const ConvoCLick = (ConvoID) => {
+    fetch(`http://localhost:5000/Messages/messagesById/id/${ConvoID}`)
+      .then(response => {
+        if (response.ok) {
+          return response.json();
+        } else {
+          throw new Error('Failed to fetch Message');
+        }
+      })
+      .then(data => {
+        console.log(data);
+        setmessagesArray(data.messages.messages)
+      })
+    .catch(error => {
+      console.error('Error fetching conversations:', error);
+    });
+    console.log(messagesArray)
+  }
   
 
   //can just do a normal fetch for convos at first on load
@@ -51,7 +69,7 @@ const Messages = ({ UserData, setUserData, ClickedConvo, setClickedConvo }) => {
               // Check if Convo.UserNames is defined before filtering
               const otherUsernames = Convo.UserNames ? Convo.UserNames.filter(username => username !== UserData.username) : [];
               return (
-                <div className='current-convos' key={Convo.id || Convo._id}>
+                <div onClick={() => {ConvoCLick(Convo.messageId)}} className='current-convos-messages' key={Convo.messageId}>
                   <h3>Convo With: {otherUsernames.join(', ')}</h3>
                 </div>
               );

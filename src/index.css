@@ -736,3 +736,11 @@ a{
   min-width: 80%;
   background-color: rgba(14, 14, 14, 0.37); /* Just for visualization */
 }
+.current-convos-messages{
+  border: 2px solid black;
+  width: 95%;
+  padding-left: 5%;
+  cursor: pointer;
+  margin-top: 10px;
+  height: 100px;
+}
