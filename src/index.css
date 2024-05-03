@@ -735,6 +735,9 @@ a{
   padding-left: 30px;
   min-width: 80%;
   background-color: rgba(14, 14, 14, 0.37); /* Just for visualization */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 .current-convos-messages{
   border: 2px solid black;
