@@ -8,44 +8,6 @@ const Messages = ({ UserData, setUserData, ClickedConvo, setClickedConvo }) => {
   const [messagesArray, setmessagesArray] = useState([]);
   const [CurrentConvoCompanionName, setCurrentConvoCompanionName] = useState(``);
 
-  useEffect(() => {
-    //setting Current with what convo was clicked
-    console.log(ClickedConvo)
-    if (ClickedConvo && ClickedConvo.UserNames) {
-      const othersNames = ClickedConvo.UserNames.filter(name => name !== UserData.username);
-      const OtherN = othersNames.join(', ')
-      console.log('this is othe rnames' , OtherN)
-      setCurrentConvoCompanionName(`${OtherN}`);
-    }
-    fetchConversations()
-    if (ClickedConvo === null) {
-      SetNoCurrentConvo(true)
-    } else{
-      setCurrentConvo(ClickedConvo)
-      ConvoCLick(ClickedConvo.messageId , CurrentConvoCompanionName)
-    }
-    console.log('blabh bhahbhbd', CurrentConvoCompanionName)
-    // when getting cliked convo compare it to fetch new array and display it on launch
-  }, []);
-
-  const fetchConversations = () => {
-    fetch(`http://localhost:5000/Messages/Conversations/${UserData.id || UserData.id}`)
-      .then(response => {
-        if (response.ok) {
-          return response.json();
-        } else {
-          throw new Error('Failed to fetch conversations');
-        }
-      })
-      .then(data => {
-        console.log(data.conversations);
-        setConversationsArray(data.conversations);
-      })
-    .catch(error => {
-      console.error('Error fetching conversations:', error);
-    });
-  };
-
   const ConvoCLick = (ConvoID, CompanionsNames) => {
     setmessagesArray([]);
     if (CompanionsNames !== '') {
@@ -63,6 +25,7 @@ const Messages = ({ UserData, setUserData, ClickedConvo, setClickedConvo }) => {
       .then(data => {
         console.log(data.messages);
         setmessagesArray(data.messages)
+        SetNoCurrentConvo(false)
         console.log(messagesArray)
       })
     .catch(error => {
@@ -70,6 +33,50 @@ const Messages = ({ UserData, setUserData, ClickedConvo, setClickedConvo }) => {
     });
     
   }
+  
+  useEffect(() => {
+    setCurrentConvoCompanionName('')
+    //setting Current with what convo was clicked
+    if (ClickedConvo && ClickedConvo.UserNames) {
+      const othersNames = ClickedConvo.UserNames.filter(name => name !== UserData.username);
+      const OtherN = othersNames.join(', ')
+      setCurrentConvoCompanionName(`${OtherN}`);
+    }
+    fetchConversations()
+    if (ClickedConvo === null) {
+      SetNoCurrentConvo(true)
+    } else{
+      setCurrentConvo(ClickedConvo)
+      ConvoCLick(ClickedConvo.messageId,CurrentConvoCompanionName)
+      console.log(messagesArray)
+    }
+    // when getting cliked convo compare it to fetch new array and display it on launch
+    return () => {
+      setClickedConvo(null)
+    };
+  }, []); 
+  useEffect(() => {
+    console.log(messagesArray);
+  }, [messagesArray, setmessagesArray]);
+
+  const fetchConversations = () => {
+    fetch(`http://localhost:5000/Messages/Conversations/${UserData.id || UserData.id}`)
+      .then(response => {
+        if (response.ok) {
+          return response.json();
+        } else {
+          throw new Error('Failed to fetch conversations');
+        }
+      })
+      .then(data => {
+        console.log(data.conversations);
+        setConversationsArray(data.conversations);
+      })
+    .catch(error => {
+      console.error('Error fetching conversations:', error);
+    }); 
+  };
+
   
 
   //can just do a normal fetch for convos at first on load
@@ -95,7 +102,14 @@ const Messages = ({ UserData, setUserData, ClickedConvo, setClickedConvo }) => {
         <div className="right-side-with-messages">
           {NoCurrentConvo && (<h1>CLick a convo</h1>)}
           {!NoCurrentConvo && (
-            <h1>convo with {CurrentConvoCompanionName}</h1>
+            <div>
+              <h1>convo with {CurrentConvoCompanionName}</h1>
+              {messagesArray.map((message, index) => (
+                <div key={index}>
+                  <h1>{message.content}</h1>
+                </div>
+              ))}
+            </div>
           )}
 
           {/*on click of convo get new messages with messages box and a array getting looped thru newest messages*/}
