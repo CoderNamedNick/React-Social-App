@@ -102,17 +102,20 @@ const Messages = ({ UserData, setUserData, ClickedConvo, setClickedConvo }) => {
         <div className="right-side-with-messages">
           {NoCurrentConvo && (<h1>CLick a convo</h1>)}
           {!NoCurrentConvo && (
-            <div>
+            <div className="current-conversation">
               <h1>convo with {CurrentConvoCompanionName}</h1>
               {messagesArray.map((message, index) => (
                 <div key={index}>
                   <h1>{message.content}</h1>
                 </div>
               ))}
+               {/*on click of convo get new messages with messages box and a array getting looped thru newest messages*/}
+                <div className="input-div">
+                  <input className="messages-input"></input>
+                  <button className="send-btn">Send Message</button>
+                </div>
             </div>
           )}
-
-          {/*on click of convo get new messages with messages box and a array getting looped thru newest messages*/}
         </div>
       </div>
     </div>
