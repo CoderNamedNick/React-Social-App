@@ -733,14 +733,13 @@ a{
 .right-side-with-messages {
   flex: 4;
   padding-left: 30px;
-  height: 100%;
   min-width: 80%;
-  background-color: rgba(14, 14, 14, 0.37); /* Just for visualization */
+  background-color: rgba(14, 14, 14, 0.37);
   display: flex;
   flex-direction: column;
   align-items: center;
   position: relative;
-
+  height: 100%; /* Ensure it takes full height */
 }
 .current-convos-messages{
   border: 2px solid black;
@@ -750,19 +749,17 @@ a{
   margin-top: 10px;
   height: 100px;
 }
-.current-conversation {
-  flex: 1;
-}
+
 
 .input-div {
   width: 96%;
-  padding: 2%; /* Adjust padding as needed */
-  background-color: #f0f0f0; /* Optional background color */
-  position: absolute;
+  padding: 2%;
+  background-color: #f0f0f0;
   height: 60px;
+  position: absolute;
   bottom: 0;
   right: 0;
-  z-index: 101010132923;
+  z-index: 1;
 }
 
 .messages-input {
@@ -777,4 +774,21 @@ a{
   height: 60px; /* Adjust height of button */
   position: relative;
   top: -7px; /* Adjusted to move the button up by 10 pixels */
+}
+.Messages-alignment-div {
+  color: white;
+  flex: 1; /* Expand to fill the remaining space */
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  width: 77vw;
+  overflow-y: auto; /* Add this to allow scrolling if needed */
+}
+
+.message-right {
+  text-align: right;
+}
+
+.message-left {
+  text-align: left;
 }

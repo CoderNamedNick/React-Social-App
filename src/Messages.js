@@ -102,13 +102,15 @@ const Messages = ({ UserData, setUserData, ClickedConvo, setClickedConvo }) => {
         <div className="right-side-with-messages">
           {NoCurrentConvo && (<h1>CLick a convo</h1>)}
           {!NoCurrentConvo && (
-            <div className="current-conversation">
-              <h1>convo with {CurrentConvoCompanionName}</h1>
-              {messagesArray.map((message, index) => (
-                <div key={index}>
-                  <h1>{message.content}</h1>
-                </div>
-              ))}
+            <div>
+              <h1 style={{margin: '0', marginBottom: '20px', paddingLeft: '50%', backgroundColor: 'rgba(172, 175, 185, 0.288)', paddingBottom: '20px'}}>{CurrentConvoCompanionName}</h1>
+              <div className="Messages-alignment-div">
+                {messagesArray.map((message, index) => (
+                  <div key={index} className={message.senderUsername === UserData.username ? "message-right" : "message-left"}>
+                    <h1>{message.content}</h1>
+                  </div>
+                ))}
+              </div>
                {/*on click of convo get new messages with messages box and a array getting looped thru newest messages*/}
                 <div className="input-div">
                   <input className="messages-input"></input>
