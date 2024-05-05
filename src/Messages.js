@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 
 const Messages = ({ UserData, setUserData, ClickedConvo, setClickedConvo }) => {
@@ -7,8 +7,10 @@ const Messages = ({ UserData, setUserData, ClickedConvo, setClickedConvo }) => {
   const [NoCurrentConvo, SetNoCurrentConvo] = useState(false)
   const [messagesArray, setmessagesArray] = useState([]);
   const [CurrentConvoCompanionName, setCurrentConvoCompanionName] = useState(``);
+  const [messageInput, setMessageInput] = useState('');
 
-  const ConvoCLick = (ConvoID, CompanionsNames) => {
+
+  const ConvoCLick = (ConvoID, CompanionsNames, Convo) => {
     setmessagesArray([]);
     if (CompanionsNames !== '') {
       setCurrentConvoCompanionName(CompanionsNames)
@@ -26,6 +28,7 @@ const Messages = ({ UserData, setUserData, ClickedConvo, setClickedConvo }) => {
         console.log(data.messages);
         setmessagesArray(data.messages)
         SetNoCurrentConvo(false)
+        setCurrentConvo(Convo)
         console.log(messagesArray)
       })
     .catch(error => {
@@ -85,6 +88,57 @@ const Messages = ({ UserData, setUserData, ClickedConvo, setClickedConvo }) => {
     messageDiv.scrollTop += deltaY > 0 ? scrollSpeed : -scrollSpeed;
   };
 
+  const sendAMessage = async () => {
+    console.log('this is current convo', CurrentConvo)
+    console.log(UserData.id , UserData._id)
+    //do this if mesaages are only between 2 people
+    if (CurrentConvo.messengers.length === 2) {
+      const Convocompanionid = CurrentConvo.messengers.filter(id => id !== UserData.id && id !== UserData._id)[0];
+      console.log(Convocompanionid)
+      try {
+        const response = await fetch(`http://localhost:5000/Messages/messages/${UserData.id || UserData._id}/send/${Convocompanionid}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ content: messageInput })
+        });
+        if (response.ok) {
+          const data = await response.json();
+          console.log('Post successful:', data);
+          setMessageInput('');
+          setmessagesArray(data.data.messages)
+    
+          // Do this Later
+          //if (socket) {
+          //  const userId = UserData.id || UserData._id
+          //  const companionId = Convocompanionid
+          //  socket.emit('new-convo', userId, companionId );
+          //  console.log('new convo sent');
+          //}
+    
+          // Handle success, update state or show a success message
+          //setFormData({ message: '' }); // Reset message content
+        } else {
+          console.error('Error posting to API:', response.statusText);
+          // Handle error, show an error message
+        }
+      } catch (error) {
+        console.error('Error posting to API:', error.message);
+        // Handle error, show an error message
+      }
+    }
+  };
+
+  const messagesEndRef = useRef(null);
+
+  useEffect(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [messagesArray]);
+  
+
   //can just do a normal fetch for convos at first on load
   //set up socket for incoming messages and convos made by other companions
   
@@ -97,7 +151,7 @@ const Messages = ({ UserData, setUserData, ClickedConvo, setClickedConvo }) => {
               // Check if Convo.UserNames is defined before filtering
               const otherUsernames = Convo.UserNames ? Convo.UserNames.filter(username => username !== UserData.username) : [];
               return (
-                <div onClick={() => {ConvoCLick(Convo.messageId, otherUsernames.join(', '))}} className='current-convos-messages' key={Convo.messageId}>
+                <div onClick={() => {ConvoCLick(Convo.messageId, otherUsernames.join(', '), Convo)}} className='current-convos-messages' key={Convo.messageId}>
                   <h3>Convo With: {otherUsernames.join(', ')}</h3>
                 </div>
               );
@@ -116,11 +170,16 @@ const Messages = ({ UserData, setUserData, ClickedConvo, setClickedConvo }) => {
                     <p className={message.senderUsername === UserData.username ? "message-content" : "message-content2"}>{message.content}</p>
                   </div>
                 ))}
+               <div ref={messagesEndRef} />
               </div>
                {/*on click of convo get new messages with messages box and a array getting looped thru newest messages*/}
                 <div className="input-div">
-                  <input className="messages-input"></input>
-                  <button className="send-btn">Send Message</button>
+                  <input 
+                  className="messages-input"
+                  value={messageInput}
+                  onChange={e => setMessageInput(e.target.value)}
+                  ></input>
+                  <button onClick={sendAMessage} className="send-btn">Send Message</button>
                 </div>
             </div>
           )}
