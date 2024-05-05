@@ -78,6 +78,12 @@ const Messages = ({ UserData, setUserData, ClickedConvo, setClickedConvo }) => {
   };
 
   
+  const handleWheelScroll = (event) => {
+    const deltaY = event.deltaY;
+    const scrollSpeed = 50; // Adjust scroll speed as needed
+    const messageDiv = document.querySelector('.Messages-alignment-div');
+    messageDiv.scrollTop += deltaY > 0 ? scrollSpeed : -scrollSpeed;
+  };
 
   //can just do a normal fetch for convos at first on load
   //set up socket for incoming messages and convos made by other companions
@@ -86,7 +92,7 @@ const Messages = ({ UserData, setUserData, ClickedConvo, setClickedConvo }) => {
     <div className="main-messages-div">
       <div className="messages-div">{/*Make this have padding top with flexdir row */}
         <div className="left-side-with-Conversations">
-          <h2>Conversations</h2>
+          <h3>Conversations</h3>
           {ConversationsArray.map(Convo => {
               // Check if Convo.UserNames is defined before filtering
               const otherUsernames = Convo.UserNames ? Convo.UserNames.filter(username => username !== UserData.username) : [];
@@ -104,10 +110,10 @@ const Messages = ({ UserData, setUserData, ClickedConvo, setClickedConvo }) => {
           {!NoCurrentConvo && (
             <div>
               <h1 style={{margin: '0', marginBottom: '20px', paddingLeft: '50%', backgroundColor: 'rgba(172, 175, 185, 0.288)', paddingBottom: '20px'}}>{CurrentConvoCompanionName}</h1>
-              <div className="Messages-alignment-div">
+              <div onWheel={handleWheelScroll} className="Messages-alignment-div">
                 {messagesArray.map((message, index) => (
                   <div key={index} className={message.senderUsername === UserData.username ? "message-right" : "message-left"}>
-                    <h1>{message.content}</h1>
+                    <p className={message.senderUsername === UserData.username ? "message-content" : "message-content2"}>{message.content}</p>
                   </div>
                 ))}
               </div>

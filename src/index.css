@@ -716,13 +716,14 @@ a{
 .messages-div {
   display: flex;
   flex-direction: row;
-  height: 90%;
+  height: 89%;
   padding-top: 108px;
 }
 .left-side-with-Conversations {
   flex: 1;
   height: 100%;
   max-width: 20%;
+  min-width: 15%;
   border-right: black solid 4px;
   background-color: rgba(255, 255, 255, 0.096);
   display: flex;
@@ -732,19 +733,20 @@ a{
 }
 .right-side-with-messages {
   flex: 4;
-  padding-left: 30px;
+  height: 100%;
+  padding-left: 20px;
   min-width: 80%;
   background-color: rgba(14, 14, 14, 0.37);
   display: flex;
   flex-direction: column;
   align-items: center;
+  flex-grow: initial;
   position: relative;
-  height: 100%; /* Ensure it takes full height */
 }
 .current-convos-messages{
   border: 2px solid black;
   width: 95%;
-  padding-left: 5%;
+  padding-left: 3%;
   cursor: pointer;
   margin-top: 10px;
   height: 100px;
@@ -754,7 +756,7 @@ a{
 .input-div {
   width: 96%;
   padding: 2%;
-  background-color: #f0f0f0;
+  background-color: #f0f0f04f;
   height: 60px;
   position: absolute;
   bottom: 0;
@@ -763,10 +765,11 @@ a{
 }
 
 .messages-input {
-  margin-top: 10px;
   width: calc(100% - 120px); /* Adjust width of input field */
-  height: 40px; /* Adjust height of input field */
+  height: 50px; /* Adjust height of input field */
   margin-right: 10px; /* Adjust margin */
+  background-color: #f0f0f031;
+  font-size: 20px;
 }
 
 .send-btn {
@@ -774,6 +777,9 @@ a{
   height: 60px; /* Adjust height of button */
   position: relative;
   top: -7px; /* Adjusted to move the button up by 10 pixels */
+  border-radius: 10px;
+  background-color: #299c6c;
+  cursor: pointer;
 }
 .Messages-alignment-div {
   color: white;
@@ -781,14 +787,39 @@ a{
   display: flex;
   flex-direction: column;
   gap: 5px;
+  height: auto;
   width: 77vw;
-  overflow-y: auto; /* Add this to allow scrolling if needed */
+  max-height: 70vh;
+  overflow-y: hidden;
 }
 
 .message-right {
+  display: block;
   text-align: right;
+
 }
 
 .message-left {
   text-align: left;
+  display: block;
+  
+}
+.message-content{
+  display: inline-flex;
+  padding: 15px;
+  font-size: 26px;
+  background-color: #299c6c;
+  border-top-left-radius: 20px;
+  border-bottom-left-radius: 20px;
+  border-top-right-radius: 20px;
+
+}
+.message-content2{
+  display: inline-flex;
+  padding: 15px;
+  font-size: 26px;
+  background-color: #0f8878;
+  border-top-left-radius: 20px;
+  border-bottom-right-radius: 20px;
+  border-top-right-radius: 20px;
 }
