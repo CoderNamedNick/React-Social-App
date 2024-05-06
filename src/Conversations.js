@@ -41,7 +41,7 @@ const Conversations = ({ UserData, setUserData, ClickedConvo, setClickedConvo })
   }, []);
 
   const fetchConversations = () => {
-    fetch(`http://localhost:5000/Messages/Conversations/${UserData.id || UserData.id}`)
+    fetch(`http://localhost:5000/Messages/Conversations/${UserData.id || UserData._id}`)
       .then(response => {
         if (response.ok) {
           return response.json();
