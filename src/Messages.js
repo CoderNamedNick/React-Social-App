@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { io } from 'socket.io-client'
 
 
 const Messages = ({ UserData, setUserData, ClickedConvo, setClickedConvo }) => {
@@ -8,6 +9,48 @@ const Messages = ({ UserData, setUserData, ClickedConvo, setClickedConvo }) => {
   const [messagesArray, setmessagesArray] = useState([]);
   const [CurrentConvoCompanionName, setCurrentConvoCompanionName] = useState(``);
   const [messageInput, setMessageInput] = useState('');
+  const [socket, setSocket] = useState(null);
+
+  useEffect(() => {
+    // Establish Socket connection
+    const socket = io('http://localhost:5000');
+    setSocket(socket)
+  
+    socket.on('connect', () => {
+      console.log('connected');
+      const userId = UserData.id || UserData._id;
+      socket.emit('storeUserIdForInTheMessages', userId);
+    });
+   
+    // Clean up socket connection when component unmounts
+    return () => {
+      socket.disconnect();
+    };
+  
+  }, []);
+
+  useEffect(() => {
+    if (socket) {
+      //FIX THIS PLS
+      // Listen for socket event indicating message update
+      socket.on('New-Message-update', (Conversation) => {
+        console.log('new convo recieved', Conversation);
+        const CurrentConvoId = CurrentConvo.messageId
+        console.log('currentConvoId', CurrentConvoId)
+        if (CurrentConvoId === Conversation._id) {
+          setmessagesArray(Conversation.messages)
+        }
+
+      });
+    }
+  
+    // Clean up event listener when component unmounts
+    return () => {
+      if (socket) {
+        socket.off('New-Message-update');
+      }
+    };
+  }, [socket, setmessagesArray]);
 
 
   const ConvoCLick = (ConvoID, CompanionsNames, Convo) => {
@@ -60,10 +103,11 @@ const Messages = ({ UserData, setUserData, ClickedConvo, setClickedConvo }) => {
   }, []); 
   useEffect(() => {
     console.log(messagesArray);
+    console.log('current Convo', CurrentConvo)
   }, [messagesArray, setmessagesArray]);
 
   const fetchConversations = () => {
-    fetch(`http://localhost:5000/Messages/Conversations/${UserData.id || UserData.id}`)
+    fetch(`http://localhost:5000/Messages/Conversations/${UserData.id || UserData._id}`)
       .then(response => {
         if (response.ok) {
           return response.json();
@@ -89,44 +133,24 @@ const Messages = ({ UserData, setUserData, ClickedConvo, setClickedConvo }) => {
   };
 
   const sendAMessage = async () => {
-    console.log('this is current convo', CurrentConvo)
-    console.log(UserData.id , UserData._id)
-    //do this if mesaages are only between 2 people
-    if (CurrentConvo.messengers.length === 2) {
-      const Convocompanionid = CurrentConvo.messengers.filter(id => id !== UserData.id && id !== UserData._id)[0];
-      console.log(Convocompanionid)
-      try {
-        const response = await fetch(`http://localhost:5000/Messages/messages/${UserData.id || UserData._id}/send/${Convocompanionid}`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ content: messageInput })
-        });
-        if (response.ok) {
-          const data = await response.json();
-          console.log('Post successful:', data);
+    try {
+      console.log('this is current convo', CurrentConvo)
+      console.log(UserData.id , UserData._id)
+      //do this if mesaages are only between 2 people
+      if (CurrentConvo.messengers.length === 2) {
+        console.log('less than two')
+        if (socket) {
+          const Convocompanionid = CurrentConvo.messengers.filter(id => id !== UserData.id && id !== UserData._id)[0];
+          const userId = UserData.id || UserData._id
+          const content = messageInput
+          console.log(Convocompanionid)
+          socket.emit('sending-A-New-Message', userId, Convocompanionid, content)
           setMessageInput('');
-          setmessagesArray(data.data.messages)
-    
-          // Do this Later
-          //if (socket) {
-          //  const userId = UserData.id || UserData._id
-          //  const companionId = Convocompanionid
-          //  socket.emit('new-convo', userId, companionId );
-          //  console.log('new convo sent');
-          //}
-    
-          // Handle success, update state or show a success message
-          //setFormData({ message: '' }); // Reset message content
-        } else {
-          console.error('Error posting to API:', response.statusText);
-          // Handle error, show an error message
         }
-      } catch (error) {
-        console.error('Error posting to API:', error.message);
-        // Handle error, show an error message
-      }
+      } 
+    }catch (error) {
+      console.error('Error posting to API:', error.message);
+      // Handle error, show an error message
     }
   };
 
