@@ -31,16 +31,16 @@ const Messages = ({ UserData, setUserData, ClickedConvo, setClickedConvo }) => {
 
   useEffect(() => {
     if (socket) {
-      //FIX THIS PLS
       // Listen for socket event indicating message update
       socket.on('New-Message-update', (Conversation) => {
-        console.log('new convo recieved', Conversation);
-        const CurrentConvoId = CurrentConvo.messageId
-        console.log('currentConvoId', CurrentConvoId)
-        if (CurrentConvoId === Conversation._id) {
-          setmessagesArray(Conversation.messages)
+        // Check if the current user is part of the conversation
+        const currentUserInConversation = Conversation.messengers.includes(UserData.id) || Conversation.messengers.includes(UserData._id);
+        console.log('Current convo message Id', CurrentConvo?.messageId); // Use optional chaining
+        console.log('new convo received id', Conversation._id);
+        // Check if the current user is part of the conversation and the message id matches the current conversation's message id
+        if (currentUserInConversation && CurrentConvo && CurrentConvo.messageId === Conversation._id) {
+          setmessagesArray(Conversation.messages);
         }
-
       });
     }
   
@@ -50,7 +50,7 @@ const Messages = ({ UserData, setUserData, ClickedConvo, setClickedConvo }) => {
         socket.off('New-Message-update');
       }
     };
-  }, [socket, setmessagesArray]);
+  }, [socket, setmessagesArray, UserData.id, UserData._id, CurrentConvo]);
 
 
   const ConvoCLick = (ConvoID, CompanionsNames, Convo) => {
