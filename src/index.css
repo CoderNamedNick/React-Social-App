@@ -750,6 +750,18 @@ a{
   cursor: pointer;
   margin-top: 10px;
   height: 100px;
+  position: relative;
+  margin-bottom: 10px;
+}
+.Notif-Counter{
+  background-color: red;
+  color: white;
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  padding: 0px 3px ;
+  border-radius: 50%;
+  border: red solid 1px;
 }
 
 

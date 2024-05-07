@@ -177,6 +177,7 @@ const Messages = ({ UserData, setUserData, ClickedConvo, setClickedConvo }) => {
               return (
                 <div onClick={() => {ConvoCLick(Convo.messageId, otherUsernames.join(', '), Convo)}} className='current-convos-messages' key={Convo.messageId}>
                   <h3>Convo With: {otherUsernames.join(', ')}</h3>
+                  <div className="Notif-Counter"> 1 </div>
                 </div>
               );
             })}
