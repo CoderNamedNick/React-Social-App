@@ -15,7 +15,7 @@ const Messages = ({ UserData, setUserData, ClickedConvo, setClickedConvo }) => {
     // Establish Socket connection
     const socket = io('http://localhost:5000');
     setSocket(socket)
-  
+   // make a socket for notifs
     socket.on('connect', () => {
       console.log('connected');
       const userId = UserData.id || UserData._id;
@@ -101,9 +101,49 @@ const Messages = ({ UserData, setUserData, ClickedConvo, setClickedConvo }) => {
       setClickedConvo(null)
     };
   }, []); 
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        // Fetch conversations
+        const response = await fetch(`http://localhost:5000/Messages/Conversations/${UserData.id || UserData._id}`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch conversations');
+        }
+        const data = await response.json();
+        const conversations = data.conversations;
+  
+        // Update conversation array with unread message counts
+        const promises = conversations.map(conversation => {
+          const companionId = conversation.messengers.find(id => id !== UserData.id && id !== UserData._id); 
+          return new Promise(resolve => {
+            socket.emit('message-count2', UserData.id || UserData._id, companionId, (unreadMessageCount) => {
+              const updatedConversation = {
+                ...conversation,
+                NotifNumber: unreadMessageCount
+              };
+              resolve(updatedConversation);
+            });
+          });
+        });
+  
+        Promise.all(promises).then(updatedConversations => {
+          setConversationsArray(updatedConversations);
+        });
+      } catch (error) {
+        console.error('Error fetching conversations:', error);
+      }
+    };
+  
+    if (socket) {
+      fetchData();
+    }
+  }, [socket, UserData.id, UserData._id]);
+
   useEffect(() => {
     console.log(messagesArray);
     console.log('current Convo', CurrentConvo)
+    console.log('convo array', ConversationsArray)
   }, [messagesArray, setmessagesArray]);
 
   const fetchConversations = () => {
@@ -177,7 +217,7 @@ const Messages = ({ UserData, setUserData, ClickedConvo, setClickedConvo }) => {
               return (
                 <div onClick={() => {ConvoCLick(Convo.messageId, otherUsernames.join(', '), Convo)}} className='current-convos-messages' key={Convo.messageId}>
                   <h3>Convo With: {otherUsernames.join(', ')}</h3>
-                  <div className="Notif-Counter"> 1 </div>
+                  <div className="Notif-Counter">{Convo.NotifNumber}</div>
                 </div>
               );
             })}
