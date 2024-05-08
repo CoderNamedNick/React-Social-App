@@ -37,11 +37,16 @@ const Messages = ({ UserData, setUserData, ClickedConvo, setClickedConvo }) => {
         const currentUserInConversation = Conversation.messengers.includes(UserData.id) || Conversation.messengers.includes(UserData._id);
         console.log('Current convo message Id', CurrentConvo?.messageId); // Use optional chaining
         console.log('new convo received id', Conversation._id);
+        fetchData()
         // Check if the current user is part of the conversation and the message id matches the current conversation's message id
         if (currentUserInConversation && CurrentConvo && CurrentConvo.messageId === Conversation._id) {
           setmessagesArray(Conversation.messages);
         }
       });
+      socket.on('Read-update', (NewUnreadNotifNumber) => {
+        console.log('got a read update')
+        fetchData()
+      })
     }
   
     // Clean up event listener when component unmounts
@@ -81,6 +86,12 @@ const Messages = ({ UserData, setUserData, ClickedConvo, setClickedConvo }) => {
   }
   
   useEffect(() => {
+    if (CurrentConvo) {
+      MarkMessagesRead();
+    }
+  }, [CurrentConvo]);
+  
+  useEffect(() => {
     setCurrentConvoCompanionName('')
     //setting Current with what convo was clicked
     if (ClickedConvo && ClickedConvo.UserNames) {
@@ -102,39 +113,39 @@ const Messages = ({ UserData, setUserData, ClickedConvo, setClickedConvo }) => {
     };
   }, []); 
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        // Fetch conversations
-        const response = await fetch(`http://localhost:5000/Messages/Conversations/${UserData.id || UserData._id}`);
-        if (!response.ok) {
-          throw new Error('Failed to fetch conversations');
-        }
-        const data = await response.json();
-        const conversations = data.conversations;
-  
-        // Update conversation array with unread message counts
-        const promises = conversations.map(conversation => {
-          const companionId = conversation.messengers.find(id => id !== UserData.id && id !== UserData._id); 
-          return new Promise(resolve => {
-            socket.emit('message-count2', UserData.id || UserData._id, companionId, (unreadMessageCount) => {
-              const updatedConversation = {
-                ...conversation,
-                NotifNumber: unreadMessageCount
-              };
-              resolve(updatedConversation);
-            });
+
+  const fetchData = async () => {
+    try {
+      // Fetch conversations
+      const response = await fetch(`http://localhost:5000/Messages/Conversations/${UserData.id || UserData._id}`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch conversations');
+      }
+      const data = await response.json();
+      const conversations = data.conversations;
+
+      // Update conversation array with unread message counts
+      const promises = conversations.map(conversation => {
+        const companionId = conversation.messengers.find(id => id !== UserData.id && id !== UserData._id); 
+        return new Promise(resolve => {
+          socket.emit('message-count2', UserData.id || UserData._id, companionId, (unreadMessageCount) => {
+            const updatedConversation = {
+              ...conversation,
+              NotifNumber: unreadMessageCount
+            };
+            resolve(updatedConversation);
           });
         });
-  
-        Promise.all(promises).then(updatedConversations => {
-          setConversationsArray(updatedConversations);
-        });
-      } catch (error) {
-        console.error('Error fetching conversations:', error);
-      }
-    };
-  
+      });
+
+      Promise.all(promises).then(updatedConversations => {
+        setConversationsArray(updatedConversations);
+      });
+    } catch (error) {
+      console.error('Error fetching conversations:', error);
+    }
+  };
+  useEffect(() => {
     if (socket) {
       fetchData();
     }
@@ -204,7 +215,10 @@ const Messages = ({ UserData, setUserData, ClickedConvo, setClickedConvo }) => {
   
 
   const MarkMessagesRead = () => {
-    
+    if (socket) {
+      const Convocompanionid = CurrentConvo.messengers.filter(id => id !== UserData.id && id !== UserData._id)[0];
+      socket.emit('Mark-As-Read', UserData.id || UserData._id, Convocompanionid)
+    }
   }
   
   return (
