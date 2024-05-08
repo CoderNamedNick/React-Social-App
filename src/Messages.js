@@ -203,8 +203,9 @@ const Messages = ({ UserData, setUserData, ClickedConvo, setClickedConvo }) => {
   }, [messagesArray]);
   
 
-  //can just do a normal fetch for convos at first on load
-  //set up socket for incoming messages and convos made by other companions
+  const MarkMessagesRead = () => {
+    
+  }
   
   return (
     <div className="main-messages-div">
@@ -232,7 +233,10 @@ const Messages = ({ UserData, setUserData, ClickedConvo, setClickedConvo }) => {
               <div onWheel={handleWheelScroll} className="Messages-alignment-div">
                 {messagesArray.map((message, index) => (
                   <div key={index} className={message.senderUsername === UserData.username ? "message-right" : "message-left"}>
-                    <p className={message.senderUsername === UserData.username ? "message-content" : "message-content2"}>{message.content}</p>
+                    {message.senderUsername === UserData.username && (
+                      <p style={{margin: 0, marginTop: '30px'}}>{message.read ? "Read" : "Sent"}</p>
+                    )}
+                    <p style={{margin: 0}} className={message.senderUsername === UserData.username ? "message-content" : "message-content2"}>{message.content}</p>
                   </div>
                 ))}
                <div ref={messagesEndRef} />

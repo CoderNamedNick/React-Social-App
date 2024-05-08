@@ -814,7 +814,7 @@ a{
 .message-left {
   text-align: left;
   display: block;
-  
+  margin-top: 30px;
 }
 .message-content{
   display: inline-flex;
