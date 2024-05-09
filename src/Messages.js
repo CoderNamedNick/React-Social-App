@@ -9,6 +9,7 @@ const Messages = ({ UserData, setUserData, ClickedConvo, setClickedConvo }) => {
   const [messagesArray, setmessagesArray] = useState([]);
   const [CurrentConvoCompanionName, setCurrentConvoCompanionName] = useState(``);
   const [messageInput, setMessageInput] = useState('');
+  const [errorMessage, seterrorMessage] = useState('')
   const [socket, setSocket] = useState(null);
 
   useEffect(() => {
@@ -41,7 +42,7 @@ const Messages = ({ UserData, setUserData, ClickedConvo, setClickedConvo }) => {
         // Check if the current user is part of the conversation and the message id matches the current conversation's message id
         if (currentUserInConversation && CurrentConvo && CurrentConvo.messageId === Conversation._id) {
           setmessagesArray(Conversation.messages);
-          MarkMessagesRead()
+          MarkMessagesRead();
         }
       });
       socket.on('Read-update', (NewUnreadNotifNumber) => {
@@ -193,6 +194,10 @@ const Messages = ({ UserData, setUserData, ClickedConvo, setClickedConvo }) => {
         console.log('less than two')
         if (socket) {
           const Convocompanionid = CurrentConvo.messengers.filter(id => id !== UserData.id && id !== UserData._id)[0];
+          if (!UserData.companions.includes(Convocompanionid)) {
+            seterrorMessage('this Traveler is No longer your Companion')
+            return
+          } 
           const userId = UserData.id || UserData._id
           const content = messageInput
           console.log(Convocompanionid)
@@ -258,6 +263,7 @@ const Messages = ({ UserData, setUserData, ClickedConvo, setClickedConvo }) => {
               </div>
                {/*on click of convo get new messages with messages box and a array getting looped thru newest messages*/}
                 <div className="input-div">
+                  {errorMessage}
                   <input 
                   className="messages-input"
                   value={messageInput}

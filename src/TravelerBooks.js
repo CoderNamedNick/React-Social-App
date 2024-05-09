@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 
 const TravelersBooks = ({UserData, setUserData}) => {
   const { username } = useParams(); // Get the username parameter from the URL
@@ -295,7 +295,7 @@ const TravelersBooks = ({UserData, setUserData}) => {
             {!isBlocked && !AcceptRequest && SentRequest && (<h2 className="Edit-PB">Companion request Sent</h2>)}
             {!isBlocked && AcceptRequest && (<h2 onClick={AccCompanionRequest} className="Edit-PB">Accept Companion Request</h2>)}
             {!isBlocked && AcceptRequest && (<h2 onClick={DeclCompanionRequest} style={{bottom: 0}} className="Edit-PB">Decline Companion Request</h2>)}
-            {!isBlocked && isCompanion && (<h2 style={{bottom: 0}} className="Edit-PB">Send Message</h2>)}
+            {!isBlocked && isCompanion && (<Link to="/Messages"><h2 style={{bottom: 0}} className="Edit-PB">Send Message</h2></Link>)}
           </div> 
           <div className='Trav-negatives'>
             {!isBlocked && !isCompanion && (<div onClick={BlockTrav} style={{cursor: 'pointer'}}>Block Traveler</div>)}
