@@ -20,7 +20,8 @@ function App() {
   const [loggedIn, setLoggedIn] = useState(false);
   const [signup, setSignup] = useState(false);
   const [UserData, setUserData] = useState({});
-  const [ClickedConvo, setClickedConvo] = useState(null)
+  const [ClickedConvo, setClickedConvo] = useState(null);
+  const [clickedGuild, setclickedGuild] = useState(null);
 
   const handleSignupClick = () => {
     setSignup(true);

@@ -10,6 +10,10 @@ const Header = ({ title, LogOut, UserData, setUserData }) => {
   const [socket, setSocket] = useState(null);
   const location = useLocation();
 
+
+  // make notif counter for messages all added together
+
+
   // Function to get the title based on the current route
   const getTitle = () => {
     // Check if the current route contains "/user/" substring
