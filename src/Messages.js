@@ -41,6 +41,7 @@ const Messages = ({ UserData, setUserData, ClickedConvo, setClickedConvo }) => {
         // Check if the current user is part of the conversation and the message id matches the current conversation's message id
         if (currentUserInConversation && CurrentConvo && CurrentConvo.messageId === Conversation._id) {
           setmessagesArray(Conversation.messages);
+          MarkMessagesRead()
         }
       });
       socket.on('Read-update', (NewUnreadNotifNumber) => {
