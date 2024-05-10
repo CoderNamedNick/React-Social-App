@@ -6,6 +6,7 @@ import { io } from "socket.io-client"
 
 const Header = ({ title, LogOut, UserData, setUserData }) => {
   const [showMenu, setShowMenu] = useState(false);
+  const [convoCount, setconvoCount] = useState(0);
   const [messageCount, setMessageCount] = useState(0);
   const [socket, setSocket] = useState(null);
   const location = useLocation();
@@ -52,18 +53,19 @@ const Header = ({ title, LogOut, UserData, setUserData }) => {
         return "TAVERN"; // Default title
     }
   };
-
+    
     // Function to emit a message when the location is '/Messages'
-    const emitMessageOnMessagesPage = () => {
+    //const emitMessageOnMessagesPage = () => {
       //this will send an emit when on Message page
-      if (location.pathname === '/Conversations') {
-        socket.emit('SomeEvent', /* data to send */);
-      }
-    };
+   //   if (location.pathname === '/Conversations') {
+    //    socket.emit('SomeEvent', /* data to send */);
+    //  }
+    //};
 
-    useEffect(() => {
-      emitMessageOnMessagesPage(); // Emit message when component mounts or when location changes
-    }, [socket, location.pathname]);
+    //useEffect(() => {
+   //   emitMessageOnMessagesPage(); // Emit message when component mounts or when location changes
+    //}, [socket, location.pathname]);
+
 
     useEffect(() => {
       // Establish Socket connection
@@ -80,7 +82,11 @@ const Header = ({ title, LogOut, UserData, setUserData }) => {
         if (userId) {
           socket.emit('Conversation-count', userId, (unreadConversationCount) => {
             console.log('got Conversation count response', unreadConversationCount);
-            setMessageCount(unreadConversationCount); // Update message count based on the initial response
+            setconvoCount(unreadConversationCount); // Update message count based on the initial response
+          });
+          socket.emit('All-Unread-count', userId, (allunreadmessageCount) => {
+            console.log('got messages count response', allunreadmessageCount);
+            setMessageCount(allunreadmessageCount); // Update message count based on the initial response
           });
         }
       });
@@ -89,14 +95,21 @@ const Header = ({ title, LogOut, UserData, setUserData }) => {
         socket.disconnect();
       };
     
-    }, []);
+    }, [UserData]);
 
     useEffect(() => {
       if (socket) {
+        const userId = UserData.id || UserData._id
         // Listen for socket event indicating conversation count update
         socket.on('convo-count-update', (unreadConversationCount) => {
           console.log('Conversation count updated:', unreadConversationCount);
-          setMessageCount(unreadConversationCount); // Update message count based on the updated response
+          setconvoCount(unreadConversationCount); // Update message count based on the updated response
+        });
+        socket.on('allunreadupdate', (NewUnreadNotifNumber) => {
+          socket.emit('All-Unread-count', userId, (allunreadmessageCount) => {
+            console.log('got messages count response', allunreadmessageCount);
+            setMessageCount(allunreadmessageCount); // Update message count based on the initial response
+          });
         });
       }
     
@@ -106,7 +119,7 @@ const Header = ({ title, LogOut, UserData, setUserData }) => {
           socket.off('convo-count-update');
         }
       };
-    }, [socket]);
+    }, [socket, UserData]);
 
   const menuClick = () => {
     setShowMenu(!showMenu);
@@ -125,8 +138,8 @@ const Header = ({ title, LogOut, UserData, setUserData }) => {
         <h2>Tavern Menu</h2>
         <div>
           <Link to="/ProfileBook"><div className="Menu-p-s">Profile Book</div></Link>
-          <Link to="/Conversations"><div className="Menu-p-s">Conversations<span className="messages-span">{messageCount}</span></div></Link>
-          <Link to="/Messages"><div className="Menu-p-s">Messages</div></Link>
+          <Link to="/Conversations"><div className="Menu-p-s">Conversations<span className="messages-span">{convoCount}</span></div></Link>
+          <Link to="/Messages"><div className="Menu-p-s">Messages<span className="messages-span">{messageCount}</span></div></Link>
           <div className="Menu-p-s">Form a Party</div>
           <Link to="/Join-Guild"><div className="Menu-p-s">Join A Guild</div></Link>
           <Link to="/Guild-Registry"><div className="Menu-p-s">Make A Guild</div></Link>
