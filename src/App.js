@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import WebSocketManager from './WebSocketManager';
 import LoginPage from "./Login";
 import SignUpPage from "./Signup";
 import HomePage from "./Homepage";

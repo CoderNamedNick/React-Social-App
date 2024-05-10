@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Logo from './images/Tavern-logo.png';
-import WebSocketManager from './WebSocketManager'; // Import WebSocketManager component
 
 const LoginPage = ({ onSignupClick, onLogin, UserData, setUserData }) => {
   const [email, setEmail] = useState('');
@@ -25,13 +24,8 @@ const LoginPage = ({ onSignupClick, onLogin, UserData, setUserData }) => {
         // Get user data from the response, including the token
         const userData = await response.json();
         setUserData(userData.user);
-        const { token } = userData; // Extract token from user data
 
-        // Store the token in Session Storage
-        sessionStorage.setItem('token', token);
-
-        // Trigger the onLogin callback with the token
-        onLogin(token);
+        onLogin();
 
         // Navigate to home page
         navigate('/HomePage');

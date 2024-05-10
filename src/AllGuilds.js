@@ -12,7 +12,6 @@ const AllGuilds = ({ UserData, setUserData }) => {
     const fetchGuildData = async () => {
       if (UserData.guildsOwned) {
         const ownedGuildsPromises = UserData.guildsOwned.map(async (id) => {
-          // Assuming you have a function to fetch guild data by ID, replace `fetchGuildDataById` with that function
           const guildData = await fetchGuildDataById(id);
           return guildData;
         });
@@ -24,7 +23,6 @@ const AllGuilds = ({ UserData, setUserData }) => {
       if (UserData.guildsJoined) {
         
         const joinedGuildsPromises = UserData.guildsJoined.map(async (id) => {
-          // Assuming you have a function to fetch guild data by ID, replace `fetchGuildDataById` with that function
           const guildData = await fetchGuildDataById(id);
           return guildData;
         });
@@ -36,7 +34,6 @@ const AllGuilds = ({ UserData, setUserData }) => {
       if (UserData.requestedGuilds) {
         
         const requestedGuildsPromises = UserData.requestedGuilds.map(async (id) => {
-          // Assuming you have a function to fetch guild data by ID, replace `fetchGuildDataById` with that function
           const guildData = await fetchGuildDataById(id);
           return guildData;
         });
@@ -52,9 +49,6 @@ const AllGuilds = ({ UserData, setUserData }) => {
     let isMounted = true;
   
     const fetchGuildData = async () => {
-      // Your existing code to fetch guild data goes here...
-  
-      // Check if all guild arrays are empty and set NoGuild accordingly
       if (isMounted && UserData.guildsOwned.length === 0 && UserData.guildsJoined.length === 0 && UserData.requestedGuilds.length === 0) {
         setNoGuild(true);
       }
@@ -64,7 +58,7 @@ const AllGuilds = ({ UserData, setUserData }) => {
   
     // Cleanup function
     return () => {
-      isMounted = false; // Set isMounted to false when component unmounts
+      isMounted = false;
     };
   }, [UserData.guildsOwned, UserData.guildsJoined, UserData.requestedGuilds, OwnedGuilds, JoinedGuilds, RequestedGuilds]);
 
