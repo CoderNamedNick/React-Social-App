@@ -62,7 +62,7 @@ const BlockList = ({ UserData, setUserData }) => {
       <div className="Travelelers-homepage-div">
         <Travelers UserData={UserData} setUserData={setUserData}/>
       </div>
-      {NoBlocked && (<div className="No-request">You Have No One Blocked</div>)}
+      {NoBlocked && (<div style={{marginLeft: '80px'}} className="No-request">You Have No One Blocked</div>)}
       {!NoBlocked && (
         <div style={{marginTop: '10px'}} className="CompReq-content-div">
           {BlockedTravs.map((traveler) => (

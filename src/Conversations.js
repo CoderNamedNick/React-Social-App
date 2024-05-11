@@ -142,7 +142,7 @@ const Conversations = ({ UserData, setUserData, ClickedConvo, setClickedConvo })
           <br />
           <br />
           <h2>Make a Conversation with a companion</h2>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '7px', width: '98%', }}>
+          <div className='Make-A-convo-grid'>
             {companionsData.map(({ userData }, index) => (
               <div className='Convo-companion-map-div' key={userData._id || userData.id} >
                 <h3>{userData.username}</h3>
@@ -173,7 +173,7 @@ const Conversations = ({ UserData, setUserData, ClickedConvo, setClickedConvo })
           <br />
           <br />
           <h2>Make A New Conversation</h2>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '7px', width: '98%', }}>
+          <div className='Make-A-convo-grid' >
           {companionsData
             .filter(({ userData }) => {
               // Check if userData.username is not present in any of the conversation usernames

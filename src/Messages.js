@@ -231,13 +231,13 @@ const Messages = ({ UserData, setUserData, ClickedConvo, setClickedConvo }) => {
     <div className="main-messages-div">
       <div className="messages-div">{/*Make this have padding top with flexdir row */}
         <div className="left-side-with-Conversations">
-          <h3>Conversations</h3>
+          <h4>Convos</h4>
           {ConversationsArray.map(Convo => {
               // Check if Convo.UserNames is defined before filtering
               const otherUsernames = Convo.UserNames ? Convo.UserNames.filter(username => username !== UserData.username) : [];
               return (
                 <div onClick={() => {ConvoCLick(Convo.messageId, otherUsernames.join(', '), Convo)}} className='current-convos-messages' key={Convo.messageId}>
-                  <h3>Convo With: {otherUsernames.join(', ')}</h3>
+                  <h2>{otherUsernames.join(', ')}</h2>
                   <div className="Notif-Counter">{Convo.NotifNumber}</div>
                 </div>
               );
@@ -246,7 +246,7 @@ const Messages = ({ UserData, setUserData, ClickedConvo, setClickedConvo }) => {
           {/*loop thru array after fetch  post convos on left side with username of person*/}
         </div>
         <div className="right-side-with-messages">
-          {NoCurrentConvo && (<h1>CLick a convo</h1>)}
+          {NoCurrentConvo && (<h1>Select A Conversation</h1>)}
           {!NoCurrentConvo && (
             <div>
               <h1 style={{margin: '0', marginBottom: '20px', paddingLeft: '50%', backgroundColor: 'rgba(172, 175, 185, 0.288)', paddingBottom: '20px'}}>{CurrentConvoCompanionName}</h1>
