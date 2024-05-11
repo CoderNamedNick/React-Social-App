@@ -54,19 +54,6 @@ const Header = ({ title, LogOut, UserData, setUserData }) => {
     }
   };
     
-    // Function to emit a message when the location is '/Messages'
-    //const emitMessageOnMessagesPage = () => {
-      //this will send an emit when on Message page
-   //   if (location.pathname === '/Conversations') {
-    //    socket.emit('SomeEvent', /* data to send */);
-    //  }
-    //};
-
-    //useEffect(() => {
-   //   emitMessageOnMessagesPage(); // Emit message when component mounts or when location changes
-    //}, [socket, location.pathname]);
-
-
     useEffect(() => {
       // Establish Socket connection
       const socket = io('http://localhost:5000');

@@ -19,7 +19,6 @@ const FindTravelers = ({UserData, setUserData}) => {
           throw new Error('Failed to fetch users');
         }
         const AllusersData = await response.json();
-        console.log(AllusersData)
         setAllUsers(AllusersData);
       } catch (error) {
         console.error('Error fetching all users:', error);

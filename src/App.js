@@ -28,7 +28,6 @@ function App() {
 
   const handleLogin = () => {
     setLoggedIn(true);
-    // Perform any necessary operations after login
   };
 
   const LogOut = () => {

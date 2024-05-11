@@ -93,7 +93,6 @@ const Conversations = ({ UserData, setUserData, ClickedConvo, setClickedConvo })
   };
 
   const startNewConvo = async () => {
-    console.log(UserData.id || UserData._id, Convocompanionid, formData.message)
     try {
       const response = await fetch(`http://localhost:5000/Messages/messages/${UserData.id || UserData._id}/send/${Convocompanionid}`, {
         method: 'POST',
