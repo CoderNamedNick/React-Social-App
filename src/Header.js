@@ -49,6 +49,10 @@ const Header = ({ title, LogOut, UserData, setUserData }) => {
         return "Guild Connections";
       case "/Join-Guild":
         return "Join A Guild";
+      case "/Conversations":
+        return "Conversations";
+      case "/Messages":
+        return "Messages";
       default:
         return "TAVERN"; // Default title
     }

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 
-const GuildPages = ({UserData, setUserData, ClickedGuild, setClikedGuild}) => {
+const GuildPages = ({UserData, setUserData, clickedGuild, setclikedGuild}) => {
   // need sockets for post 
   //need socket for comments on post 
   //no need for sokcets for likes and dislikes
@@ -10,6 +10,7 @@ const GuildPages = ({UserData, setUserData, ClickedGuild, setClikedGuild}) => {
   
   return (
     <div className='Guild-Pages-main-div'>
+      <h1>I AM GUILD PAGES</h1>
       <div className="Guild-Pages-left-side">
         {
          /*this will have Guild members/ elders/owner

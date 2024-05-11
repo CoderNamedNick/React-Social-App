@@ -641,6 +641,7 @@ a{
   margin-bottom: 20px;
   color: rgb(58, 52, 52);
   width: 100%; /* Ensures the item stretches horizontally */
+  cursor: pointer;
 }
 .findable-guild-item{
   border: black solid 3px;

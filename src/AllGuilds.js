@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Travelers from "./Travelers";
 
-const AllGuilds = ({ UserData, setUserData }) => {
+const AllGuilds = ({ UserData, setUserData, clickedGuild, setclickedGuild }) => {
   const [OwnedGuilds, setOwnedGuilds] = useState([]);
   const [JoinedGuilds, setJoinedGuilds] = useState([]);
   const [RequestedGuilds, setRequestedGuilds] = useState([]);
   const [NoGuild, setNoGuild] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchGuildData = async () => {
@@ -101,6 +102,11 @@ const AllGuilds = ({ UserData, setUserData }) => {
     }
   }
 
+  const GuildClick = (Guild) => {
+    setclickedGuild(Guild)
+    navigate('/GuildPages')
+  }
+
   return (
   <div className='All-Guilds-main-div'>
     <div className="Travelelers-homepage-div">
@@ -113,15 +119,12 @@ const AllGuilds = ({ UserData, setUserData }) => {
           <h1>Owned Guilds</h1>
           <div className="guild-container">
             {OwnedGuilds.map((Guild) => (
-              <Link key={Guild._id || Guild.id} to={`/Guild/${Guild.guildName}`}>
-                {/* Link to another page with the guild name as a parameter */}
-                <div className="guild-item">
-                  <p>{Guild.guildName}</p>
-                  <p>Guild Moto: {Guild.guildMoto}</p>
-                  <p>Guild Members: {Guild.joinedTravelers.length}</p>
-                  <p>Guild Post: {Guild.guildPost.length}</p>
-                </div>
-              </Link>
+              <div className="guild-item" key={Guild._id || Guild.id} onClick={() => {GuildClick(Guild)}}>
+                <p>{Guild.guildName}</p>
+                <p>Guild Moto: {Guild.guildMoto}</p>
+                <p>Guild Members: {Guild.joinedTravelers.length}</p>
+                <p>Guild Post: {Guild.guildPost.length}</p>
+              </div>
             ))}
           </div>
         </div>
@@ -129,15 +132,12 @@ const AllGuilds = ({ UserData, setUserData }) => {
           <h1 style={{marginTop: '-60px'}}>Joined Guilds</h1>
           <div className="guild-container">
             {JoinedGuilds.filter((Guild) => !UserData.guildsOwned.includes(Guild.id || Guild._id)).map((FilteredGuild) => (
-              <Link key={FilteredGuild._id || FilteredGuild.id} to={`/Guild/${FilteredGuild.guildName}`}>
-                {/* Link to another page with the guild name as a parameter */}
-                <div className="guild-item">
-                  <p>{FilteredGuild.guildName}</p>
-                  <p>Guild Moto: {FilteredGuild.guildMoto}</p>
-                  <p>Guild bio: {FilteredGuild.bio}</p>
-                  <p>Guild Members: {FilteredGuild.joinedTravelers.length}</p>
-                </div>
-              </Link>
+              <div className="guild-item" onClick={() => {GuildClick(FilteredGuild)}}>
+                <p>{FilteredGuild.guildName}</p>
+                <p>Guild Moto: {FilteredGuild.guildMoto}</p>
+                <p>Guild bio: {FilteredGuild.bio}</p>
+                <p>Guild Members: {FilteredGuild.joinedTravelers.length}</p>
+              </div>
             ))}
           </div>
         </div>

@@ -14,6 +14,7 @@ import AllGuilds from "./AllGuilds";
 import JoinAGuild from "./JoinAGuild";
 import Conversations from "./Conversations";
 import Messages from "./Messages";
+import GuildPages from "./GuildPages"
 
 function App() {
   const [loggedIn, setLoggedIn] = useState(false);
@@ -71,10 +72,11 @@ function App() {
               <Route path="/Block-List" element={<BlockList UserData={UserData} setUserData={setUserData} />} />
               <Route path="/user/:username" element={<TravelersBooks UserData={UserData} setUserData={setUserData} />} />
               <Route path="/Guild-Registry" element={<MakeGuild UserData={UserData} setUserData={setUserData} />} />
-              <Route path="/All-Guilds" element={<AllGuilds UserData={UserData} setUserData={setUserData} />} />
+              <Route path="/All-Guilds" element={<AllGuilds UserData={UserData} setUserData={setUserData} clickedGuild={clickedGuild} setclickedGuild={setclickedGuild} />} />
               <Route path="/Join-Guild" element={<JoinAGuild UserData={UserData} setUserData={setUserData} />} />
               <Route path="/Conversations" element={<Conversations UserData={UserData} setUserData={setUserData} ClickedConvo={ClickedConvo} setClickedConvo={setClickedConvo} />} />
               <Route path="/Messages" element={<Messages UserData={UserData} setUserData={setUserData} ClickedConvo={ClickedConvo} setClickedConvo={setClickedConvo} />} />
+              <Route path="/GuildPages" element={<GuildPages UserData={UserData} setUserData={setUserData} clickedGuild={clickedGuild} setclickedGuild={setclickedGuild} />} />
             </Routes>
           )}
         </div>
