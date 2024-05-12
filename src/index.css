@@ -864,3 +864,50 @@ a{
     grid-template-columns: repeat(2,1fr);
   }
 }
+.Guild-Pages-main-div{
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  height: 100vh;
+  background: linear-gradient(to bottom, #c5daee4b, #266bc5);
+  background-repeat: no-repeat;
+  background-attachment: fixed; 
+  overflow-y: auto;
+}
+.Guild-Pages-left-side{
+  background-color: #0f8878;
+  width: 20%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.Guild-Pages-middle-side{
+  background-color: #365faa;
+  width: 60%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.Guild-Pages-right-side{
+  background-color: #aa3666;
+  width: 20%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.GP-left-side-2nd{
+  background-color: #5028be;
+  margin-top: 108px;
+  overflow-wrap: break-word;
+  max-width: 98%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.GP-guild-moto{
+  font-size: 28px;
+  font-family: 'Times New Roman', Times, serif;
+}
