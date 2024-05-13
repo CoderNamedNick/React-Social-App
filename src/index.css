@@ -911,3 +911,12 @@ a{
   font-size: 28px;
   font-family: 'Times New Roman', Times, serif;
 }
+.guild-member-tooltip{
+  background-color: rgba(0, 0, 0, 0.452);
+  color: white;
+  position: absolute;
+  margin-left: 20%;
+  padding: 10px;
+  border-radius: 15px;
+  margin-top: -8%;
+}
