@@ -34,10 +34,11 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclikedGuild}) => {
      const socket = io('http://localhost:5000');
      setSocket(socket)
     // make a socket for notifs
+    const guildId = clickedGuild.id || clickedGuild._id
      socket.on('connect', () => {
        console.log('connected');
      });
-    
+     socket.emit('joinGuildRoom', guildId);
      // Clean up socket connection when component unmounts
     fetchGuildMembers();
     return () => {
@@ -46,8 +47,9 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclikedGuild}) => {
   }, []); 
   useEffect(() => {
     if (socket) {
-      socket.on('promote-update', (updatedGuild, guildMembersWithElders) => {
-        setAllMembers(guildMembersWithElders);
+      socket.on('new-member', () => {
+        console.log('got new member')
+        fetchGuildMembers()
       });
     }
   
@@ -61,10 +63,24 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclikedGuild}) => {
   console.log(clickedGuild)
 
   const PromoteToElder = (TravelerId) => {
+    if (socket) {
+      const GuildId = clickedGuild.id || clickedGuild._id;
+      console.log('sending emit');
+      socket.emit('update-to-elder', GuildId, TravelerId, (updatedGuild, guildMembersWithElders) => {
+
+        setAllMembers(guildMembersWithElders);
+      });
+    }
+  };
+  const DemoteToMember = (TravelerId) => {
     // check if this works pls
     if (socket) {
       const GuildId = clickedGuild.id || clickedGuild._id
-      socket.emit('update-to-elder', GuildId, TravelerId)
+      console.log('sending emit')
+      socket.emit('demote-to-member', GuildId, TravelerId, (updatedGuild, guildMembersWithElders) => {
+
+        setAllMembers(guildMembersWithElders);
+      });
     }
   }
   
@@ -72,8 +88,8 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclikedGuild}) => {
     <div className='Guild-Pages-main-div'>
       <div className="Guild-Pages-left-side">
         <div className="GP-left-side-2nd" >
-          <p style={{fontSize: '40px'}} className="medievalsharp-regular">{clickedGuild.guildName}</p>
-          <p className="GP-guild-moto">{clickedGuild.guildMoto}</p>
+          <p style={{fontSize: '40px', paddingLeft: '10px'}} className="medievalsharp-regular">{clickedGuild.guildName}</p>
+          <p style={{width: '96%', paddingLeft: '2%'}} className="GP-guild-moto">{clickedGuild.guildMoto}</p>
         </div>
           {AllMembers && (
             <div style={{width: '98%'}}>
@@ -86,19 +102,19 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclikedGuild}) => {
               <hr/>
               <div style={{display: 'flex', flexDirection: 'column', gap: '5px'}}>
                 {AllMembers.Elders
-                .filter(elders => elders.AccPrivate === true) 
+                .filter(elders => elders.AccPrivate === false) 
                 .map((elder) => (
                   <div>
-                    <h2 style={{cursor: 'pointer'}} onClick={() => toggleTooltip(elder.id)}>{elder.UserName}<span style={{fontSize: '14px', fontWeight: '400'}}>Elder</span></h2>
+                    <h2 style={{cursor: 'pointer'}} onClick={() => toggleTooltip(elder.id)}>{elder.UserName } <span style={{fontSize: '14px', fontWeight: '400'}}>Elder</span></h2>
                     {UserData.username !== elder.UserName && (
                       <div className="guild-elder-tooltip" style={{ display: clickedMember === elder.id ? 'block' : 'none' }}>
                       <Link to={`/user/${elder.UserName}`}><div>View {elder.UserName}'s Profile</div></Link>
                         {UserData.username === AllMembers.Owner.UserName && (
-                          <div>Demote to Member</div>
+                          <div style={{cursor: 'pointer'}} onClick={() => {DemoteToMember(elder.id || elder._id)}}>Demote to Member</div>
                         )}
                         <hr style={{margin: '3px'}}/>
                         {UserData.username === AllMembers.Owner.UserName  && (
-                          <div>Ban From Guild</div>
+                          <div style={{cursor: 'pointer'}}>Ban From Guild</div>
                         )}
                       </div>
                     )}
@@ -118,11 +134,11 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclikedGuild}) => {
                     <div className="guild-member-tooltip" style={{ display: clickedMember === member.id ? 'block' : 'none' }}>
                       <Link to={`/user/${member.UserName}`}><div>View {member.UserName}'s Profile</div></Link>
                       {UserData.username === AllMembers.Owner.UserName && (
-                        <div onClick={() => {PromoteToElder(member.id || member._id)}}>Promote to Elder</div>
+                        <div style={{cursor: 'pointer'}} onClick={() => {PromoteToElder(member.id || member._id)}}>Promote to Elder</div>
                       )}
                       <hr style={{margin: '3px'}}/>
                       {(UserData.username === AllMembers.Owner.UserName || AllMembers.Elders.includes(UserData.username)) && (
-                        <div>Ban From Guild</div>
+                        <div style={{cursor: 'pointer'}}>Ban From Guild</div>
                       )}
                     </div>
                   )}

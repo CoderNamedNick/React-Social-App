@@ -122,8 +122,8 @@ const AllGuilds = ({ UserData, setUserData, clickedGuild, setclickedGuild }) => 
               <div className="guild-item" key={Guild._id || Guild.id} onClick={() => {GuildClick(Guild)}}>
                 <p>{Guild.guildName}</p>
                 <p>Guild Moto: {Guild.guildMoto}</p>
-                <p>Guild Members: {Guild.joinedTravelers.length}</p>
-                <p>Guild Post: {Guild.guildPost.length}</p>
+                {Guild.joinedTravelers && (<p>Guild Members: {Guild.joinedTravelers.length}</p>)}
+                {Guild.guildPost && (<p>Guild Post: {Guild.guildPost.length}</p>)}
               </div>
             ))}
           </div>
@@ -136,7 +136,7 @@ const AllGuilds = ({ UserData, setUserData, clickedGuild, setclickedGuild }) => 
                 <p>{FilteredGuild.guildName}</p>
                 <p>Guild Moto: {FilteredGuild.guildMoto}</p>
                 <p>Guild bio: {FilteredGuild.bio}</p>
-                <p>Guild Members: {FilteredGuild.joinedTravelers.length}</p>
+                {FilteredGuild.joinedTravelers && (<p>Guild Members: {FilteredGuild.joinedTravelers.length}</p>)}
               </div>
             ))}
           </div>
@@ -148,7 +148,7 @@ const AllGuilds = ({ UserData, setUserData, clickedGuild, setclickedGuild }) => 
               <div className="guild-item">
                 <p>{Guild.guildName}</p>
                 <p>Guild Moto: {Guild.guildMoto}</p>
-                <p>Guild Members: {Guild.joinedTravelers.length}</p>
+                {Guild.joinedTravelers && (<p>Guild Members: {Guild.joinedTravelers.length}</p>)}
                 <p onClick={() => CancelGuildRequest(Guild.id || Guild._id)} style={{cursor: 'pointer'}}>Cancel Request</p>
               </div>
             ))}
