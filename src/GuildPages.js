@@ -47,9 +47,9 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclikedGuild}) => {
   }, []); 
   useEffect(() => {
     if (socket) {
-      socket.on('new-member', () => {
+      socket.on('userJoinedGuildRoom', (guildMembersWithElders) => {
         console.log('got new member')
-        fetchGuildMembers()
+        setAllMembers(guildMembersWithElders);
       });
     }
   

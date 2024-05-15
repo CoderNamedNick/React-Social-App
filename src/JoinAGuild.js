@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { io } from "socket.io-client";
 
 const JoinAGuild = ({ UserData, setUserData }) => {
   const [AllGuilds, setAllGuilds] = useState([]);
@@ -7,6 +8,7 @@ const JoinAGuild = ({ UserData, setUserData }) => {
   const [joinedGuilds, setJoinedGuilds] = useState([]);
   const [requestedGuilds, setRequestedGuilds] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
+  const [socket, setSocket] = useState(null)
 
   const colors = [
     { name: 'blue', color1: '#F5F6FC', color2: '#0F2180' },
@@ -32,6 +34,14 @@ const JoinAGuild = ({ UserData, setUserData }) => {
       }
     };
     fetchAllGuilds();
+    const socket = io('http://localhost:5000');
+    setSocket(socket)
+    socket.on('connect', () => {
+      console.log('connected');
+    });
+   return () => {
+     socket.disconnect();
+   };
   }, []);
 
   useEffect(() => {
@@ -93,6 +103,10 @@ const JoinAGuild = ({ UserData, setUserData }) => {
       const data = await response.json();
       setUserData(data.user);
       console.log('Joined successfully');
+      if (socket) {
+        const userId = UserData.id || UserData._id
+        socket.emit('New-member', guildId, userId)
+      }
       setJoinedGuilds([...joinedGuilds, guildId]);
     } catch (error) {
       console.error('Error sending join request:', error);
