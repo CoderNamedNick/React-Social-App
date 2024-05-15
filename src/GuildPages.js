@@ -47,7 +47,7 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclikedGuild}) => {
   }, []); 
   useEffect(() => {
     if (socket) {
-      socket.on('userJoinedGuildRoom', (guildMembersWithElders) => {
+      socket.on('memberUpdates', (guildMembersWithElders) => {
         console.log('got new member')
         setAllMembers(guildMembersWithElders);
       });
@@ -66,10 +66,7 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclikedGuild}) => {
     if (socket) {
       const GuildId = clickedGuild.id || clickedGuild._id;
       console.log('sending emit');
-      socket.emit('update-to-elder', GuildId, TravelerId, (updatedGuild, guildMembersWithElders) => {
-
-        setAllMembers(guildMembersWithElders);
-      });
+      socket.emit('update-to-elder', GuildId, TravelerId)
     }
   };
   const DemoteToMember = (TravelerId) => {
@@ -77,10 +74,7 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclikedGuild}) => {
     if (socket) {
       const GuildId = clickedGuild.id || clickedGuild._id
       console.log('sending emit')
-      socket.emit('demote-to-member', GuildId, TravelerId, (updatedGuild, guildMembersWithElders) => {
-
-        setAllMembers(guildMembersWithElders);
-      });
+      socket.emit('demote-to-member', GuildId, TravelerId );
     }
   }
   
