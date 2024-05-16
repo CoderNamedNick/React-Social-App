@@ -78,6 +78,15 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclikedGuild}) => {
     }
   }
   
+  const BanMember = (TravelerId) => {
+    // check if this works pls
+    if (socket) {
+      const GuildId = clickedGuild.id || clickedGuild._id
+      console.log('sending emit')
+      socket.emit('Ban-member', GuildId, TravelerId );
+    }
+  }
+  
   return (
     <div className='Guild-Pages-main-div'>
       <div className="Guild-Pages-left-side">
@@ -108,7 +117,7 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclikedGuild}) => {
                         )}
                         <hr style={{margin: '3px'}}/>
                         {UserData.username === AllMembers.Owner.UserName  && (
-                          <div style={{cursor: 'pointer'}}>Ban From Guild</div>
+                          <div style={{cursor: 'pointer'}} onClick={() => {BanMember(elder.id || elder._id)}} >Ban From Guild</div>
                         )}
                       </div>
                     )}
@@ -132,7 +141,7 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclikedGuild}) => {
                       )}
                       <hr style={{margin: '3px'}}/>
                       {(UserData.username === AllMembers.Owner.UserName || AllMembers.Elders.includes(UserData.username)) && (
-                        <div style={{cursor: 'pointer'}}>Ban From Guild</div>
+                        <div style={{cursor: 'pointer'}} onClick={() => {BanMember(member.id || member._id)}}>Ban From Guild</div>
                       )}
                     </div>
                   )}
