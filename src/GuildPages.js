@@ -140,7 +140,7 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclikedGuild}) => {
                         <div style={{cursor: 'pointer'}} onClick={() => {PromoteToElder(member.id || member._id)}}>Promote to Elder</div>
                       )}
                       <hr style={{margin: '3px'}}/>
-                      {(UserData.username === AllMembers.Owner.UserName || AllMembers.Elders.includes(UserData.username)) && (
+                      {(UserData.username === AllMembers.Owner.UserName || AllMembers.Elders.some(elder => elder.UserName === UserData.username)) && (
                         <div style={{cursor: 'pointer'}} onClick={() => {BanMember(member.id || member._id)}}>Ban From Guild</div>
                       )}
                     </div>
