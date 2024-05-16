@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useLocation, Link } from "react-router-dom";
+import { useLocation, Link, useNavigate } from "react-router-dom";
 import Logo from './images/Tavern-logo.png'
 import Menu from './icons/menu.png'
 import { io } from "socket.io-client"
@@ -10,6 +10,7 @@ const Header = ({ title, LogOut, UserData, setUserData }) => {
   const [messageCount, setMessageCount] = useState(0);
   const [socket, setSocket] = useState(null);
   const location = useLocation();
+  const navigate = useNavigate();
 
 
   // make notif counter for messages all added together
@@ -101,6 +102,11 @@ const Header = ({ title, LogOut, UserData, setUserData }) => {
             console.log('got messages count response', allunreadmessageCount);
             setMessageCount(allunreadmessageCount); // Update message count based on the initial response
           });
+        });
+        socket.on('Banned-From-A-Guild', (NewUserInfo) => {
+          console.log('updated User YAYAYAYAYAY')
+          setUserData(NewUserInfo)
+          navigate('/HomePage')
         });
       }
     
