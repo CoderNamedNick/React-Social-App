@@ -316,9 +316,9 @@ const TravelersBooks = ({UserData, setUserData}) => {
                 <h4># of guild Members: {Guild.joinedTravelers.length}</h4>
                 <h5>Guild Since: {Guild.guildDate ? Guild.guildDate.substring(0, 10) : ''}</h5>
               </div>
-              <div style={{ flex: '1', marginLeft: '50px', paddingRight: '10px' }}>
-                <p style={{ fontSize: '20px' }}>Guild Bio:</p>
-                <p style={{ fontSize: '20px' }}>{Guild.bio}</p>
+              <div style={{ flex: '1', marginLeft: '50px', paddingRight: '10px', maxWidth: '50%' }}>
+                <p style={{ fontSize: '20px', display: 'inline' }}>Guild Bio:</p>
+                <div style={{ fontSize: '20px', width: '100%', overflowWrap: 'break-word', maxWidth: '100%' }}>{Guild.bio}</div>
               </div>
             </div>
           ))}
