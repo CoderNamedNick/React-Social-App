@@ -112,7 +112,6 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclikedGuild}) => {
     <div className='Guild-Pages-main-div'>
       <div className="Guild-Pages-left-side">
         <div className="GP-left-side-2nd" >
-          <p style={{fontSize: '40px', paddingLeft: '10px'}} className="medievalsharp-regular">{clickedGuild.guildName}</p>
           <p style={{width: '96%', paddingLeft: '2%'}} className="GP-guild-moto">{clickedGuild.guildMoto}</p>
         </div>
           {AllMembers && (
@@ -178,13 +177,9 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclikedGuild}) => {
           )}
         <div> 
       </div>
-        {
-         /*this will have Guild members/ elders/owner
-         along with guildmoto   */
-        }
       </div>
       <div className="Guild-Pages-middle-side">
-        <h1 style={{marginTop: '108px'}}>I AM GUILD PAGES</h1>
+      <p style={{fontSize: '40px', paddingLeft: '10px',marginTop: '108px'}} className="medievalsharp-regular">{clickedGuild.guildName}</p>
         {
          /*this will have Guild Name, main post and feed  */
         }

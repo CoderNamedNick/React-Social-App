@@ -39,7 +39,7 @@ function App() {
   return (
     <BrowserRouter>
       <div className="App">
-        {loggedIn && <Header UserData={UserData} setUserData={setUserData} LogOut={LogOut}  />}
+        {loggedIn && <Header UserData={UserData} setUserData={setUserData} LogOut={LogOut} clickedGuild={clickedGuild} setclickedGuild={setclickedGuild}  />}
         <div>
           {!signup && !loggedIn && (
             <Routes>

@@ -4,7 +4,7 @@ import Logo from './images/Tavern-logo.png'
 import Menu from './icons/menu.png'
 import { io } from "socket.io-client"
 
-const Header = ({ title, LogOut, UserData, setUserData }) => {
+const Header = ({ title, LogOut, UserData, setUserData, clickedguild }) => {
   const [showMenu, setShowMenu] = useState(false);
   const [convoCount, setconvoCount] = useState(0);
   const [messageCount, setMessageCount] = useState(0);
@@ -22,10 +22,11 @@ const Header = ({ title, LogOut, UserData, setUserData }) => {
     if (location.pathname.startsWith("/user/")) {
       // Extract the username from the URL
       const username = location.pathname.split("/")[2]; // Assuming "/user/:username" format
-
+      
       // Return a custom title with the username
       return `${username}'s Profile Book`;
     }
+    
 
 
     // For other routes, provide default titles
@@ -54,6 +55,8 @@ const Header = ({ title, LogOut, UserData, setUserData }) => {
         return "Conversations";
       case "/Messages":
         return "Messages";
+      case "/GuildPages":
+        return "Guild Page";
       default:
         return "TAVERN"; // Default title
     }
