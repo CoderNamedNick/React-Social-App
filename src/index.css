@@ -882,6 +882,13 @@ a{
   flex-direction: column;
   align-items: center;
 }
+.members-div{
+  overflow-y: hidden;
+  scrollbar-width: thin;
+  scroll-behavior: smooth;
+  border-top: solid 1px white;
+  border-bottom: solid 1px white;
+}
 .Guild-Pages-middle-side{
   background-color: #365faa;
   width: 60%;
