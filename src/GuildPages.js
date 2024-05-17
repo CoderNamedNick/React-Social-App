@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { io } from "socket.io-client";
 
@@ -6,6 +6,27 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclikedGuild}) => {
   const [socket, setSocket] = useState(null);
   const [AllMembers, setAllMembers] = useState(null);
   const [clickedMember, setclickedMember] = useState(null);
+  const containerRef = useRef(null);
+
+  // Function to handle mouse wheel scroll
+  const handleScroll = (e) => {
+    const container = containerRef.current;
+    container.scrollTop += e.deltaY;
+  };
+
+  // Function to handle touch events (swipe)
+  let touchStartY = 0;
+  const handleTouchStart = (e) => {
+    touchStartY = e.touches[0].clientY;
+  };
+
+  const handleTouchMove = (e) => {
+    const container = containerRef.current;
+    const touchY = e.touches[0].clientY;
+    const deltaY = touchY - touchStartY;
+    container.scrollTop += deltaY * 2; // Adjust the scrolling speed as needed
+    touchStartY = touchY;
+  };
 
   const toggleTooltip = (memberId) => {
     setclickedMember(clickedMember === memberId ? null : memberId);
@@ -95,7 +116,12 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclikedGuild}) => {
           <p style={{width: '96%', paddingLeft: '2%'}} className="GP-guild-moto">{clickedGuild.guildMoto}</p>
         </div>
           {AllMembers && (
-            <div style={{width: '98%'}}>
+            <div className="members-div"
+            ref={containerRef}
+            onWheel={handleScroll}
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            style={{width: '98%'}}>
               <h2 style={{cursor: 'pointer'}} onClick={() => toggleTooltip(AllMembers.Owner.id)}>{AllMembers.Owner.UserName} <span style={{fontSize: '14px', fontWeight: '400'}}>Owner</span></h2>
               {UserData.username !== AllMembers.Owner.UserName && (
                 <div className="guild-Owner-tooltip" style={{ display: clickedMember === AllMembers.Owner.id ? 'block' : 'none' }}>
@@ -164,6 +190,7 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclikedGuild}) => {
         }
       </div>
       <div className="Guild-Pages-right-side">
+        <h1 style={{marginTop: '108px'}}>right side</h1>
         {
          /*this will have guild settings depending on role in guild
          owner has all power/ elders can  ban / all users have option to Make Post,

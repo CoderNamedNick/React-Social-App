@@ -135,8 +135,8 @@ const AllGuilds = ({ UserData, setUserData, clickedGuild, setclickedGuild }) => 
               <div className="guild-item" onClick={() => {GuildClick(FilteredGuild)}}>
                 <p>{FilteredGuild.guildName}</p>
                 <p>Guild Moto: {FilteredGuild.guildMoto}</p>
-                <p>Guild bio: {FilteredGuild.bio}</p>
                 {FilteredGuild.joinedTravelers && (<p>Guild Members: {FilteredGuild.joinedTravelers.length}</p>)}
+                {FilteredGuild.guildPost && (<p>Guild Post: {FilteredGuild.guildPost.length}</p>)}
               </div>
             ))}
           </div>
