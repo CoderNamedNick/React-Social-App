@@ -108,10 +108,10 @@ const HomePage = ({UserData, setUserData}) => {
         </div></Link>
 
         {/* Div for Tavern News */}
-        <div className="Homepage-contents-divs">
+        <Link to="/Tavern-News"><div className="Homepage-contents-divs">
           <h2>Tavern News</h2>
           {/* Display Tavern news */}
-        </div>
+        </div></Link>
       </div>
     </div>
   );
