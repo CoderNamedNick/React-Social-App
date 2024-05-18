@@ -944,3 +944,19 @@ a{
   border-radius: 15px;
   margin-top: -8%;
 }
+.guild-rightside-div{
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  align-items: center;
+  width: 96%;
+  margin-left: 2%;
+  border-top: 1px solid rgb(0, 0, 0);
+  color: rgb(31, 24, 24);
+  font-size: 18px;
+  text-align: center;
+}
+.guild-settings {
+  position: absolute;
+  bottom: 0;
+}
