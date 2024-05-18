@@ -56,7 +56,7 @@ const Header = ({ title, LogOut, UserData, setUserData, clickedguild }) => {
       case "/Messages":
         return "Messages";
       case "/GuildPages":
-        return "Guild Page";
+        return "";
       default:
         return "TAVERN"; // Default title
     }

@@ -179,13 +179,40 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclikedGuild}) => {
       </div>
       </div>
       <div className="Guild-Pages-middle-side">
-      <p style={{fontSize: '40px', paddingLeft: '10px',marginTop: '108px'}} className="medievalsharp-regular">{clickedGuild.guildName}</p>
+        <p style={{fontSize: '42px', paddingLeft: '10px', color: 'white', zIndex: '1000'}} className="medievalsharp-regular">{clickedGuild.guildName}</p>
         {
          /*this will have Guild Name, main post and feed  */
         }
+        <div style={{bottom: '1%', left: '21%', position: 'absolute'}}>Make A post</div>
       </div>
       <div className="Guild-Pages-right-side">
-        <h1 style={{marginTop: '108px'}}>right side</h1>
+        <h1 style={{marginTop: '108px'}}>Configuration</h1>
+        {/* for owner */}
+        {AllMembers && UserData.username === AllMembers.Owner.UserName && (
+          <div className="guild-rightside-div">
+            <h2>View Guild Stats</h2>
+            <h2>Manage Guild Join request</h2>
+            <h2>Send A Guild Alert</h2>
+            <h2>Manage Guild</h2>
+            <h2 className="guild-settings">Guild Settings</h2>
+          </div>
+        )}
+        {/* for elders */}
+        {AllMembers && AllMembers.Elders.some(elder => elder.UserName === UserData.username) && (
+          <div className="guild-rightside-div">
+            <h2>View Guild Stats</h2>
+            <h2>Manage Guild Join request</h2>
+            <h2>Send a message up to Guild Master</h2>
+            <h2 className="guild-settings">Guild Settings</h2>
+          </div>
+        )}
+        {/* for members */}
+        {AllMembers && AllMembers.Members.some(Member => Member.UserName === UserData.username) && (
+          <div className="guild-rightside-div">
+            <h2>View Guild Stats</h2>
+            <h2 className="guild-settings">Guild Settings</h2>
+          </div>
+        )}
         {
          /*this will have guild settings depending on role in guild
          owner has all power/ elders can  ban / all users have option to Make Post,
