@@ -6,8 +6,15 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclikedGuild}) => {
   const [socket, setSocket] = useState(null);
   const [AllMembers, setAllMembers] = useState(null);
   const [clickedMember, setclickedMember] = useState(null);
+  const [ShowGuildStats, setShowGuildStats] = useState(false);
+  const [ShowBanReasonInput, setShowBanReasonInput] = useState(false);
+  const [BaninputValue, setBanInputValue] = useState('');
   const containerRef = useRef(null);
 
+
+  const handleBanInputChange = (event) => {
+    setBanInputValue(event.target.value);
+  };
   // Function to handle mouse wheel scroll
   const handleScroll = (e) => {
     const container = containerRef.current;
@@ -30,6 +37,7 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclikedGuild}) => {
 
   const toggleTooltip = (memberId) => {
     setclickedMember(clickedMember === memberId ? null : memberId);
+    setShowBanReasonInput(false)
   };
   // need sockets for post 
   //need socket for comments on post 
@@ -99,13 +107,21 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclikedGuild}) => {
     }
   }
   
-  const BanMember = (TravelerId) => {
+  const HandleBanMember = (TravelerId, ) => {
+    setShowBanReasonInput(true)
+  }
+
+  const BanMember = (TravelerId, Reason) => {
     // check if this works pls
     if (socket) {
       const GuildId = clickedGuild.id || clickedGuild._id
       console.log('sending emit')
-      socket.emit('Ban-member', GuildId, TravelerId );
+      socket.emit('Ban-member', GuildId, TravelerId, Reason );
     }
+  }
+
+  const handleViewGuildStats = () => {
+    setShowGuildStats(!ShowGuildStats)
   }
   
   return (
@@ -142,8 +158,17 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclikedGuild}) => {
                         )}
                         <hr style={{margin: '3px'}}/>
                         {UserData.username === AllMembers.Owner.UserName  && (
-                          <div style={{cursor: 'pointer'}} onClick={() => {BanMember(elder.id || elder._id)}} >Ban From Guild</div>
+                          <div style={{cursor: 'pointer'}} onClick={() => {HandleBanMember(elder.id || elder._id)}}>Ban From Guild</div>
                         )}
+                        { ShowBanReasonInput && (<div className="guild-member-tooltip" style={{ display: clickedMember === elder.id ? 'block' : 'none' }}>
+                          <div>Reason For Ban: </div>
+                          <input
+                            type="text"
+                            value={BaninputValue}
+                            onChange={handleBanInputChange}
+                          />
+                          <button onClick={() => {BanMember(elder.id || elder._id, BaninputValue )}}>Confirm Ban</button>
+                        </div>)}
                       </div>
                     )}
                   </div>
@@ -166,8 +191,17 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclikedGuild}) => {
                       )}
                       <hr style={{margin: '3px'}}/>
                       {(UserData.username === AllMembers.Owner.UserName || AllMembers.Elders.some(elder => elder.UserName === UserData.username)) && (
-                        <div style={{cursor: 'pointer'}} onClick={() => {BanMember(member.id || member._id)}}>Ban From Guild</div>
+                        <div style={{cursor: 'pointer'}} onClick={() => {HandleBanMember(member.id || member._id)}}>Ban From Guild</div>
                       )}
+                      { ShowBanReasonInput && (<div className="guild-member-tooltip" style={{ display: clickedMember === member.id ? 'block' : 'none' }}>
+                        <div>Reason For Ban: </div>
+                        <input
+                          type="text"
+                          value={BaninputValue}
+                          onChange={handleBanInputChange}
+                        />
+                        <button onClick={() => {BanMember(member.id || member._id, BaninputValue )}}>Confirm Ban</button>
+                      </div>)}
                     </div>
                   )}
                 </div>
@@ -190,7 +224,7 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclikedGuild}) => {
         {/* for owner */}
         {AllMembers && UserData.username === AllMembers.Owner.UserName && (
           <div className="guild-rightside-div">
-            <h2>View Guild Stats</h2>
+            <h2 onClick={handleViewGuildStats} style={{cursor: 'pointer'}}>View Guild Stats</h2>
             <h2>Manage Guild Join request</h2>
             <h2>Send A Guild Alert</h2>
             <h2>Manage Guild</h2>
@@ -200,7 +234,7 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclikedGuild}) => {
         {/* for elders */}
         {AllMembers && AllMembers.Elders.some(elder => elder.UserName === UserData.username) && (
           <div className="guild-rightside-div">
-            <h2>View Guild Stats</h2>
+            <h2 onClick={handleViewGuildStats} style={{cursor: 'pointer'}}>View Guild Stats</h2>
             <h2>Manage Guild Join request</h2>
             <h2>Send a message up to Guild Master</h2>
             <h2 className="guild-settings">Guild Settings</h2>
@@ -209,7 +243,7 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclikedGuild}) => {
         {/* for members */}
         {AllMembers && AllMembers.Members.some(Member => Member.UserName === UserData.username) && (
           <div className="guild-rightside-div">
-            <h2>View Guild Stats</h2>
+            <h2 onClick={handleViewGuildStats} style={{cursor: 'pointer'}}>View Guild Stats</h2>
             <h2 className="guild-settings">Guild Settings</h2>
           </div>
         )}
@@ -219,7 +253,20 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclikedGuild}) => {
          guild settings send message to elders,  leave guild,  */
         }
       </div>
-     
+      {ShowGuildStats && (
+        <div className="Guild-stats-popup">
+          <div><h2>{clickedGuild.guildName}</h2></div>
+          <div>Guild Privacy: {clickedGuild.Findable ? 'Findable' : 'Private'}</div>
+          <div>Request To Join: {clickedGuild.RequestToJoin ? 'Yes' : 'No'}</div>
+          <div>Owner: {AllMembers.Owner.UserName}</div>
+          <div>Guild Color: {clickedGuild.guildColor}</div>
+          <div>Guild Creation Date: {clickedGuild.guildDate ? clickedGuild.guildDate.substring(0, 10) : ''}</div>
+          <div> # of Members: {clickedGuild.joinedTravelers.length + clickedGuild.guildElders.length}</div>
+          <div># of Post: {clickedGuild.guildPost.length}</div>
+          <div># of Banned Travelers: {clickedGuild.bannedTravelers.length}</div>
+          <div style={{alignSelf: 'center', cursor: 'pointer'}} onClick={handleViewGuildStats}>Finish</div>
+        </div>
+      )}
     </div>
   );
 };
