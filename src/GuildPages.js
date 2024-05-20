@@ -5,8 +5,10 @@ import { io } from "socket.io-client";
 const GuildPages = ({UserData, setUserData, clickedGuild, setclikedGuild}) => {
   const [socket, setSocket] = useState(null);
   const [AllMembers, setAllMembers] = useState(null);
+  const [RequestedMembers, setRequestedMembers] = useState(null);
   const [clickedMember, setclickedMember] = useState(null);
   const [ShowGuildStats, setShowGuildStats] = useState(false);
+  const [ShowGuildJoinRequest, setShowGuildJoinRequest] = useState(false);
   const [ShowBanReasonInput, setShowBanReasonInput] = useState(false);
   const [BaninputValue, setBanInputValue] = useState('');
   const containerRef = useRef(null);
@@ -38,6 +40,7 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclikedGuild}) => {
   const toggleTooltip = (memberId) => {
     setclickedMember(clickedMember === memberId ? null : memberId);
     setShowBanReasonInput(false)
+    setBanInputValue('')
   };
   // need sockets for post 
   //need socket for comments on post 
@@ -58,6 +61,19 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclikedGuild}) => {
       console.error('Error fetching all guilds:', error);
     }
   };
+  const fetchRequestToJoinMembers = async () => {
+    try {
+      const response = await fetch(`http://localhost:5000/Guilds/ReqToJoinTavelers/${clickedGuild.id || clickedGuild._id}`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch members');
+      }
+      const travelersData = await response.json();
+      console.log(travelersData)
+      setRequestedMembers(travelersData.traveler);
+    } catch (error) {
+      console.error('Error fetching all guilds:', error);
+    }
+  };
   useEffect(() => {
      // Establish Socket connection
      const socket = io('http://localhost:5000');
@@ -70,6 +86,7 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclikedGuild}) => {
      socket.emit('joinGuildRoom', guildId);
      // Clean up socket connection when component unmounts
     fetchGuildMembers();
+    fetchRequestToJoinMembers()
     return () => {
       socket.disconnect();
     };
@@ -123,6 +140,9 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclikedGuild}) => {
   const handleViewGuildStats = () => {
     setShowGuildStats(!ShowGuildStats)
   }
+  const handleManageJoinReq = () => {
+    setShowGuildJoinRequest(!ShowGuildJoinRequest)
+  }
   
   return (
     <div className='Guild-Pages-main-div'>
@@ -151,7 +171,7 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclikedGuild}) => {
                   <div>
                     <h2 style={{cursor: 'pointer'}} onClick={() => toggleTooltip(elder.id)}>{elder.UserName } <span style={{fontSize: '14px', fontWeight: '400'}}>Elder</span></h2>
                     {UserData.username !== elder.UserName && (
-                      <div className="guild-elder-tooltip" style={{ display: clickedMember === elder.id ? 'block' : 'none' }}>
+                      <div className="guild-member-tooltip" style={{ display: clickedMember === elder.id ? 'block' : 'none' }}>
                       <Link to={`/user/${elder.UserName}`}><div>View {elder.UserName}'s Profile</div></Link>
                         {UserData.username === AllMembers.Owner.UserName && (
                           <div style={{cursor: 'pointer'}} onClick={() => {DemoteToMember(elder.id || elder._id)}}>Demote to Member</div>
@@ -160,7 +180,7 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclikedGuild}) => {
                         {UserData.username === AllMembers.Owner.UserName  && (
                           <div style={{cursor: 'pointer'}} onClick={() => {HandleBanMember(elder.id || elder._id)}}>Ban From Guild</div>
                         )}
-                        { ShowBanReasonInput && (<div className="guild-member-tooltip" style={{ display: clickedMember === elder.id ? 'block' : 'none' }}>
+                        { ShowBanReasonInput && (<div className="guild-ban-tooltip" style={{ display: clickedMember === elder.id ? 'block' : 'none' }}>
                           <div>Reason For Ban: </div>
                           <input
                             type="text"
@@ -193,7 +213,7 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclikedGuild}) => {
                       {(UserData.username === AllMembers.Owner.UserName || AllMembers.Elders.some(elder => elder.UserName === UserData.username)) && (
                         <div style={{cursor: 'pointer'}} onClick={() => {HandleBanMember(member.id || member._id)}}>Ban From Guild</div>
                       )}
-                      { ShowBanReasonInput && (<div className="guild-member-tooltip" style={{ display: clickedMember === member.id ? 'block' : 'none' }}>
+                      { ShowBanReasonInput && (<div className="guild-ban-tooltip" style={{ display: clickedMember === member.id ? 'block' : 'none' }}>
                         <div>Reason For Ban: </div>
                         <input
                           type="text"
@@ -225,7 +245,7 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclikedGuild}) => {
         {AllMembers && UserData.username === AllMembers.Owner.UserName && (
           <div className="guild-rightside-div">
             <h2 onClick={handleViewGuildStats} style={{cursor: 'pointer'}}>View Guild Stats</h2>
-            <h2>Manage Guild Join request</h2>
+            <h2 onClick={handleManageJoinReq}>Manage Guild Join request</h2>
             <h2>Send A Guild Alert</h2>
             <h2>Manage Guild</h2>
             <h2 className="guild-settings">Guild Settings</h2>
@@ -235,7 +255,7 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclikedGuild}) => {
         {AllMembers && AllMembers.Elders.some(elder => elder.UserName === UserData.username) && (
           <div className="guild-rightside-div">
             <h2 onClick={handleViewGuildStats} style={{cursor: 'pointer'}}>View Guild Stats</h2>
-            <h2>Manage Guild Join request</h2>
+            <h2 onClick={handleManageJoinReq}>Manage Guild Join request</h2>
             <h2>Send a message up to Guild Master</h2>
             <h2 className="guild-settings">Guild Settings</h2>
           </div>
@@ -265,6 +285,39 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclikedGuild}) => {
           <div># of Post: {clickedGuild.guildPost.length}</div>
           <div># of Banned Travelers: {clickedGuild.bannedTravelers.length}</div>
           <div style={{alignSelf: 'center', cursor: 'pointer'}} onClick={handleViewGuildStats}>Finish</div>
+        </div>
+      )}
+      {ShowGuildJoinRequest && (
+        <div>
+          {clickedGuild.RequestToJoin ? (
+            <div>
+              You currently have {clickedGuild.guildJoinRequest.length} join request.
+              {clickedGuild.guildJoinRequest.length > 0 && (
+                <div>
+                  {RequestedMembers.map(traveler => {
+                    <div>
+                      {traveler.username}
+                      {traveler.AccPrivate ? (
+                        <div>This Account is Private</div>
+                      ) : (
+                        <Link to={`/user/${traveler.username}`}><div>
+                          View Profile
+                        </div></Link>
+                      )}
+                      <div>
+                        Accept Request
+                      </div>
+                      <div>
+                        Decline Request
+                      </div>
+                    </div>
+                  })}
+                </div>
+              )}
+            </div>
+          ) : (
+            <p>Your guild is currently open for all to join. To change this, go to guild settings.</p>
+          )}
         </div>
       )}
     </div>
