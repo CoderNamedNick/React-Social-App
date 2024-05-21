@@ -80,6 +80,9 @@ const JoinAGuild = ({ UserData, setUserData }) => {
       setUserData(data.user);
       console.log('Join request sent successfully');
       setRequestedGuilds([...requestedGuilds, guildId]);
+      if (socket) {
+        socket.emit('request-join-guild', guildId);
+      }
     } catch (error) {
       console.error('Error sending join request:', error);
     }
