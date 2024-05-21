@@ -976,3 +976,27 @@ a{
   padding: 20px;
   font-weight: 500;
 }
+.Guild-Request-popup{
+  position: fixed;
+  top: 10%;
+  left: 10%;
+  right: 10%;
+  bottom: 10%;
+  background-color: rgba(68, 65, 65, 0.877);
+  color: white;
+  border-radius: 5%;
+  font-size: 30px;
+  word-wrap: break-word;
+  padding: 20px;
+  font-weight: 500;
+}
+.guild-req-counter{
+  background-color: red;
+  font-size: 20px;
+  padding-left: 3px;
+  padding-right: 3px;
+  padding-bottom: 2px;
+  border: rgba(0, 0, 0, 0.61) solid 1px;
+  text-align: center;
+  border-radius: 10px;
+}
