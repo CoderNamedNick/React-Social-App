@@ -2,11 +2,12 @@ import React, { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { io } from "socket.io-client";
 
-const GuildPages = ({UserData, setUserData, clickedGuild, setclikedGuild}) => {
+const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
   const [socket, setSocket] = useState(null);
   const [AllMembers, setAllMembers] = useState(null);
   const [RequestedMembers, setRequestedMembers] = useState(null);
   const [clickedMember, setclickedMember] = useState(null);
+  const [GuildRequestCount, setGuildRequestCount] = useState('0')
   const [ShowGuildStats, setShowGuildStats] = useState(false);
   const [ShowGuildJoinRequest, setShowGuildJoinRequest] = useState(false);
   const [ShowBanReasonInput, setShowBanReasonInput] = useState(false);
@@ -87,6 +88,7 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclikedGuild}) => {
      // Clean up socket connection when component unmounts
     fetchGuildMembers();
     fetchRequestToJoinMembers()
+    setGuildRequestCount(clickedGuild.guildJoinRequest.length)
     return () => {
       socket.disconnect();
     };
@@ -97,12 +99,19 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclikedGuild}) => {
         console.log('got new member')
         setAllMembers(guildMembersWithElders);
       });
+      socket.on('guildReqUpdates', (updatedGuild, joinRequestCount, ReqToJoinTavelers) => {
+        console.log('got new request update')
+        setclickedGuild(updatedGuild)
+        setGuildRequestCount(joinRequestCount)
+        setRequestedMembers(ReqToJoinTavelers)
+      });
     }
   
     // Clean up event listener when component unmounts
     return () => {
       if (socket) {
         socket.off('promote-update');
+        socket.off('guildReqUpdates');
       }
     };
   }, [AllMembers]);
@@ -245,7 +254,7 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclikedGuild}) => {
         {AllMembers && UserData.username === AllMembers.Owner.UserName && (
           <div className="guild-rightside-div">
             <h2 onClick={handleViewGuildStats} style={{cursor: 'pointer'}}>View Guild Stats</h2>
-            <h2 onClick={handleManageJoinReq}>Manage Guild Join request</h2>
+            <h2 onClick={handleManageJoinReq}>Manage Guild Join request <span className="guild-req-counter">{GuildRequestCount}</span></h2>
             <h2>Send A Guild Alert</h2>
             <h2>Manage Guild</h2>
             <h2 className="guild-settings">Guild Settings</h2>
@@ -255,7 +264,7 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclikedGuild}) => {
         {AllMembers && AllMembers.Elders.some(elder => elder.UserName === UserData.username) && (
           <div className="guild-rightside-div">
             <h2 onClick={handleViewGuildStats} style={{cursor: 'pointer'}}>View Guild Stats</h2>
-            <h2 onClick={handleManageJoinReq}>Manage Guild Join request</h2>
+            <h2 onClick={handleManageJoinReq}>Manage Guild Join request <span className="guild-req-counter">{GuildRequestCount}</span></h2>
             <h2>Send a message up to Guild Master</h2>
             <h2 className="guild-settings">Guild Settings</h2>
           </div>
@@ -288,30 +297,26 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclikedGuild}) => {
         </div>
       )}
       {ShowGuildJoinRequest && (
-        <div>
+        <div className="Guild-Request-popup">
           {clickedGuild.RequestToJoin ? (
             <div>
               You currently have {clickedGuild.guildJoinRequest.length} join request.
-              {clickedGuild.guildJoinRequest.length > 0 && (
+              {clickedGuild.guildJoinRequest.length !== 0 && (
                 <div>
-                  {RequestedMembers.map(traveler => {
-                    <div>
-                      {traveler.username}
+                  {RequestedMembers.map((traveler, index) => ( // Added parentheses and index parameter
+                    <div key={index}> {/* Added key for each mapped element */}
+                      {traveler.UserName}
                       {traveler.AccPrivate ? (
                         <div>This Account is Private</div>
                       ) : (
-                        <Link to={`/user/${traveler.username}`}><div>
-                          View Profile
-                        </div></Link>
+                        <Link to={`/user/${traveler.username}`}>
+                          <div>View Profile</div>
+                        </Link>
                       )}
-                      <div>
-                        Accept Request
-                      </div>
-                      <div>
-                        Decline Request
-                      </div>
+                      <div>Accept Request</div>
+                      <div>Decline Request</div>
                     </div>
-                  })}
+                  ))}
                 </div>
               )}
             </div>
