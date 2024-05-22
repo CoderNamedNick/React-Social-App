@@ -154,6 +154,14 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
     }
   }
 
+  const DeclineJoinRequest = (TravelerId) => {
+    if (socket) {
+      const GuildId = clickedGuild.id || clickedGuild._id
+      console.log('sending emit')
+      socket.emit('New-member-Declined', GuildId, TravelerId );
+    }
+  }
+
   const handleViewGuildStats = () => {
     setShowGuildStats(!ShowGuildStats)
   }
@@ -325,7 +333,7 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
                       </div>
                       <div style={{display: 'flex', flexDirection: 'column', gap:'10px'}}>
                         <div onClick={() => {AcceptJoinRequest(traveler.id || traveler._id)}}>Accept Request</div>
-                        <div>Decline Request</div>
+                        <div onClick={() => {DeclineJoinRequest(traveler.id || traveler._id)}}>Decline Request</div>
                       </div>
                     </div>
                   ))}
