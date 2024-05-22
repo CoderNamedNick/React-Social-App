@@ -1000,3 +1000,16 @@ a{
   text-align: center;
   border-radius: 10px;
 }
+.ReqMember-item{
+  display: flex;
+  flex-direction: row;
+  width: 96%;
+  justify-content: space-between;
+  background-color: rgb(93, 170, 147);
+  color: rgba(7, 7, 7, 0.801);
+  margin-bottom: 10px;
+  border-radius: 3%;
+  border: black solid 1px;
+  padding: 2%;
+  border-bottom: 3px solid rgba(0, 0, 0, 0.37);
+}

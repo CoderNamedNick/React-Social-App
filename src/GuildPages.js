@@ -146,6 +146,14 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
     }
   }
 
+  const AcceptJoinRequest = (TravelerId) => {
+    if (socket) {
+      const GuildId = clickedGuild.id || clickedGuild._id
+      console.log('sending emit')
+      socket.emit('New-member-Accepted', GuildId, TravelerId );
+    }
+  }
+
   const handleViewGuildStats = () => {
     setShowGuildStats(!ShowGuildStats)
   }
@@ -300,21 +308,25 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
         <div className="Guild-Request-popup">
           {clickedGuild.RequestToJoin ? (
             <div>
-              You currently have {clickedGuild.guildJoinRequest.length} join request.
+              <div style={{marginBottom: '10px'}}>You currently have {clickedGuild.guildJoinRequest.length} join request.</div>
               {clickedGuild.guildJoinRequest.length !== 0 && (
                 <div>
                   {RequestedMembers.map((traveler, index) => ( // Added parentheses and index parameter
-                    <div key={index}> {/* Added key for each mapped element */}
-                      {traveler.UserName}
-                      {traveler.AccPrivate ? (
-                        <div>This Account is Private</div>
-                      ) : (
-                        <Link to={`/user/${traveler.username}`}>
-                          <div>View Profile</div>
-                        </Link>
-                      )}
-                      <div>Accept Request</div>
-                      <div>Decline Request</div>
+                    <div className="ReqMember-item" key={index}> {/* Added key for each mapped element */}
+                      <div>
+                        {traveler.UserName}
+                        {traveler.AccPrivate ? (
+                          <div>This Account is Private</div>
+                        ) : (
+                          <Link to={`/user/${traveler.UserName}`}>
+                            <div>View Profile</div>
+                          </Link>
+                        )}
+                      </div>
+                      <div style={{display: 'flex', flexDirection: 'column', gap:'10px'}}>
+                        <div onClick={() => {AcceptJoinRequest(traveler.id || traveler._id)}}>Accept Request</div>
+                        <div>Decline Request</div>
+                      </div>
                     </div>
                   ))}
                 </div>
