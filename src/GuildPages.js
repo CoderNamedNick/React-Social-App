@@ -332,8 +332,8 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
                         )}
                       </div>
                       <div style={{display: 'flex', flexDirection: 'column', gap:'10px'}}>
-                        <div onClick={() => {AcceptJoinRequest(traveler.id || traveler._id)}}>Accept Request</div>
-                        <div onClick={() => {DeclineJoinRequest(traveler.id || traveler._id)}}>Decline Request</div>
+                        <div style={{cursor: 'pointer'}} onClick={() => {AcceptJoinRequest(traveler.id || traveler._id)}}>Accept Request</div>
+                        <div style={{cursor: 'pointer'}} onClick={() => {DeclineJoinRequest(traveler.id || traveler._id)}}>Decline Request</div>
                       </div>
                     </div>
                   ))}

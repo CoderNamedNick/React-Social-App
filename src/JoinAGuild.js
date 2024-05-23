@@ -145,8 +145,7 @@ const JoinAGuild = ({ UserData, setUserData }) => {
         !guild.joinedTravelers.includes(UserData._id) &&
         !requestedGuilds.includes(guild.id) &&
         !requestedGuilds.includes(guild._id) &&
-        !guild.bannedTravelers.includes(UserData.id) &&
-        !guild.bannedTravelers.includes(UserData._id) &&
+        !guild.bannedTravelers.some(traveler => traveler.Traveler === UserData.id || traveler.Traveler === UserData._id) &&
         (
           guild.guildName.toLowerCase().includes(searchQuery.toLowerCase()) ||
           guild.guildMoto.toLowerCase().includes(searchQuery.toLowerCase()) ||
