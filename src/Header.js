@@ -93,6 +93,12 @@ const Header = ({ title, LogOut, UserData, setUserData, clickedguild }) => {
     }, [UserData]);
 
     useEffect(() => {
+      const handleBannedFromGuild = (NewUserInfo) => {
+        setUserData(NewUserInfo);
+        if (location.pathname === "/GuildPages") {
+          navigate('/HomePage');
+        }
+      };
       if (socket) {
         const userId = UserData.id || UserData._id
         // Listen for socket event indicating conversation count update
@@ -106,10 +112,9 @@ const Header = ({ title, LogOut, UserData, setUserData, clickedguild }) => {
             setMessageCount(allunreadmessageCount); // Update message count based on the initial response
           });
         });
-        socket.on('Banned-From-A-Guild', (NewUserInfo) => {
-          console.log('updated User YAYAYAYAYAY')
-          setUserData(NewUserInfo)
-          navigate('/HomePage')
+        socket.on('Banned-From-A-Guild', handleBannedFromGuild);
+        socket.on('Updated-User-Data', (NewUserData) => {
+          setUserData(NewUserData)
         });
       }
     
@@ -119,7 +124,7 @@ const Header = ({ title, LogOut, UserData, setUserData, clickedguild }) => {
           socket.off('convo-count-update');
         }
       };
-    }, [socket, UserData]);
+    }, [location.pathname, navigate, socket, UserData]);
 
   const menuClick = () => {
     setShowMenu(!showMenu);
