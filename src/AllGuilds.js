@@ -1,13 +1,27 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Travelers from "./Travelers";
+import { io } from "socket.io-client";
 
 const AllGuilds = ({ UserData, setUserData, clickedGuild, setclickedGuild }) => {
   const [OwnedGuilds, setOwnedGuilds] = useState([]);
   const [JoinedGuilds, setJoinedGuilds] = useState([]);
   const [RequestedGuilds, setRequestedGuilds] = useState([]);
   const [NoGuild, setNoGuild] = useState(false);
+  const [socket, setSocket] = useState(null)
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const socket = io('http://localhost:5000');
+    setSocket(socket)
+    socket.on('connect', () => {
+      console.log('connected');
+    });
+   return () => {
+     socket.disconnect();
+   };
+  }, []);
+
 
   useEffect(() => {
     const fetchGuildData = async () => {
@@ -94,6 +108,9 @@ const AllGuilds = ({ UserData, setUserData, clickedGuild, setclickedGuild }) => 
       // Remove canceled guild ID from requestedGuilds array
       const updatedRequestedGuilds = RequestedGuilds.filter(guild => guild._id !== guildId);
       setRequestedGuilds(updatedRequestedGuilds);
+      if (socket) {
+        socket.emit('request-join-guild', guildId);
+      }
   
       console.log('Request Canceled successfully');
     } catch (error) {
