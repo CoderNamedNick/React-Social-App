@@ -12,6 +12,7 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
   const [ShowGuildJoinRequest, setShowGuildJoinRequest] = useState(false);
   const [ShowBanReasonInput, setShowBanReasonInput] = useState(false);
   const [BaninputValue, setBanInputValue] = useState('');
+  const [ShowGuildSettings, setShowGuildSettings] = useState(false)
   const containerRef = useRef(null);
 
 
@@ -168,6 +169,9 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
   const handleManageJoinReq = () => {
     setShowGuildJoinRequest(!ShowGuildJoinRequest)
   }
+  const handleGuildSettings = () => {
+    setShowGuildSettings(!ShowGuildSettings)
+  }
   
   return (
     <div className='Guild-Pages-main-div'>
@@ -272,8 +276,8 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
             <h2 onClick={handleViewGuildStats} style={{cursor: 'pointer'}}>View Guild Stats</h2>
             <h2 onClick={handleManageJoinReq}>Manage Guild Join request <span className="guild-req-counter">{GuildRequestCount}</span></h2>
             <h2>Send A Guild Alert</h2>
-            <h2>Manage Guild</h2>
-            <h2 className="guild-settings">Guild Settings</h2>
+            <h2>View Elder messages</h2>
+            <h2 className="guild-settings" onClick={handleGuildSettings}>Guild Settings</h2>
           </div>
         )}
         {/* for elders */}
@@ -282,14 +286,14 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
             <h2 onClick={handleViewGuildStats} style={{cursor: 'pointer'}}>View Guild Stats</h2>
             <h2 onClick={handleManageJoinReq}>Manage Guild Join request <span className="guild-req-counter">{GuildRequestCount}</span></h2>
             <h2>Send a message up to Guild Master</h2>
-            <h2 className="guild-settings">Guild Settings</h2>
+            <h2 className="guild-settings" onClick={handleGuildSettings}>Guild Settings</h2>
           </div>
         )}
         {/* for members */}
         {AllMembers && AllMembers.Members.some(Member => Member.UserName === UserData.username) && (
           <div className="guild-rightside-div">
             <h2 onClick={handleViewGuildStats} style={{cursor: 'pointer'}}>View Guild Stats</h2>
-            <h2 className="guild-settings">Guild Settings</h2>
+            <h2 className="guild-settings" onClick={handleGuildSettings}>Guild Settings</h2>
           </div>
         )}
         {
@@ -342,6 +346,42 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
             </div>
           ) : (
             <p>Your guild is currently open for all to join. To change this, go to guild settings.</p>
+          )}
+        </div>
+      )}
+      {ShowGuildSettings && (
+        <div className="guild-settings-div">
+          {AllMembers && AllMembers.Members.some(Member => Member.UserName === UserData.username) && (
+            <div className="guild-settings-popup">
+              <div onClick={handleGuildSettings}>Finish</div>
+              <div>View Guild guidelines</div>
+              <div>Report Guild User</div>
+              <div>Report Guild</div>
+              <div>Retire From Guild</div>
+            </div>
+          )}
+          {AllMembers && AllMembers.Elders.some(elder => elder.UserName === UserData.username) && (
+            <div className="guild-settings-popup">
+              <div onClick={handleGuildSettings}>Finish</div>
+              <div>View Guild guidelines</div>
+              <div>Report Guild User</div>
+              <div>Report Guild</div>
+              <div>Demote Self</div>
+              <div>Give User a Warning</div>
+              <div>Retire From Guild</div>
+            </div>
+          )}
+          {AllMembers && UserData.username === AllMembers.Owner.UserName && (
+            <div className="guild-settings-popup">
+              <div onClick={handleGuildSettings} style={{alignSelf: 'flex-start'}}>Finish</div>
+              <div>Manage Guild guidelines</div>
+              <div>Change Guild Features</div>
+              <div>See Report List</div>
+              <div>Manage Banned Travelers</div>
+              <div>Give User a Warning</div>
+              <div>Give Up OwnerShip</div>
+              <div>Disband Guild</div>
+            </div>
           )}
         </div>
       )}
