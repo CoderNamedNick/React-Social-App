@@ -1013,3 +1013,22 @@ a{
   padding: 2%;
   border-bottom: 3px solid rgba(0, 0, 0, 0.37);
 }
+.guild-settings-div {
+  position: fixed;
+  top: 108px;
+  left: 20%;
+  right: 0%;
+  bottom: 0%;
+  background-color: rgba(126, 123, 123, 0.932);
+  color: white;
+  font-size: 30px;
+  word-wrap: break-word;
+  padding: 20px;
+  font-weight: 500;
+}
+.guild-settings-popup {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 40px;
+}
