@@ -11,6 +11,7 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
   const [ShowGuildStats, setShowGuildStats] = useState(false);
   const [ShowGuildJoinRequest, setShowGuildJoinRequest] = useState(false);
   const [ShowBanReasonInput, setShowBanReasonInput] = useState(false);
+  const [ShowGuildGuidelines, setShowGuildGuidelines] = useState(false)
   const [BaninputValue, setBanInputValue] = useState('');
   const [ShowGuildSettings, setShowGuildSettings] = useState(false)
   const containerRef = useRef(null);
@@ -172,6 +173,9 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
   const handleGuildSettings = () => {
     setShowGuildSettings(!ShowGuildSettings)
   }
+  const handleGuildGuidelines = () => {
+    setShowGuildGuidelines(!ShowGuildGuidelines)
+  }
   
   return (
     <div className='Guild-Pages-main-div'>
@@ -195,13 +199,13 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
               <hr/>
               <div style={{display: 'flex', flexDirection: 'column', gap: '5px'}}>
                 {AllMembers.Elders
-                .filter(elders => elders.AccPrivate === false) 
                 .map((elder) => (
                   <div>
                     <h2 style={{cursor: 'pointer'}} onClick={() => toggleTooltip(elder.id)}>{elder.UserName } <span style={{fontSize: '14px', fontWeight: '400'}}>Elder</span></h2>
                     {UserData.username !== elder.UserName && (
                       <div className="guild-member-tooltip" style={{ display: clickedMember === elder.id ? 'block' : 'none' }}>
-                      <Link to={`/user/${elder.UserName}`}><div>View {elder.UserName}'s Profile</div></Link>
+                      {!elder.AccPrivate && (<Link to={`/user/${elder.UserName}`}><div>View {elder.UserName}'s Profile</div></Link>)}
+                      {elder.AccPrivate && (<div>{elder.UserName}'s Profile Is Private</div>)}
                         {UserData.username === AllMembers.Owner.UserName && (
                           <div style={{cursor: 'pointer'}} onClick={() => {DemoteToMember(elder.id || elder._id)}}>Demote to Member</div>
                         )}
@@ -226,7 +230,6 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
               {AllMembers.Elders.length !== 0 && (<hr/>)}
               <div style={{display: 'flex', flexDirection: 'column', gap: '5px'}}>
               {AllMembers.Members
-              .filter(member => member.AccPrivate === false) 
               .map((member) => (
                 <div key={member.id}>
                   <h2 style={{cursor: 'pointer'}} onClick={() => toggleTooltip(member.id)}>
@@ -234,7 +237,8 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
                   </h2>
                   {UserData.username !== member.UserName && (
                     <div className="guild-member-tooltip" style={{ display: clickedMember === member.id ? 'block' : 'none' }}>
-                      <Link to={`/user/${member.UserName}`}><div>View {member.UserName}'s Profile</div></Link>
+                      {!member.AccPrivate && (<Link to={`/user/${member.UserName}`}><div>View {member.UserName}'s Profile</div></Link>)}
+                      {member.AccPrivate && (<div>{member.UserName}'s Profile Is Private</div>)}
                       {UserData.username === AllMembers.Owner.UserName && (
                         <div style={{cursor: 'pointer'}} onClick={() => {PromoteToElder(member.id || member._id)}}>Promote to Elder</div>
                       )}
@@ -269,7 +273,7 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
         <div style={{bottom: '1%', left: '21%', position: 'absolute'}}>Make A post</div>
       </div>
       <div className="Guild-Pages-right-side">
-        <h1 style={{marginTop: '108px'}}>Configuration</h1>
+        <h4 style={{marginTop: '108px'}}>Configuration</h4>
         {/* for owner */}
         {AllMembers && UserData.username === AllMembers.Owner.UserName && (
           <div className="guild-rightside-div">
@@ -293,6 +297,7 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
         {AllMembers && AllMembers.Members.some(Member => Member.UserName === UserData.username) && (
           <div className="guild-rightside-div">
             <h2 onClick={handleViewGuildStats} style={{cursor: 'pointer'}}>View Guild Stats</h2>
+            <h2>View Warnings</h2>
             <h2 className="guild-settings" onClick={handleGuildSettings}>Guild Settings</h2>
           </div>
         )}
@@ -353,34 +358,77 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
         <div className="guild-settings-div">
           {AllMembers && AllMembers.Members.some(Member => Member.UserName === UserData.username) && (
             <div className="guild-settings-popup">
-              <div onClick={handleGuildSettings}>Finish</div>
-              <div>View Guild guidelines</div>
-              <div>Report Guild User</div>
-              <div>Report Guild</div>
-              <div>Retire From Guild</div>
+              <div onClick={handleGuildSettings} style={{alignSelf: 'flex-start', cursor: 'pointer'}}>Finish</div>
+              <div className="guild-settings-popup-item" onClick={handleGuildGuidelines}>View Guild guidelines</div>
+              <div className="guild-settings-popup-item">Report Guild User</div>
+              <div className="guild-settings-popup-item">Report Guild</div>
+              <div className="guild-settings-popup-item">Retire From Guild</div>
             </div>
           )}
           {AllMembers && AllMembers.Elders.some(elder => elder.UserName === UserData.username) && (
             <div className="guild-settings-popup">
-              <div onClick={handleGuildSettings}>Finish</div>
-              <div>View Guild guidelines</div>
-              <div>Report Guild User</div>
-              <div>Report Guild</div>
-              <div>Demote Self</div>
-              <div>Give User a Warning</div>
-              <div>Retire From Guild</div>
+              <div onClick={handleGuildSettings} style={{alignSelf: 'flex-start', cursor: 'pointer'}}>Finish</div>
+              <div className="guild-settings-popup-item" onClick={handleGuildGuidelines}>View Guild guidelines</div>
+              <div className="guild-settings-popup-item">Report Guild User</div>
+              <div className="guild-settings-popup-item">Report Guild</div>
+              <div className="guild-settings-popup-item">Demote Self</div>
+              <div className="guild-settings-popup-item">Give User a Warning</div>
+              <div className="guild-settings-popup-item">Retire From Guild</div>
             </div>
           )}
           {AllMembers && UserData.username === AllMembers.Owner.UserName && (
             <div className="guild-settings-popup">
-              <div onClick={handleGuildSettings} style={{alignSelf: 'flex-start'}}>Finish</div>
-              <div>Manage Guild guidelines</div>
-              <div>Change Guild Features</div>
-              <div>See Report List</div>
-              <div>Manage Banned Travelers</div>
-              <div>Give User a Warning</div>
-              <div>Give Up OwnerShip</div>
-              <div>Disband Guild</div>
+              <div onClick={handleGuildSettings} style={{alignSelf: 'flex-start', cursor: 'pointer'}}>Finish</div>
+              <div className="guild-settings-popup-item" onClick={handleGuildGuidelines}>Manage Guild guidelines</div>
+              <div className="guild-settings-popup-item">Change Guild Features</div>
+              <div className="guild-settings-popup-item">See Report List</div>
+              <div className="guild-settings-popup-item">Manage Banned Travelers</div>
+              <div className="guild-settings-popup-item">Give User a Warning</div>
+              <div className="guild-settings-popup-item">Give Up OwnerShip</div>
+              <div className="guild-settings-popup-item">Disband Guild</div>
+            </div>
+          )}
+        </div>
+      )}
+      {ShowGuildGuidelines && (
+        <div className="guild-guidelines-popup-main">
+          <h1>Guild Guidelines</h1>
+          {AllMembers && UserData.username !== AllMembers.Owner.UserName && (
+            <div className="guild-Guideline-popup">
+              <h3>Guild Guidelines are unique to each guild to make the guild a welcoming and safe place.</h3>
+              {clickedGuild.guildGuidelines === "" && (
+                <div>
+                  Your guild leader has not yet set up guidelines for the Guild.
+                  Please come back when he has to check the newest updated guidelines!
+                </div>
+              )}
+              {clickedGuild.guildGuidelines !== "" && (
+                <div>
+                  {clickedGuild.guildGuidelines}
+                </div>
+              )}
+              <h2 onClick={handleGuildGuidelines} >Acknowledge guidelines</h2>
+            </div>
+          )}
+          {AllMembers && UserData.username === AllMembers.Owner.UserName && (
+            <div className="guild-Guideline-popup">
+              <h3>Guild Guidelines are unique to each guild to make the guild a welcoming and safe place.</h3>
+              {clickedGuild.guildGuidelines === "" && (
+                <div>
+                  There Are No guidelines to follow. As Guild Leader please make Guild Lines For your members to follow
+                </div>
+              )}
+              {clickedGuild.guildGuidelines !== "" && (
+                <div>
+                  <h2>These Are the Current Guidelines</h2>
+                  <br></br>
+                  {clickedGuild.guildGuidelines}
+                  <br></br>
+                  Whould you Like to change them??
+                  <h2><span>Yes</span>       <span>No</span></h2>
+                </div>
+              )}
+              <h2 onClick={handleGuildGuidelines} >Acknowledge guidelines</h2>
             </div>
           )}
         </div>
