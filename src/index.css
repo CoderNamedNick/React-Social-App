@@ -1014,13 +1014,13 @@ a{
   border-bottom: 3px solid rgba(0, 0, 0, 0.37);
 }
 .guild-settings-div {
-  position: fixed;
+  position: absolute;
   top: 108px;
   left: 20%;
   right: 0%;
   bottom: 0%;
-  background-color: rgba(126, 123, 123, 0.932);
-  color: white;
+  background-color: rgb(90, 89, 89);
+  color: rgb(255, 255, 255);
   font-size: 30px;
   word-wrap: break-word;
   padding: 20px;
@@ -1030,5 +1030,29 @@ a{
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 40px;
+  gap: 30px;
+}
+.guild-settings-popup-item {
+  background-color: #167263;
+  width: 100%;
+  text-align: center;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  border-radius: 20%;
+  border: solid black 1px;
+}
+.guild-guidelines-popup-main{
+  position: absolute;
+  top: 108px;
+  left: 20%;
+  right: 0%;
+  bottom: 0%;
+  background-color: rgb(90, 89, 89);
+  color: rgb(255, 255, 255);
+  font-size: 30px;
+  word-wrap: break-word;
+  padding: 20px;
+  font-weight: 500;
+  display: flex; 
+  flex-direction: column;
 }
