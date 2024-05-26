@@ -12,7 +12,9 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
   const [ShowGuildJoinRequest, setShowGuildJoinRequest] = useState(false);
   const [ShowBanReasonInput, setShowBanReasonInput] = useState(false);
   const [ShowGuildGuidelines, setShowGuildGuidelines] = useState(false)
+  const [ShowGuildGuidelines2, setShowGuildGuidelines2] = useState(false)
   const [BaninputValue, setBanInputValue] = useState('');
+  const [GuidelinesinputValue, setGuidelinesinputValue] = useState('');
   const [ShowGuildSettings, setShowGuildSettings] = useState(false)
   const containerRef = useRef(null);
 
@@ -20,6 +22,9 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
   const handleBanInputChange = (event) => {
     setBanInputValue(event.target.value);
   };
+  const handleGuidelinesInputChange = (event) => {
+    setGuidelinesinputValue(event.target.value);
+  }
   // Function to handle mouse wheel scroll
   const handleScroll = (e) => {
     const container = containerRef.current;
@@ -107,6 +112,10 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
         setGuildRequestCount(joinRequestCount)
         setRequestedMembers(ReqToJoinTavelers)
       });
+      socket.on('Guild-Settings-updates', (updatedGuild) => {
+        console.log('got new guild update')
+        setclickedGuild(updatedGuild)
+      });
     }
   
     // Clean up event listener when component unmounts
@@ -164,6 +173,18 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
     }
   }
 
+  const ChangeGuidelines = (NewGuidelines) => {
+    // check if this works pls
+    if (socket) {
+      const GuildId = clickedGuild.id || clickedGuild._id
+      console.log('sending emit')
+      socket.emit('Guidelines-updated', GuildId, NewGuidelines);
+    }
+    setShowGuildGuidelines(false)
+    setShowGuildGuidelines2(false)
+    setGuidelinesinputValue("")
+  }
+
   const handleViewGuildStats = () => {
     setShowGuildStats(!ShowGuildStats)
   }
@@ -175,6 +196,9 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
   }
   const handleGuildGuidelines = () => {
     setShowGuildGuidelines(!ShowGuildGuidelines)
+  }
+  const handleGuildGuidelines2 = () => {
+    setShowGuildGuidelines2(!ShowGuildGuidelines2)
   }
   
   return (
@@ -415,20 +439,41 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
               <h3>Guild Guidelines are unique to each guild to make the guild a welcoming and safe place.</h3>
               {clickedGuild.guildGuidelines === "" && (
                 <div>
-                  There Are No guidelines to follow. As Guild Leader please make Guild Lines For your members to follow
+                  <p>There Are No guidelines to follow. As Guild Leader please make Guild Lines For your members to follow</p>
+                  <textarea
+                    style={{width: '95%', height: '195px', resize: 'none', fontSize: '20px', fontWeight: '600' }}
+                    value={GuidelinesinputValue}
+                    onChange={handleGuidelinesInputChange}
+                  />
+                  <h2 onClick={() => {ChangeGuidelines(GuidelinesinputValue)}}>Save and Exit?</h2>
                 </div>
               )}
               {clickedGuild.guildGuidelines !== "" && (
                 <div>
-                  <h2>These Are the Current Guidelines</h2>
-                  <br></br>
-                  {clickedGuild.guildGuidelines}
-                  <br></br>
-                  Whould you Like to change them??
-                  <h2><span>Yes</span>       <span>No</span></h2>
+                  {!ShowGuildGuidelines2 && (
+                    <div>
+                      <h2>These Are the Current Guidelines</h2>
+                      <br></br>
+                      {clickedGuild.guildGuidelines}
+                      <br></br>
+                      <br/>
+                      <br/>
+                      Whould you Like to change them??
+                      <h2><span onClick={handleGuildGuidelines2}>Yes</span>       <span onClick={handleGuildGuidelines}>No</span></h2>
+                    </div>
+                  )}
+                  {ShowGuildGuidelines2 && (
+                    <div>
+                    <textarea
+                      style={{width: '95%', height: '195px', resize: 'none', fontSize: '20px', fontWeight: '600' }}
+                      value={GuidelinesinputValue}
+                      onChange={handleGuidelinesInputChange}
+                    />
+                    <h2 onClick={() => {ChangeGuidelines(GuidelinesinputValue)}}>Save and Exit?</h2>
+                  </div>
+                  )}
                 </div>
               )}
-              <h2 onClick={handleGuildGuidelines} >Acknowledge guidelines</h2>
             </div>
           )}
         </div>
