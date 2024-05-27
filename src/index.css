@@ -869,13 +869,11 @@ a{
   flex-direction: row;
   width: 100%;
   height: 100vh;
-  background: linear-gradient(to bottom, #c5daee4b, #266bc5);
   background-repeat: no-repeat;
   background-attachment: fixed; 
   overflow-y: auto;
 }
 .Guild-Pages-left-side{
-  background-color: #0f8878;
   width: 20%;
   height: 100%;
   display: flex;
@@ -890,20 +888,21 @@ a{
   border-bottom: solid 1px white;
 }
 .Guild-Pages-middle-side{
-  background-color: #365faa;
   width: 60%;
   height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
+  border-left: solid black 2px;
+  border-right: solid black 2px;
 }
 .Guild-Pages-right-side{
-  background-color: #aa3666;
   width: 20%;
   height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
+
 }
 .GP-left-side-2nd{
   margin-top: 108px;
@@ -959,6 +958,7 @@ a{
 .guild-settings {
   position: absolute;
   bottom: 0;
+  cursor: pointer;
 }
 .Guild-stats-popup{
   display: flex;
@@ -1031,6 +1031,7 @@ a{
   flex-direction: column;
   align-items: center;
   gap: 30px;
+  cursor: pointer;
 }
 .guild-settings-popup-item {
   background-color: #167263;
@@ -1052,7 +1053,12 @@ a{
   font-size: 30px;
   word-wrap: break-word;
   padding: 20px;
-  font-weight: 500;
   display: flex; 
   flex-direction: column;
+  align-items: center;
+}
+.guild-Guideline-popup{
+  display: flex; 
+  flex-direction: column;
+  align-items: center;
 }
