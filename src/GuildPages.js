@@ -18,6 +18,22 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
   const [ShowGuildSettings, setShowGuildSettings] = useState(false)
   const containerRef = useRef(null);
 
+  
+  const colors = [
+    { name: 'blue', color1: '#B5BAE1', color2: '#0F2180' },
+    { name: 'green', color1: '#9FE5A6', color2: '#0F6617' },
+    { name: 'red', color1: '#C26D6D', color2: '#A70909' },
+    { name: 'purple', color1: '#D8B4D9', color2: '#78096F' },
+    { name: 'yellow', color1: '#F9F1C7', color2: '#F6D936' },
+    { name: 'orange', color1: '#F6AF75', color2: '#EA6A00' },
+    { name: 'grey', color1: '#D3D3D3', color2: '#4D4545' },
+  ];
+
+  const getGuildColors = (guildColor) => {
+    const selectedColorData = colors.find(color => color.name === guildColor);
+    return selectedColorData ? `linear-gradient(to top, ${selectedColorData.color1}, ${selectedColorData.color2})` : '';
+  };
+
 
   const handleBanInputChange = (event) => {
     setBanInputValue(event.target.value);
@@ -202,7 +218,7 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
   }
   
   return (
-    <div className='Guild-Pages-main-div'>
+    <div style={{background: getGuildColors(clickedGuild.guildColor)}} className='Guild-Pages-main-div'>
       <div className="Guild-Pages-left-side">
         <div className="GP-left-side-2nd" >
           <p style={{width: '96%', paddingLeft: '2%'}} className="GP-guild-moto">{clickedGuild.guildMoto}</p>
@@ -290,7 +306,7 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
       </div>
       </div>
       <div className="Guild-Pages-middle-side">
-        <p style={{fontSize: '42px', paddingLeft: '10px', color: 'white', zIndex: '1000'}} className="medievalsharp-regular">{clickedGuild.guildName}</p>
+        <p style={{fontSize: '42px', paddingLeft: '10px', color: 'white'}} className="medievalsharp-regular">{clickedGuild.guildName}</p>
         {
          /*this will have Guild Name, main post and feed  */
         }
@@ -302,7 +318,7 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
         {AllMembers && UserData.username === AllMembers.Owner.UserName && (
           <div className="guild-rightside-div">
             <h2 onClick={handleViewGuildStats} style={{cursor: 'pointer'}}>View Guild Stats</h2>
-            <h2 onClick={handleManageJoinReq}>Manage Guild Join request <span className="guild-req-counter">{GuildRequestCount}</span></h2>
+            <h2 onClick={handleManageJoinReq} style={{cursor: 'pointer'}}>Manage Guild Join request <span className="guild-req-counter">{GuildRequestCount}</span></h2>
             <h2>Send A Guild Alert</h2>
             <h2>View Elder messages</h2>
             <h2 className="guild-settings" onClick={handleGuildSettings}>Guild Settings</h2>
@@ -312,7 +328,7 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
         {AllMembers && AllMembers.Elders.some(elder => elder.UserName === UserData.username) && (
           <div className="guild-rightside-div">
             <h2 onClick={handleViewGuildStats} style={{cursor: 'pointer'}}>View Guild Stats</h2>
-            <h2 onClick={handleManageJoinReq}>Manage Guild Join request <span className="guild-req-counter">{GuildRequestCount}</span></h2>
+            <h2 onClick={handleManageJoinReq} style={{cursor: 'pointer'}}>Manage Guild Join request <span className="guild-req-counter">{GuildRequestCount}</span></h2>
             <h2>Send a message up to Guild Master</h2>
             <h2 className="guild-settings" onClick={handleGuildSettings}>Guild Settings</h2>
           </div>
@@ -349,7 +365,10 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
         <div className="Guild-Request-popup">
           {clickedGuild.RequestToJoin ? (
             <div>
-              <div style={{marginBottom: '10px'}}>You currently have {clickedGuild.guildJoinRequest.length} join request.</div>
+              <div style={{marginBottom: '10px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'space-between'}}>
+                <p>You currently have {clickedGuild.guildJoinRequest.length} join request.</p>
+                <p style={{position: 'absolute', bottom: '0', cursor: 'pointer'}} onClick={handleManageJoinReq}>Finish</p>
+              </div>
               {clickedGuild.guildJoinRequest.length !== 0 && (
                 <div>
                   {RequestedMembers.map((traveler, index) => ( // Added parentheses and index parameter
@@ -416,10 +435,10 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
       )}
       {ShowGuildGuidelines && (
         <div className="guild-guidelines-popup-main">
-          <h1>Guild Guidelines</h1>
+          <h2>Guild Guidelines</h2>
+          <p style={{textAlign: 'center'}}>Guild Guidelines are unique to each guild to make the guild a welcoming and safe place.</p>
           {AllMembers && UserData.username !== AllMembers.Owner.UserName && (
             <div className="guild-Guideline-popup">
-              <h3>Guild Guidelines are unique to each guild to make the guild a welcoming and safe place.</h3>
               {clickedGuild.guildGuidelines === "" && (
                 <div>
                   Your guild leader has not yet set up guidelines for the Guild.
@@ -436,7 +455,6 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
           )}
           {AllMembers && UserData.username === AllMembers.Owner.UserName && (
             <div className="guild-Guideline-popup">
-              <h3>Guild Guidelines are unique to each guild to make the guild a welcoming and safe place.</h3>
               {clickedGuild.guildGuidelines === "" && (
                 <div>
                   <p>There Are No guidelines to follow. As Guild Leader please make Guild Lines For your members to follow</p>
@@ -452,14 +470,14 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
                 <div>
                   {!ShowGuildGuidelines2 && (
                     <div>
-                      <h2>These Are the Current Guidelines</h2>
+                      <p>These Are the Current Guidelines</p>
                       <br></br>
                       {clickedGuild.guildGuidelines}
-                      <br></br>
+                      <br/>
                       <br/>
                       <br/>
                       Whould you Like to change them??
-                      <h2><span onClick={handleGuildGuidelines2}>Yes</span>       <span onClick={handleGuildGuidelines}>No</span></h2>
+                      <h2><span style={{paddingRight: '60%', cursor: 'pointer'}} onClick={handleGuildGuidelines2}>Yes</span>       <span style={{cursor: 'pointer'}}  onClick={handleGuildGuidelines}>No</span></h2>
                     </div>
                   )}
                   {ShowGuildGuidelines2 && (
