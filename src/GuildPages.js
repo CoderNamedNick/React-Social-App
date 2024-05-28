@@ -35,13 +35,32 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Add logic to send a PATCH request with the updated values
-    console.log('Updated Guild:', guildData);
-    // Call the API to update the guild features here
+    const guildId = clickedGuild.id || clickedGuild._id; // Assuming guild ID is stored in clickedGuild._id
+    try {
+      const response = await fetch(`http://localhost:5000/Guilds/id/${guildId}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(guildData),
+      });
 
-    handleChangeFeatures(); // Close the edit form
+      if (!response.ok) {
+        throw new Error('Failed to update guild');
+      }
+
+      const updatedGuild = await response.json();
+      console.log('Updated Guild:', updatedGuild);
+      if (socket) {
+        socket.emit('update-all-guild', guildId);
+      }
+
+      handleChangeFeatures(); // Close the edit form
+    } catch (error) {
+      console.error('Error:', error);
+    }
   };
   
   const colors = [
@@ -154,6 +173,10 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
         setRequestedMembers(ReqToJoinTavelers)
       });
       socket.on('Guild-Settings-updates', (updatedGuild) => {
+        console.log('got new guild update')
+        setclickedGuild(updatedGuild)
+      });
+      socket.on('guild-update', (updatedGuild) => {
         console.log('got new guild update')
         setclickedGuild(updatedGuild)
       });
@@ -586,14 +609,22 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
               </div>
               <div>
                 <label>Guild Color:</label>
-                <input
-                  type="text"
+                <select
                   name="guildColor"
                   value={guildData.guildColor}
                   onChange={handleChange}
-                />
+                >
+                  <option value="blue">Blue</option>
+                  <option value="red">Red</option>
+                  <option value="orange">Orange</option>
+                  <option value="yellow">Yellow</option>
+                  <option value="grey">Grey</option>
+                  <option value="purple">Purple</option>
+                  <option value="green">Green</option>
+                </select>
               </div>
               <button type="submit" style={{ position: 'absolute', bottom: '0', right: '10px', cursor: 'pointer' }}>Finish</button>
+              <h2 onClick={handleEditFeatures} style={{ position: 'absolute', bottom: '0', left: '10px', cursor: 'pointer' }}>leave</h2>
             </form>
           </div>
           )}
