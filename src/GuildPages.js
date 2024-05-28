@@ -16,8 +16,33 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
   const [BaninputValue, setBanInputValue] = useState('');
   const [GuidelinesinputValue, setGuidelinesinputValue] = useState('');
   const [ShowGuildSettings, setShowGuildSettings] = useState(false)
+  const [ShowChangeGuildFeatures, setShowChangeGuildFeatures] = useState(false)
+  const [ShowEditGuildFeatures, setShowEditGuildFeatures] = useState(false)
+  const [guildData, setGuildData] = useState({
+    guildMoto: clickedGuild.guildMoto,
+    bio: clickedGuild.bio,
+    RequestToJoin: clickedGuild.RequestToJoin,
+    Findable: clickedGuild.Findable,
+    guildColor: clickedGuild.guildColor,
+  });
   const containerRef = useRef(null);
 
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setGuildData((prevData) => ({
+      ...prevData,
+      [name]: type === 'checkbox' ? checked : value,
+    }));
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // Add logic to send a PATCH request with the updated values
+    console.log('Updated Guild:', guildData);
+    // Call the API to update the guild features here
+
+    handleChangeFeatures(); // Close the edit form
+  };
   
   const colors = [
     { name: 'blue', color1: '#B5BAE1', color2: '#0F2180' },
@@ -215,6 +240,12 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
   }
   const handleGuildGuidelines2 = () => {
     setShowGuildGuidelines2(!ShowGuildGuidelines2)
+  }
+  const handleChangeFeatures= () => {
+    setShowChangeGuildFeatures(!ShowChangeGuildFeatures)
+  }
+  const handleEditFeatures= () => {
+    setShowEditGuildFeatures(!ShowEditGuildFeatures)
   }
   
   return (
@@ -423,7 +454,7 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
             <div className="guild-settings-popup">
               <div onClick={handleGuildSettings} style={{alignSelf: 'flex-start', cursor: 'pointer'}}>Finish</div>
               <div className="guild-settings-popup-item" onClick={handleGuildGuidelines}>Manage Guild guidelines</div>
-              <div className="guild-settings-popup-item">Change Guild Features</div>
+              <div className="guild-settings-popup-item" onClick={handleChangeFeatures}>Change Guild Features</div>
               <div className="guild-settings-popup-item">See Report List</div>
               <div className="guild-settings-popup-item">Manage Banned Travelers</div>
               <div className="guild-settings-popup-item">Give User a Warning</div>
@@ -493,6 +524,78 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
                 </div>
               )}
             </div>
+          )}
+        </div>
+      )}
+      {ShowChangeGuildFeatures && (
+        <div>
+          {!ShowEditGuildFeatures && (
+            <div className="guild-features-popup-main">
+              <h2 style={{textAlign: 'center'}}>Guild Features</h2>
+              <div>Guild Moto: {clickedGuild.guildMoto}</div>
+              <div>Guild bio: {clickedGuild.bio}</div>
+              <div>{clickedGuild.RequestToJoin ? 'Request To Join' : 'Open For all'}</div>
+              <div>Findable: {clickedGuild.Findable ? 'Findable' : 'Hidden'}</div>
+              <div>Guild Color: {clickedGuild.guildColor}</div>
+              <h3 className="guild-settings" onClick={handleEditFeatures}>Edit Features</h3>
+              <h3 onClick={handleChangeFeatures} style={{position: 'absolute', bottom: '0', right: '10px', cursor: 'pointer'}}>Finish</h3>
+            </div>
+          )}
+          {ShowEditGuildFeatures && (
+            <div className="guild-features-popup-main">
+            <h2 style={{ textAlign: 'center' }}>Edit Guild Features</h2>
+            <form onSubmit={handleSubmit}>
+              <div>
+                <label>Guild Moto:</label>
+                <input
+                  type="text"
+                  name="guildMoto"
+                  value={guildData.guildMoto}
+                  onChange={handleChange}
+                />
+              </div>
+              <div>
+                <label>Guild bio:</label>
+                <textarea
+                  name="bio"
+                  value={guildData.bio}
+                  onChange={handleChange}
+                />
+              </div>
+              <div>
+                <label>
+                  <input
+                    type="checkbox"
+                    name="RequestToJoin"
+                    checked={guildData.RequestToJoin}
+                    onChange={handleChange}
+                  />
+                  Request To Join
+                </label>
+              </div>
+              <div>
+                <label>
+                  <input
+                    type="checkbox"
+                    name="Findable"
+                    checked={guildData.Findable}
+                    onChange={handleChange}
+                  />
+                  Findable
+                </label>
+              </div>
+              <div>
+                <label>Guild Color:</label>
+                <input
+                  type="text"
+                  name="guildColor"
+                  value={guildData.guildColor}
+                  onChange={handleChange}
+                />
+              </div>
+              <button type="submit" style={{ position: 'absolute', bottom: '0', right: '10px', cursor: 'pointer' }}>Finish</button>
+            </form>
+          </div>
           )}
         </div>
       )}
