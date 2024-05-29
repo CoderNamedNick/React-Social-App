@@ -1077,3 +1077,43 @@ a{
   flex-direction: column;
   gap: 30px;
 }
+.guild-features-form-divs{
+  margin-top: 30px;
+}
+.guild-features-form-submit-btn {
+  position: absolute;
+  bottom: 5%;
+  right: 2%;
+  cursor: pointer;
+  background-color: rgba(128, 128, 128, 0);
+  border: none;
+  color: white;
+  font-weight: 800;
+  font-size: 36px;
+}
+.guild-Report-A-User-popup-main{
+  position: absolute;
+  top: 108px;
+  left: 20%;
+  right: 0%;
+  bottom: 0%;
+  background-color: rgb(90, 89, 89);
+  color: rgb(255, 255, 255);
+  font-size: 30px;
+  word-wrap: break-word;
+  padding: 20px;
+}
+.Report-A-User-grid-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-bottom: 20px;
+}
+.Report-A-User-grid-item {
+  border: 1px solid #ccc;
+  padding: 1px;
+  text-align: center;
+  background-color: #333030;
+  border-radius: 5px;
+  padding: 10px;
+}
