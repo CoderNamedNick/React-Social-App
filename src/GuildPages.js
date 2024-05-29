@@ -18,6 +18,7 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
   const [ShowGuildSettings, setShowGuildSettings] = useState(false)
   const [ShowChangeGuildFeatures, setShowChangeGuildFeatures] = useState(false)
   const [ShowEditGuildFeatures, setShowEditGuildFeatures] = useState(false)
+  const [ShowGuildReportUser, setShowGuildReportUser] = useState(false)
   const [guildData, setGuildData] = useState({
     guildMoto: clickedGuild.guildMoto,
     bio: clickedGuild.bio,
@@ -270,6 +271,9 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
   const handleEditFeatures= () => {
     setShowEditGuildFeatures(!ShowEditGuildFeatures)
   }
+  const handleReportAUser= () => {
+    setShowGuildReportUser(!ShowGuildReportUser)
+  }
   
   return (
     <div style={{background: getGuildColors(clickedGuild.guildColor)}} className='Guild-Pages-main-div'>
@@ -457,7 +461,8 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
             <div className="guild-settings-popup">
               <div onClick={handleGuildSettings} style={{alignSelf: 'flex-start', cursor: 'pointer'}}>Finish</div>
               <div className="guild-settings-popup-item" onClick={handleGuildGuidelines}>View Guild guidelines</div>
-              <div className="guild-settings-popup-item">Report Guild User</div>
+              <div className="guild-settings-popup-item" onClick={handleReportAUser}>Report A Guild User</div>
+              <div className="guild-settings-popup-item">Veiw Any Warnings</div>
               <div className="guild-settings-popup-item">Report Guild</div>
               <div className="guild-settings-popup-item">Retire From Guild</div>
             </div>
@@ -466,11 +471,12 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
             <div className="guild-settings-popup">
               <div onClick={handleGuildSettings} style={{alignSelf: 'flex-start', cursor: 'pointer'}}>Finish</div>
               <div className="guild-settings-popup-item" onClick={handleGuildGuidelines}>View Guild guidelines</div>
-              <div className="guild-settings-popup-item">Report Guild User</div>
+              <div className="guild-settings-popup-item"onClick={handleReportAUser}>Report A Guild User</div>
               <div className="guild-settings-popup-item">Report Guild</div>
               <div className="guild-settings-popup-item">Demote Self</div>
+              <div className="guild-settings-popup-item">See Report List</div>
               <div className="guild-settings-popup-item">Give User a Warning</div>
-              <div className="guild-settings-popup-item">Retire From Guild</div>
+              <div className="guild-settings-popup-item">Veiw Any Warnings</div>
             </div>
           )}
           {AllMembers && UserData.username === AllMembers.Owner.UserName && (
@@ -479,8 +485,8 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
               <div className="guild-settings-popup-item" onClick={handleGuildGuidelines}>Manage Guild guidelines</div>
               <div className="guild-settings-popup-item" onClick={handleChangeFeatures}>Change Guild Features</div>
               <div className="guild-settings-popup-item">See Report List</div>
-              <div className="guild-settings-popup-item">Manage Banned Travelers</div>
               <div className="guild-settings-popup-item">Give User a Warning</div>
+              <div className="guild-settings-popup-item">Manage Banned Travelers</div>
               <div className="guild-settings-popup-item">Give Up OwnerShip</div>
               <div className="guild-settings-popup-item">Disband Guild</div>
             </div>
@@ -568,24 +574,27 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
             <div className="guild-features-popup-main">
             <h2 style={{ textAlign: 'center' }}>Edit Guild Features</h2>
             <form onSubmit={handleSubmit}>
-              <div>
-                <label>Guild Moto:</label>
+              <div className="guild-features-form-divs">
+                <label>Guild Moto: </label>
                 <input
+                  maxLength={45}
                   type="text"
                   name="guildMoto"
                   value={guildData.guildMoto}
                   onChange={handleChange}
                 />
               </div>
-              <div>
-                <label>Guild bio:</label>
+              <div className="guild-features-form-divs">
+                <label>Guild bio: </label>
                 <textarea
+                  maxLength={165}
                   name="bio"
                   value={guildData.bio}
                   onChange={handleChange}
+                  style={{resize: 'none', height: '60px', width: '60%'}}
                 />
               </div>
-              <div>
+              <div className="guild-features-form-divs">
                 <label>
                   <input
                     type="checkbox"
@@ -593,10 +602,10 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
                     checked={guildData.RequestToJoin}
                     onChange={handleChange}
                   />
-                  Request To Join
+                   Request To Join
                 </label>
               </div>
-              <div>
+              <div className="guild-features-form-divs">
                 <label>
                   <input
                     type="checkbox"
@@ -604,11 +613,11 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
                     checked={guildData.Findable}
                     onChange={handleChange}
                   />
-                  Findable
+                   Findable
                 </label>
               </div>
-              <div>
-                <label>Guild Color:</label>
+              <div className="guild-features-form-divs">
+                <label>Guild Color: </label>
                 <select
                   name="guildColor"
                   value={guildData.guildColor}
@@ -623,12 +632,39 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
                   <option value="green">Green</option>
                 </select>
               </div>
-              <button type="submit" style={{ position: 'absolute', bottom: '0', right: '10px', cursor: 'pointer' }}>Finish</button>
+              <button className="guild-features-form-submit-btn" type="submit">Finish</button>
               <h2 onClick={handleEditFeatures} style={{ position: 'absolute', bottom: '0', left: '10px', cursor: 'pointer' }}>leave</h2>
             </form>
           </div>
           )}
         </div>
+      )}
+      {ShowGuildReportUser && (
+        <div className="guild-Report-A-User-popup-main">
+        <h2>Report A Guild User</h2>
+        <p>Who is the User you are reporting in the guild?</p>
+        <div style={{overflowY: 'auto', maxHeight: '55%', border: 'white solid 3px', paddingLeft: '20px', paddingRight: '20px'}}>
+          <h3>Elders</h3>
+          <div className="Report-A-User-grid-container">
+            {AllMembers.Elders.map((elder) => (
+              <div className="Report-A-User-grid-item" key={elder.UserName}>
+                <div>{elder.UserName}</div>
+                <div>Elder</div>
+              </div>
+            ))}
+          </div>
+          <h3>Members</h3>
+          <div className="Report-A-User-grid-container">
+            {AllMembers.Members.map((member) => (
+              <div className="Report-A-User-grid-item" key={member.UserName}>
+                <div>{member.UserName}</div>
+                <div>Member</div>
+              </div>
+            ))}
+          </div>
+        </div>
+        <h3 style={{ position: 'absolute', bottom: '0', left: '10px', cursor: 'pointer' }} onClick={handleReportAUser}>Finish</h3>
+      </div>
       )}
     </div>
   );
