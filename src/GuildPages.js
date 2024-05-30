@@ -14,11 +14,14 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
   const [ShowGuildGuidelines, setShowGuildGuidelines] = useState(false)
   const [ShowGuildGuidelines2, setShowGuildGuidelines2] = useState(false)
   const [BaninputValue, setBanInputValue] = useState('');
+  const [ReportinputValue, setReportInputValue] = useState('');
   const [GuidelinesinputValue, setGuidelinesinputValue] = useState('');
   const [ShowGuildSettings, setShowGuildSettings] = useState(false)
   const [ShowChangeGuildFeatures, setShowChangeGuildFeatures] = useState(false)
   const [ShowEditGuildFeatures, setShowEditGuildFeatures] = useState(false)
-  const [ShowGuildReportUser, setShowGuildReportUser] = useState(false)
+  const [ShowGuildReportUser, setShowGuildReportUser] = useState(false);
+  const [ShowGuildReportList, setShowGuildReportList] = useState(false)
+  const [clickedMemberForReport, setclickedMemberForReport] = useState(null);
   const [guildData, setGuildData] = useState({
     guildMoto: clickedGuild.guildMoto,
     bio: clickedGuild.bio,
@@ -82,6 +85,9 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
 
   const handleBanInputChange = (event) => {
     setBanInputValue(event.target.value);
+  };
+  const handleReportInputChange = (event) => {
+    setReportInputValue(event.target.value);
   };
   const handleGuidelinesInputChange = (event) => {
     setGuidelinesinputValue(event.target.value);
@@ -214,12 +220,20 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
   }
 
   const BanMember = (TravelerId, Reason) => {
-    // check if this works pls
     if (socket) {
       const GuildId = clickedGuild.id || clickedGuild._id
       console.log('sending emit')
       socket.emit('Ban-member', GuildId, TravelerId, Reason );
     }
+  }
+  const ReportMember = (TravelerId, Reason) => {
+    if (socket) {
+      const GuildId = clickedGuild.id || clickedGuild._id
+      console.log('sending emit')
+      socket.emit('Report-member', GuildId, TravelerId, Reason );
+    }
+    setclickedMemberForReport(null)
+    setReportInputValue('')
   }
 
   const AcceptJoinRequest = (TravelerId) => {
@@ -249,6 +263,9 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
     setShowGuildGuidelines2(false)
     setGuidelinesinputValue("")
   }
+  const ReportAUser = (Traveler) => {
+    setclickedMemberForReport(Traveler);
+  }
 
   const handleViewGuildStats = () => {
     setShowGuildStats(!ShowGuildStats)
@@ -273,6 +290,9 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
   }
   const handleReportAUser= () => {
     setShowGuildReportUser(!ShowGuildReportUser)
+  }
+  const handleSeeReportList= () => {
+    setShowGuildReportList(!ShowGuildReportList)
   }
   
   return (
@@ -474,7 +494,6 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
               <div className="guild-settings-popup-item"onClick={handleReportAUser}>Report A Guild User</div>
               <div className="guild-settings-popup-item">Report Guild</div>
               <div className="guild-settings-popup-item">Demote Self</div>
-              <div className="guild-settings-popup-item">See Report List</div>
               <div className="guild-settings-popup-item">Give User a Warning</div>
               <div className="guild-settings-popup-item">Veiw Any Warnings</div>
             </div>
@@ -484,7 +503,7 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
               <div onClick={handleGuildSettings} style={{alignSelf: 'flex-start', cursor: 'pointer'}}>Finish</div>
               <div className="guild-settings-popup-item" onClick={handleGuildGuidelines}>Manage Guild guidelines</div>
               <div className="guild-settings-popup-item" onClick={handleChangeFeatures}>Change Guild Features</div>
-              <div className="guild-settings-popup-item">See Report List</div>
+              <div className="guild-settings-popup-item" onClick={handleSeeReportList}>See Report List</div>
               <div className="guild-settings-popup-item">Give User a Warning</div>
               <div className="guild-settings-popup-item">Manage Banned Travelers</div>
               <div className="guild-settings-popup-item">Give Up OwnerShip</div>
@@ -639,32 +658,59 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
           )}
         </div>
       )}
+      {ShowGuildReportList && (
+        <div className="guild-Report-A-User-popup-main">
+          <h2>Report List</h2>
+            {clickedGuild.Reports.map((report) => (
+              <div>
+                <p>{report.TravelerUserName}</p>
+               <p>{report.ReasonForReport}</p>
+              </div>
+            ))}
+            <h2 onClick={handleSeeReportList} style={{ position: 'absolute', bottom: '0', left: '10px', cursor: 'pointer' }}>leave</h2>
+        </div>
+      )}
       {ShowGuildReportUser && (
         <div className="guild-Report-A-User-popup-main">
-        <h2>Report A Guild User</h2>
-        <p>Who is the User you are reporting in the guild?</p>
-        <div style={{overflowY: 'auto', maxHeight: '55%', border: 'white solid 3px', paddingLeft: '20px', paddingRight: '20px'}}>
-          <h3>Elders</h3>
-          <div className="Report-A-User-grid-container">
-            {AllMembers.Elders.map((elder) => (
-              <div className="Report-A-User-grid-item" key={elder.UserName}>
-                <div>{elder.UserName}</div>
-                <div>Elder</div>
-              </div>
-            ))}
+          <h2>Report A Guild User</h2>
+          <p>Who is the User you are reporting in the guild?</p>
+          <div style={{overflowY: 'auto', maxHeight: '55%', border: 'white solid 3px', paddingLeft: '20px', paddingRight: '20px'}}>
+            <h3>Elders</h3>
+            <div className="Report-A-User-grid-container">
+              {AllMembers.Elders.map((elder) => (
+                <div onClick={() => {ReportAUser(elder)}} className="Report-A-User-grid-item" key={elder.UserName}>
+                  <div>{elder.UserName}</div>
+                  <div>Elder</div>
+                </div>
+              ))}
+            </div>
+            <h3>Members</h3>
+            <div className="Report-A-User-grid-container">
+              {AllMembers.Members.map((member) => (
+                <div onClick={() => {ReportAUser(member)}} className="Report-A-User-grid-item" key={member.UserName}>
+                  <div>{member.UserName}</div>
+                  <div>Member</div>
+                </div>
+              ))}
+            </div>
           </div>
-          <h3>Members</h3>
-          <div className="Report-A-User-grid-container">
-            {AllMembers.Members.map((member) => (
-              <div className="Report-A-User-grid-item" key={member.UserName}>
-                <div>{member.UserName}</div>
-                <div>Member</div>
-              </div>
-            ))}
-          </div>
+          <h3 style={{ position: 'absolute', bottom: '0', left: '10px', cursor: 'pointer' }} onClick={handleReportAUser}>Finish</h3>
+          {clickedMemberForReport && (
+            <div className="guild-Report-A-User" style={{border: 'black solid 1px'}}>
+              <h3>{clickedMemberForReport.UserName}</h3>
+              <p>Reason For Report</p>
+              <textarea
+                maxLength={200}
+                style={{width: '45%', height: '20%', resize: 'none', fontSize: '20px'}}
+                type="text"
+                value={ReportinputValue}
+                onChange={handleReportInputChange}
+              />
+              <br/><br/><br/>
+              <h2 onClick={() => {ReportMember(clickedMemberForReport.id || clickedMemberForReport._id, ReportinputValue )}} style={{cursor: 'pointer'}}>Submit Report</h2>
+            </div>
+          )}
         </div>
-        <h3 style={{ position: 'absolute', bottom: '0', left: '10px', cursor: 'pointer' }} onClick={handleReportAUser}>Finish</h3>
-      </div>
       )}
     </div>
   );
