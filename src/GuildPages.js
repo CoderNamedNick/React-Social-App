@@ -226,6 +226,20 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
       socket.emit('Ban-member', GuildId, TravelerId, Reason );
     }
   }
+  const BanFromReportMember = (TravelerId, Reason, ReportId) => {
+    if (socket) {
+      const GuildId = clickedGuild.id || clickedGuild._id
+      console.log('sending emit')
+      socket.emit('Ban-member', GuildId, TravelerId, Reason );
+      RemoveReport(ReportId)
+    }
+  }
+  const RemoveReport = (ReportId) => {
+    if (socket) {
+      const GuildId = clickedGuild.id || clickedGuild._id
+      socket.emit('Remove-Report', GuildId, ReportId)
+    }
+  }
   const ReportMember = (TravelerId, Reason) => {
     if (socket) {
       const GuildId = clickedGuild.id || clickedGuild._id
@@ -661,12 +675,21 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
       {ShowGuildReportList && (
         <div className="guild-Report-A-User-popup-main">
           <h2>Report List</h2>
+          <div style={{overflowY: 'auto', maxHeight: '65%',}}>
             {clickedGuild.Reports.map((report) => (
-              <div>
-                <p>{report.TravelerUserName}</p>
-               <p>{report.ReasonForReport}</p>
+              <div className="report-list-divs">
+                <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', marginBottom: '20px,'}}>
+                  <div>User: {report.TravelerUserName}</div>
+                  <div style={{paddingRight: '15%'}}>Reason: {report.ReasonForReport}</div>
+                </div>
+                <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', borderTop: 'solid white 2px'}}>
+                  <div>Issue A Warning</div>
+                  <div onClick={() => {BanFromReportMember(report.TravelerId, report.ReasonForReport, report._id || report.id)}}>Ban User</div>
+                  <div onClick={() => {RemoveReport(report._id || report.id)}}>Ignore Report</div>
+                </div>
               </div>
             ))}
+          </div>
             <h2 onClick={handleSeeReportList} style={{ position: 'absolute', bottom: '0', left: '10px', cursor: 'pointer' }}>leave</h2>
         </div>
       )}
@@ -677,7 +700,9 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
           <div style={{overflowY: 'auto', maxHeight: '55%', border: 'white solid 3px', paddingLeft: '20px', paddingRight: '20px'}}>
             <h3>Elders</h3>
             <div className="Report-A-User-grid-container">
-              {AllMembers.Elders.map((elder) => (
+              {AllMembers.Elders
+              .filter(elder => elder.UserName !== UserData.username)
+              .map((elder) => (
                 <div onClick={() => {ReportAUser(elder)}} className="Report-A-User-grid-item" key={elder.UserName}>
                   <div>{elder.UserName}</div>
                   <div>Elder</div>
@@ -686,7 +711,9 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
             </div>
             <h3>Members</h3>
             <div className="Report-A-User-grid-container">
-              {AllMembers.Members.map((member) => (
+              {AllMembers.Members
+              .filter(member => member.UserName !== UserData.username)
+              .map((member) => (
                 <div onClick={() => {ReportAUser(member)}} className="Report-A-User-grid-item" key={member.UserName}>
                   <div>{member.UserName}</div>
                   <div>Member</div>
