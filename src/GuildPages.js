@@ -22,6 +22,10 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
   const [ShowGuildReportUser, setShowGuildReportUser] = useState(false);
   const [ShowGuildReportList, setShowGuildReportList] = useState(false)
   const [clickedMemberForReport, setclickedMemberForReport] = useState(null);
+  const [ShowGuildWarningUser, setShowGuildWarningUser] = useState(false);
+  const [WarninginputValue, setWarningInputValue] = useState('');
+  const [clickedMemberForWarning, setclickedMemberForWarning] = useState(null);
+  const [ShowWarnings, setShowWarnings] = useState(false);
   const [guildData, setGuildData] = useState({
     guildMoto: clickedGuild.guildMoto,
     bio: clickedGuild.bio,
@@ -88,6 +92,9 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
   };
   const handleReportInputChange = (event) => {
     setReportInputValue(event.target.value);
+  };
+  const handleWarningInputChange = (event) => {
+    setWarningInputValue(event.target.value);
   };
   const handleGuidelinesInputChange = (event) => {
     setGuidelinesinputValue(event.target.value);
@@ -215,7 +222,7 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
     }
   }
   
-  const HandleBanMember = (TravelerId, ) => {
+  const HandleBanMember = () => {
     setShowBanReasonInput(true)
   }
 
@@ -249,6 +256,14 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
     setclickedMemberForReport(null)
     setReportInputValue('')
   }
+  const WarnMember = (TravelerId, Reason) => {
+    if (socket) {
+      const GuildId = clickedGuild.id || clickedGuild._id
+      socket.emit('Warn-member', GuildId, TravelerId, Reason );
+    }
+    setclickedMemberForWarning(null)
+    setWarningInputValue('')
+  }
 
   const AcceptJoinRequest = (TravelerId) => {
     if (socket) {
@@ -280,7 +295,9 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
   const ReportAUser = (Traveler) => {
     setclickedMemberForReport(Traveler);
   }
-
+  const WarnAUser = (Traveler) => {
+    setclickedMemberForWarning(Traveler);
+  }
   const handleViewGuildStats = () => {
     setShowGuildStats(!ShowGuildStats)
   }
@@ -305,8 +322,14 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
   const handleReportAUser= () => {
     setShowGuildReportUser(!ShowGuildReportUser)
   }
+  const handleGiveWarning= () => {
+    setShowGuildWarningUser(!ShowGuildWarningUser)
+  }
   const handleSeeReportList= () => {
     setShowGuildReportList(!ShowGuildReportList)
+  }
+  const handleShowWarnings= () => {
+    setShowWarnings(!ShowWarnings)
   }
   
   return (
@@ -421,6 +444,14 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
           <div className="guild-rightside-div">
             <h2 onClick={handleViewGuildStats} style={{cursor: 'pointer'}}>View Guild Stats</h2>
             <h2 onClick={handleManageJoinReq} style={{cursor: 'pointer'}}>Manage Guild Join request <span className="guild-req-counter">{GuildRequestCount}</span></h2>
+            <h2 onClick={handleShowWarnings}>
+              View Warnings
+              {clickedGuild.Warnings.filter(warning => warning.TravelerUserName === UserData.username).length > 0 && (
+                <span className="warning-notif-number">
+                  {clickedGuild.Warnings.filter(warning => warning.TravelerUserName === UserData.username).length}
+                </span>
+              )}
+            </h2>
             <h2>Send a message up to Guild Master</h2>
             <h2 className="guild-settings" onClick={handleGuildSettings}>Guild Settings</h2>
           </div>
@@ -429,7 +460,14 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
         {AllMembers && AllMembers.Members.some(Member => Member.UserName === UserData.username) && (
           <div className="guild-rightside-div">
             <h2 onClick={handleViewGuildStats} style={{cursor: 'pointer'}}>View Guild Stats</h2>
-            <h2>View Warnings</h2>
+            <h2 onClick={handleShowWarnings}>
+              View Warnings
+              {clickedGuild.Warnings.filter(warning => warning.TravelerUserName === UserData.username).length > 0 && (
+                <span className="warning-notif-number">
+                  {clickedGuild.Warnings.filter(warning => warning.TravelerUserName === UserData.username).length}
+                </span>
+              )}
+            </h2>
             <h2 className="guild-settings" onClick={handleGuildSettings}>Guild Settings</h2>
           </div>
         )}
@@ -441,16 +479,18 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
       </div>
       {ShowGuildStats && (
         <div className="Guild-stats-popup">
-          <div><h2>{clickedGuild.guildName}</h2></div>
-          <div>Guild Privacy: {clickedGuild.Findable ? 'Findable' : 'Private'}</div>
-          <div>Request To Join: {clickedGuild.RequestToJoin ? 'Yes' : 'No'}</div>
-          <div>Owner: {AllMembers.Owner.UserName}</div>
-          <div>Guild Color: {clickedGuild.guildColor}</div>
-          <div>Guild Creation Date: {clickedGuild.guildDate ? clickedGuild.guildDate.substring(0, 10) : ''}</div>
-          <div> # of Members: {clickedGuild.joinedTravelers.length + clickedGuild.guildElders.length}</div>
-          <div># of Post: {clickedGuild.guildPost.length}</div>
-          <div># of Banned Travelers: {clickedGuild.bannedTravelers.length}</div>
-          <div style={{alignSelf: 'center', cursor: 'pointer'}} onClick={handleViewGuildStats}>Finish</div>
+          <div style={{width: '98%', display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: '1rem'}}>
+            <div><h2>{clickedGuild.guildName}</h2></div>
+            <div>Guild Privacy: {clickedGuild.Findable ? 'Findable' : 'Private'}</div>
+            <div>Request To Join: {clickedGuild.RequestToJoin ? 'Yes' : 'No'}</div>
+            <div>Owner: {AllMembers.Owner.UserName}</div>
+            <div>Guild Color: {clickedGuild.guildColor}</div>
+            <div>Guild Creation Date: {clickedGuild.guildDate ? clickedGuild.guildDate.substring(0, 10) : ''}</div>
+            <div> # of Members: {clickedGuild.joinedTravelers.length + clickedGuild.guildElders.length}</div>
+            <div># of Post: {clickedGuild.guildPost.length}</div>
+            <div># of Banned Travelers: {clickedGuild.bannedTravelers.length}</div>
+            <div style={{alignSelf: 'center', cursor: 'pointer'}} onClick={handleViewGuildStats}>Finish</div>
+          </div>
         </div>
       )}
       {ShowGuildJoinRequest && (
@@ -496,7 +536,6 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
               <div onClick={handleGuildSettings} style={{alignSelf: 'flex-start', cursor: 'pointer'}}>Finish</div>
               <div className="guild-settings-popup-item" onClick={handleGuildGuidelines}>View Guild guidelines</div>
               <div className="guild-settings-popup-item" onClick={handleReportAUser}>Report A Guild User</div>
-              <div className="guild-settings-popup-item">Veiw Any Warnings</div>
               <div className="guild-settings-popup-item">Report Guild</div>
               <div className="guild-settings-popup-item">Retire From Guild</div>
             </div>
@@ -509,7 +548,6 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
               <div className="guild-settings-popup-item">Report Guild</div>
               <div className="guild-settings-popup-item">Demote Self</div>
               <div className="guild-settings-popup-item">Give User a Warning</div>
-              <div className="guild-settings-popup-item">Veiw Any Warnings</div>
             </div>
           )}
           {AllMembers && UserData.username === AllMembers.Owner.UserName && (
@@ -518,7 +556,7 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
               <div className="guild-settings-popup-item" onClick={handleGuildGuidelines}>Manage Guild guidelines</div>
               <div className="guild-settings-popup-item" onClick={handleChangeFeatures}>Change Guild Features</div>
               <div className="guild-settings-popup-item" onClick={handleSeeReportList}>See Report List</div>
-              <div className="guild-settings-popup-item">Give User a Warning</div>
+              <div className="guild-settings-popup-item" onClick={handleGiveWarning}>Give User a Warning</div>
               <div className="guild-settings-popup-item">Manage Banned Travelers</div>
               <div className="guild-settings-popup-item">Give Up OwnerShip</div>
               <div className="guild-settings-popup-item">Disband Guild</div>
@@ -674,7 +712,7 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
       )}
       {ShowGuildReportList && (
         <div className="guild-Report-A-User-popup-main">
-          <h2>Report List</h2>
+          <h2 style={{ textAlign: 'center' }}>Report List</h2>
           <div style={{overflowY: 'auto', maxHeight: '65%',}}>
             {clickedGuild.Reports.map((report) => (
               <div className="report-list-divs">
@@ -737,6 +775,70 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
               <h2 onClick={() => {ReportMember(clickedMemberForReport.id || clickedMemberForReport._id, ReportinputValue )}} style={{cursor: 'pointer'}}>Submit Report</h2>
             </div>
           )}
+        </div>
+      )}
+      {ShowGuildWarningUser && (
+        <div className="guild-Report-A-User-popup-main">
+          <h2>Give User A Warning</h2>
+          <p>Who are you giving a warning?</p>
+          <div style={{overflowY: 'auto', maxHeight: '55%', border: 'white solid 3px', paddingLeft: '20px', paddingRight: '20px'}}>
+            <h3>Elders</h3>
+            <div className="Report-A-User-grid-container">
+              {AllMembers.Elders
+              .filter(elder => elder.UserName !== UserData.username)
+              .map((elder) => (
+                <div onClick={() => {WarnAUser(elder)}} className="Report-A-User-grid-item" key={elder.UserName}>
+                  <div>{elder.UserName}</div>
+                  <div>Elder</div>
+                  <div># of Warnings: {clickedGuild.Warnings.filter(warning => warning.TravelerUserName === elder.UserName).length}</div>
+                </div>
+              ))}
+            </div>
+            <h3>Members</h3>
+            <div className="Report-A-User-grid-container">
+              {AllMembers.Members
+              .filter(member => member.UserName !== UserData.username)
+              .map((member) => (
+                <div onClick={() => {WarnAUser(member)}} className="Report-A-User-grid-item" key={member.UserName}>
+                  <div>{member.UserName}</div>
+                  <div>Member</div>
+                  <div># of Warnings: {clickedGuild.Warnings.filter(warning => warning.TravelerUserName === member.UserName).length}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+          <h3 style={{ position: 'absolute', bottom: '0', left: '10px', cursor: 'pointer' }} onClick={handleGiveWarning}>Finish</h3>
+          {clickedMemberForWarning && (
+            <div className="guild-Report-A-User" style={{border: 'black solid 1px'}}>
+              <h3>{clickedMemberForWarning.UserName}</h3>
+              <p>Reason For Warning</p>
+              <textarea
+                maxLength={200}
+                style={{width: '45%', height: '20%', resize: 'none', fontSize: '20px'}}
+                type="text"
+                value={WarninginputValue}
+                onChange={handleWarningInputChange}
+              />
+              <br/><br/><br/>
+              <h2 onClick={() => {WarnMember(clickedMemberForWarning.id || clickedMemberForWarning._id, WarninginputValue)}} style={{cursor: 'pointer'}}>Submit Warning</h2>
+            </div>
+          )}
+        </div>
+      )}
+      {ShowWarnings && (
+        <div className="guild-Report-A-User-popup-main">
+          <h2 style={{ textAlign: 'center' }}>Warnings</h2>
+          {clickedGuild.Warnings.filter(warning => warning.TravelerUserName === UserData.username).length === 0 ? (
+            <h2>You currently have no warnings, keep up the good attitude!</h2>
+          ) : (
+            clickedGuild.Warnings.filter(warning => warning.TravelerUserName === UserData.username).map((warning, index) => (
+              <div key={index} className="warning-item">
+                <p><strong>{index + 1}{index === 0 ? 'st' : index === 1 ? 'nd' : index === 2 ? 'rd' : 'th'} Warning </strong> </p>
+                <p> Reason: {warning.ReasonForWarning}</p>
+              </div>
+            ))
+          )}
+          <h3 style={{ position: 'absolute', bottom: '0', left: '10px', cursor: 'pointer' }} onClick={handleShowWarnings}>Finish</h3>
         </div>
       )}
     </div>
