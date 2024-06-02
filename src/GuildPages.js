@@ -256,13 +256,16 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
     setclickedMemberForReport(null)
     setReportInputValue('')
   }
-  const WarnMember = (TravelerId, Reason) => {
+  const WarnMember = (TravelerId, Reason, ReportId) => {
     if (socket) {
       const GuildId = clickedGuild.id || clickedGuild._id
       socket.emit('Warn-member', GuildId, TravelerId, Reason );
     }
     setclickedMemberForWarning(null)
     setWarningInputValue('')
+    if (ReportId) {
+      RemoveReport(ReportId)
+    }
   }
   const WarnMemberFromReport = (Traveler) => {
     setclickedMemberForWarning(Traveler)
@@ -828,7 +831,7 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
                 onChange={handleWarningInputChange}
               />
               <br/><br/><br/>
-              <h2 onClick={() => {WarnMember(clickedMemberForWarning.TravelerId || clickedMemberForWarning.id || clickedMemberForWarning._id , WarninginputValue)}} style={{cursor: 'pointer'}}>Submit Warning</h2>
+              <h2 onClick={() => {WarnMember(clickedMemberForWarning.TravelerId || clickedMemberForWarning.id || clickedMemberForWarning._id , WarninginputValue, clickedMemberForWarning._id)}} style={{cursor: 'pointer'}}>Submit Warning</h2>
             </div>
           )}
         </div>
@@ -839,12 +842,14 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
           {clickedGuild.Warnings.filter(warning => warning.TravelerUserName === UserData.username).length === 0 ? (
             <h2>You currently have no warnings, keep up the good attitude!</h2>
           ) : (
-            clickedGuild.Warnings.filter(warning => warning.TravelerUserName === UserData.username).map((warning, index) => (
-              <div key={index} className="warning-item">
-                <p><strong>{index + 1}{index === 0 ? 'st' : index === 1 ? 'nd' : index === 2 ? 'rd' : 'th'} Warning </strong> </p>
-                <p> Reason: {warning.ReasonForWarning}</p>
-              </div>
-            ))
+            <div style={{overflowY: 'auto', height: '70%'}}>
+              {clickedGuild.Warnings.filter(warning => warning.TravelerUserName === UserData.username).map((warning, index) => (
+                <div key={index} className="warning-item">
+                  <p><strong>{index + 1}{index === 0 ? 'st' : index === 1 ? 'nd' : index === 2 ? 'rd' : 'th'} Warning </strong> </p>
+                  <p> Reason: {warning.ReasonForWarning}</p>
+                </div>
+              ))}
+            </div>
           )}
           <h3 style={{ position: 'absolute', bottom: '0', left: '10px', cursor: 'pointer' }} onClick={handleShowWarnings}>Finish</h3>
         </div>
