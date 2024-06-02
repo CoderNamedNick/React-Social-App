@@ -264,6 +264,11 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
     setclickedMemberForWarning(null)
     setWarningInputValue('')
   }
+  const WarnMemberFromReport = (Traveler) => {
+    setclickedMemberForWarning(Traveler)
+    setShowGuildReportList(false);
+    setShowGuildWarningUser(true);
+  }
 
   const AcceptJoinRequest = (TravelerId) => {
     if (socket) {
@@ -525,7 +530,10 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
               )}
             </div>
           ) : (
-            <p>Your guild is currently open for all to join. To change this, go to guild settings.</p>
+            <div>
+              <p>Your guild is currently open for all to join. To change this, go to guild settings.</p>
+              <h3 onClick={handleManageJoinReq} style={{position: 'absolute', bottom: '0', right: '10px', cursor: 'pointer'}}>Finish</h3>
+            </div>
           )}
         </div>
       )}
@@ -546,7 +554,7 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
               <div className="guild-settings-popup-item" onClick={handleGuildGuidelines}>View Guild guidelines</div>
               <div className="guild-settings-popup-item"onClick={handleReportAUser}>Report A Guild User</div>
               <div className="guild-settings-popup-item">Report Guild</div>
-              <div className="guild-settings-popup-item">Demote Self</div>
+              <div className="guild-settings-popup-item" onClick={() => {DemoteToMember(UserData.id || UserData._id)}}>Demote Self</div>
               <div className="guild-settings-popup-item">Give User a Warning</div>
             </div>
           )}
@@ -721,7 +729,7 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
                   <div style={{paddingRight: '15%'}}>Reason: {report.ReasonForReport}</div>
                 </div>
                 <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', borderTop: 'solid white 2px'}}>
-                  <div>Issue A Warning</div>
+                  <div onClick={() => {WarnMemberFromReport(report)}}>Issue A Warning</div>
                   <div onClick={() => {BanFromReportMember(report.TravelerId, report.ReasonForReport, report._id || report.id)}}>Ban User</div>
                   <div onClick={() => {RemoveReport(report._id || report.id)}}>Ignore Report</div>
                 </div>
@@ -810,8 +818,8 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
           <h3 style={{ position: 'absolute', bottom: '0', left: '10px', cursor: 'pointer' }} onClick={handleGiveWarning}>Finish</h3>
           {clickedMemberForWarning && (
             <div className="guild-Report-A-User" style={{border: 'black solid 1px'}}>
-              <h3>{clickedMemberForWarning.UserName}</h3>
-              <p>Reason For Warning</p>
+              <h3>{clickedMemberForWarning.UserName || clickedMemberForWarning.TravelerUserName}</h3>
+              <p onClick={() => {console.log(clickedMemberForWarning)}}>Reason For Warning</p>
               <textarea
                 maxLength={200}
                 style={{width: '45%', height: '20%', resize: 'none', fontSize: '20px'}}
@@ -820,7 +828,7 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
                 onChange={handleWarningInputChange}
               />
               <br/><br/><br/>
-              <h2 onClick={() => {WarnMember(clickedMemberForWarning.id || clickedMemberForWarning._id, WarninginputValue)}} style={{cursor: 'pointer'}}>Submit Warning</h2>
+              <h2 onClick={() => {WarnMember(clickedMemberForWarning.TravelerId || clickedMemberForWarning.id || clickedMemberForWarning._id , WarninginputValue)}} style={{cursor: 'pointer'}}>Submit Warning</h2>
             </div>
           )}
         </div>
