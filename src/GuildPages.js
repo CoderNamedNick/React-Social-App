@@ -26,6 +26,7 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
   const [WarninginputValue, setWarningInputValue] = useState('');
   const [clickedMemberForWarning, setclickedMemberForWarning] = useState(null);
   const [ShowWarnings, setShowWarnings] = useState(false);
+  const [ShowBannedTravelers, setShowBannedTravelers] = useState(false);
   const [guildData, setGuildData] = useState({
     guildMoto: clickedGuild.guildMoto,
     bio: clickedGuild.bio,
@@ -233,6 +234,13 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
       socket.emit('Ban-member', GuildId, TravelerId, Reason );
     }
   }
+  const UnbanMember = (TravelerId) => {
+    if (socket) {
+      const GuildId = clickedGuild.id || clickedGuild._id
+      console.log('sending emit')
+      socket.emit('Unban-member', GuildId, TravelerId);
+    }
+  }
   const BanFromReportMember = (TravelerId, Reason, ReportId) => {
     if (socket) {
       const GuildId = clickedGuild.id || clickedGuild._id
@@ -338,6 +346,9 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
   }
   const handleShowWarnings= () => {
     setShowWarnings(!ShowWarnings)
+  }
+  const handleShowBanList= () => {
+    setShowBannedTravelers(!ShowBannedTravelers)
   }
   
   return (
@@ -568,7 +579,7 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
               <div className="guild-settings-popup-item" onClick={handleChangeFeatures}>Change Guild Features</div>
               <div className="guild-settings-popup-item" onClick={handleSeeReportList}>See Report List</div>
               <div className="guild-settings-popup-item" onClick={handleGiveWarning}>Give User a Warning</div>
-              <div className="guild-settings-popup-item">Manage Banned Travelers</div>
+              <div className="guild-settings-popup-item" onClick={handleShowBanList}>Manage Banned Travelers</div>
               <div className="guild-settings-popup-item">Give Up OwnerShip</div>
               <div className="guild-settings-popup-item">Disband Guild</div>
             </div>
@@ -852,6 +863,31 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
             </div>
           )}
           <h3 style={{ position: 'absolute', bottom: '0', left: '10px', cursor: 'pointer' }} onClick={handleShowWarnings}>Finish</h3>
+        </div>
+      )}
+      {ShowBannedTravelers && (
+        <div className="guild-Report-A-User-popup-main">
+          {clickedGuild.bannedTravelers.length === 0 && (
+            <div>
+              There are no banned travelers.
+            </div>
+          )}
+          {clickedGuild.bannedTravelers.length !== 0 && (
+            <div>
+               {clickedGuild.bannedTravelers.map(traveler => (
+                <div  className="warning-item">
+                  <div>
+                    <p>{traveler.TravelerUserName} <strong>Banned</strong> </p>
+                    <p> Reason: {traveler.Reason}</p>
+                  </div>
+                  <div>
+                    <p onClick={() => (UnbanMember(traveler.TravelerId))}>Unban</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+          <h3 style={{ position: 'absolute', bottom: '0', left: '10px', cursor: 'pointer' }} onClick={handleShowBanList}>Finish</h3>
         </div>
       )}
     </div>
