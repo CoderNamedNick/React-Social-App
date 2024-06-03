@@ -27,6 +27,7 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
   const [clickedMemberForWarning, setclickedMemberForWarning] = useState(null);
   const [ShowWarnings, setShowWarnings] = useState(false);
   const [ShowBannedTravelers, setShowBannedTravelers] = useState(false);
+  const [ShowFinalLeave, setShowFinalLeave] = useState(false);
   const [guildData, setGuildData] = useState({
     guildMoto: clickedGuild.guildMoto,
     bio: clickedGuild.bio,
@@ -226,7 +227,13 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
   const HandleBanMember = () => {
     setShowBanReasonInput(true)
   }
-
+  const RetireFromGuild = (TravelerId) => {
+    if (socket) {
+      const GuildId = clickedGuild.id || clickedGuild._id
+      console.log('sending emit')
+      socket.emit('Leave-Guild', GuildId, TravelerId );
+    }
+  }
   const BanMember = (TravelerId, Reason) => {
     if (socket) {
       const GuildId = clickedGuild.id || clickedGuild._id
@@ -559,7 +566,13 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
               <div className="guild-settings-popup-item" onClick={handleGuildGuidelines}>View Guild guidelines</div>
               <div className="guild-settings-popup-item" onClick={handleReportAUser}>Report A Guild User</div>
               <div className="guild-settings-popup-item">Report Guild</div>
-              <div className="guild-settings-popup-item">Retire From Guild</div>
+              <div className="guild-settings-popup-item" onClick={() => {setShowFinalLeave(!ShowFinalLeave)}}>Retire From Guild</div>
+              {ShowFinalLeave && (
+                <div className="guild-Report-A-User" style={{border: 'black solid 1px'}}>
+                  <h2>Are you Sure You Want To Leave the Guild?</h2>
+                  <p><span style={{paddingRight: '90px'}} onClick={() => {RetireFromGuild(UserData.id || UserData._id)}}> Yes </span>       <span onClick={() => {setShowFinalLeave(!ShowFinalLeave)}}> No </span></p>
+                </div>
+              )}
             </div>
           )}
           {AllMembers && AllMembers.Elders.some(elder => elder.UserName === UserData.username) && (
@@ -580,7 +593,6 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
               <div className="guild-settings-popup-item" onClick={handleSeeReportList}>See Report List</div>
               <div className="guild-settings-popup-item" onClick={handleGiveWarning}>Give User a Warning</div>
               <div className="guild-settings-popup-item" onClick={handleShowBanList}>Manage Banned Travelers</div>
-              <div className="guild-settings-popup-item">Give Up OwnerShip</div>
               <div className="guild-settings-popup-item">Disband Guild</div>
             </div>
           )}
