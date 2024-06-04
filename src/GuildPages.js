@@ -227,13 +227,7 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
   const HandleBanMember = () => {
     setShowBanReasonInput(true)
   }
-  const RetireFromGuild = (TravelerId) => {
-    if (socket) {
-      const GuildId = clickedGuild.id || clickedGuild._id
-      console.log('sending emit')
-      socket.emit('Leave-Guild', GuildId, TravelerId );
-    }
-  }
+
   const BanMember = (TravelerId, Reason) => {
     if (socket) {
       const GuildId = clickedGuild.id || clickedGuild._id
@@ -303,6 +297,21 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
       socket.emit('New-member-Declined', GuildId, TravelerId );
     }
   }
+  const RetireFromGuild = async (TravelerId) => {
+    if (socket) {
+      const GuildId = clickedGuild.id || clickedGuild._id;
+      console.log('sending emit to leave guild');
+      await socket.emit('Retire-From-Guild', GuildId, TravelerId);
+    }
+  };
+
+  const DisbandGuild = async () => {
+    if (socket) {
+      const GuildId = clickedGuild.id || clickedGuild._id;
+      console.log('sending emit to disband guild');
+      socket.emit('Disband-Guild', GuildId, UserData.id || UserData._id);
+    }
+  };
 
   const ChangeGuidelines = (NewGuidelines) => {
     // check if this works pls
@@ -582,7 +591,7 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
               <div className="guild-settings-popup-item"onClick={handleReportAUser}>Report A Guild User</div>
               <div className="guild-settings-popup-item">Report Guild</div>
               <div className="guild-settings-popup-item" onClick={() => {DemoteToMember(UserData.id || UserData._id)}}>Demote Self</div>
-              <div className="guild-settings-popup-item">Give User a Warning</div>
+              <div className="guild-settings-popup-item" onClick={handleGiveWarning}>Give User a Warning</div>
             </div>
           )}
           {AllMembers && UserData.username === AllMembers.Owner.UserName && (
@@ -593,7 +602,7 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
               <div className="guild-settings-popup-item" onClick={handleSeeReportList}>See Report List</div>
               <div className="guild-settings-popup-item" onClick={handleGiveWarning}>Give User a Warning</div>
               <div className="guild-settings-popup-item" onClick={handleShowBanList}>Manage Banned Travelers</div>
-              <div className="guild-settings-popup-item">Disband Guild</div>
+              <div className="guild-settings-popup-item" onClick={DisbandGuild}>Disband Guild</div>
             </div>
           )}
         </div>
