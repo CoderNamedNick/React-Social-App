@@ -456,7 +456,6 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
       </div>
       </div>
       <div className="Guild-Pages-middle-side">
-        <p style={{fontSize: '42px', paddingLeft: '10px', color: 'white'}} className="medievalsharp-regular">{clickedGuild.guildName}</p>
         {
          /*this will have Guild Name, main post and feed  */
         }
@@ -470,7 +469,7 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
             <h2 onClick={handleViewGuildStats} style={{cursor: 'pointer'}}>View Guild Stats</h2>
             <h2 onClick={handleManageJoinReq} style={{cursor: 'pointer'}}>Manage Guild Join request <span className="guild-req-counter">{GuildRequestCount}</span></h2>
             <h2>Send A Guild Alert</h2>
-            <h2>View Elder messages</h2>
+            <h3>View Elder messages</h3>
             <h2 className="guild-settings" onClick={handleGuildSettings}>Guild Settings</h2>
           </div>
         )}
@@ -487,7 +486,7 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
                 </span>
               )}
             </h2>
-            <h2>Send a message up to Guild Master</h2>
+            <h3>Send a message up to Guild Master</h3>
             <h2 className="guild-settings" onClick={handleGuildSettings}>Guild Settings</h2>
           </div>
         )}

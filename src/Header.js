@@ -4,7 +4,7 @@ import Logo from './images/Tavern-logo.png'
 import Menu from './icons/menu.png'
 import { io } from "socket.io-client"
 
-const Header = ({ title, LogOut, UserData, setUserData, clickedguild }) => {
+const Header = ({ title, LogOut, UserData, setUserData, clickedGuild, }) => {
   const [showMenu, setShowMenu] = useState(false);
   const [convoCount, setconvoCount] = useState(0);
   const [messageCount, setMessageCount] = useState(0);
@@ -56,7 +56,11 @@ const Header = ({ title, LogOut, UserData, setUserData, clickedguild }) => {
       case "/Messages":
         return "Messages";
       case "/GuildPages":
-        return "";
+        if (clickedGuild) {
+          return `${clickedGuild.guildName}`;
+        } else {
+          return "";
+        }
       default:
         return "TAVERN"; // Default title
     }
