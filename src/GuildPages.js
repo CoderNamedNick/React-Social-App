@@ -28,6 +28,7 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
   const [ShowWarnings, setShowWarnings] = useState(false);
   const [ShowBannedTravelers, setShowBannedTravelers] = useState(false);
   const [ShowFinalLeave, setShowFinalLeave] = useState(false);
+  const [ShowReportGuild, setShowReportGuild] = useState(false);
   const [guildData, setGuildData] = useState({
     guildMoto: clickedGuild.guildMoto,
     bio: clickedGuild.bio,
@@ -36,6 +37,38 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
     guildColor: clickedGuild.guildColor,
   });
   const containerRef = useRef(null);
+  const [reportData, setReportData] = useState({
+    GuildName: '',
+    ReasonForReport: '',
+    ReportDetails: ''
+  });
+
+  const handleReportChange = (e) => {
+    setReportData({ ...reportData, [e.target.name]: e.target.value });
+  };
+
+  const handleReportSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await fetch(`http://localhost:5000/Reports/guild/${UserData.id || UserData._id}/${clickedGuild.id || clickedGuild._id}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(reportData)
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        alert('Guild report submitted successfully!');
+        setShowReportGuild(false)
+      } else {
+        alert(`Error: ${data.message}`);
+      }
+    } catch (error) {
+      console.error('Error submitting guild report:', error);
+    }
+  };
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -366,6 +399,9 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
   const handleShowBanList= () => {
     setShowBannedTravelers(!ShowBannedTravelers)
   }
+  const handleShowReportGuild= () => {
+    setShowReportGuild(!ShowReportGuild)
+  }
   
   return (
     <div style={{background: getGuildColors(clickedGuild.guildColor)}} className='Guild-Pages-main-div'>
@@ -573,7 +609,7 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
               <div onClick={handleGuildSettings} style={{alignSelf: 'flex-start', cursor: 'pointer'}}>Finish</div>
               <div className="guild-settings-popup-item" onClick={handleGuildGuidelines}>View Guild guidelines</div>
               <div className="guild-settings-popup-item" onClick={handleReportAUser}>Report A Guild User</div>
-              <div className="guild-settings-popup-item">Report Guild</div>
+              <div className="guild-settings-popup-item" onClick={handleShowReportGuild}>Report Guild</div>
               <div className="guild-settings-popup-item" onClick={() => {setShowFinalLeave(!ShowFinalLeave)}}>Retire From Guild</div>
               {ShowFinalLeave && (
                 <div className="guild-Report-A-User" style={{border: 'black solid 1px'}}>
@@ -588,7 +624,7 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
               <div onClick={handleGuildSettings} style={{alignSelf: 'flex-start', cursor: 'pointer'}}>Finish</div>
               <div className="guild-settings-popup-item" onClick={handleGuildGuidelines}>View Guild guidelines</div>
               <div className="guild-settings-popup-item"onClick={handleReportAUser}>Report A Guild User</div>
-              <div className="guild-settings-popup-item">Report Guild</div>
+              <div className="guild-settings-popup-item" onClick={handleShowReportGuild}>Report Guild</div>
               <div className="guild-settings-popup-item" onClick={() => {DemoteToMember(UserData.id || UserData._id)}}>Demote Self</div>
               <div className="guild-settings-popup-item" onClick={handleGiveWarning}>Give User a Warning</div>
             </div>
@@ -908,6 +944,30 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
             </div>
           )}
           <h3 style={{ position: 'absolute', bottom: '0', left: '10px', cursor: 'pointer' }} onClick={handleShowBanList}>Finish</h3>
+        </div>
+      )}
+      {ShowReportGuild && (
+        <div className="guild-Report-A-User-popup-main">
+          <h2 style={{marginBottom: '100px', textAlign: 'center'}}>Reporting  Guild</h2>
+          <form style={{display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10%', height: '65%'}} onSubmit={handleReportSubmit}>
+            <input style={{padding: '10px',  width: '30%', fontSize:'20px',}} type="text" name="GuildName" value={reportData.GuildName} onChange={handleReportChange} placeholder="Reporting Guild's Name" required />
+            <select
+              name="ReasonForReport"
+              value={reportData.ReasonForReport}
+              onChange={handleReportChange}
+              style={{padding: '10px',  width: '30%', fontSize:'20px',}}
+            >
+              <option value="Harassment">Harassment</option>
+              <option value="Sexual Misconduct">Sexual Misconduct</option>
+              <option value="Racial Misconduct">Racial Misconduct</option>
+              <option value="Discriminatory">Discriminatory</option>
+              <option value="Threats">Threats</option>
+              <option value="Other">Other</option>
+            </select>
+            <textarea style={{resize: 'none', width: '50%', height: '30%', fontSize: '20px'}} name="ReportDetails" value={reportData.ReportDetails} onChange={handleReportChange} placeholder="Report Details" required></textarea>
+            <button type="submit">Submit Report</button>
+          </form>
+          <h3 style={{ position: 'absolute', bottom: '0', left: '10px', cursor: 'pointer' }} onClick={handleShowReportGuild}>Cancel</h3>
         </div>
       )}
     </div>
