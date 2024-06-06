@@ -9,6 +9,7 @@ const TravelersBooks = ({UserData, setUserData}) => {
   const [AcceptRequest, setAcceptRequest] = useState(false)
   const [isCompanion, setisCompanion] = useState(false);
   const [isBlocked, setisBlocked] = useState(false);
+  const [ShowReportWindow, setShowReportWindow] = useState(false);
   const colors = 
   [
   {name: 'Blue', color1: '#F5F6FC', color2: '#0F2180'},
@@ -19,6 +20,38 @@ const TravelersBooks = ({UserData, setUserData}) => {
   {name: 'Orange', color1: '#F6AF75', color2: '#EA6A00'},
   {name: 'Gray', color1: '#D3D3D3', color2: '#4D4545'},
   ];
+  const [reportData, setReportData] = useState({
+    TravelerUserName: '',
+    ReasonForReport: '',
+    ReportDetails: ''
+  });
+
+  const handleReportChange = (e) => {
+    setReportData({ ...reportData, [e.target.name]: e.target.value });
+  };
+
+  const handleReportSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await fetch(`http://localhost:5000/Reports/user/${UserData.id || UserData._id}/${userDetails.id || userDetails._id}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(reportData)
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        alert('User report submitted successfully!');
+        setShowReportWindow(false)
+      } else {
+        alert(`Error: ${data.message}`);
+      }
+    } catch (error) {
+      console.error('Error submitting user report:', error);
+    }
+  };
   const [selectedColor, setSelectedColor] = useState(() => {
     // If UserData.ProfileColor exists and is a valid color option, return its corresponding color1 and color2
     if (!userDetails) {
@@ -273,6 +306,10 @@ const TravelersBooks = ({UserData, setUserData}) => {
     return <div>Loading...</div>;
   }
 
+  const handleShowReportWindow = () => {
+    setShowReportWindow(!ShowReportWindow)
+  }
+
   return (
     <div style={{ background: `linear-gradient(to bottom, ${selectedColor})` }} className="TB-main-div">
       <div>
@@ -292,6 +329,7 @@ const TravelersBooks = ({UserData, setUserData}) => {
               <p>Traveler Since: {userDetails.AccDate ? userDetails.AccDate.substring(0, 10) : ''}</p>
             </div>
             {!isBlocked && !isCompanion && !AcceptRequest && !SentRequest && (<h2 onClick={SendCompanionRequest} className="Edit-PB">Send Companion request</h2>)}
+            <h2 onClick={handleShowReportWindow} className="Report-PB">Report</h2>
             {!isBlocked && !AcceptRequest && SentRequest && (<h2 className="Edit-PB">Companion request Sent</h2>)}
             {!isBlocked && AcceptRequest && (<h2 onClick={AccCompanionRequest} className="Edit-PB">Accept Companion Request</h2>)}
             {!isBlocked && AcceptRequest && (<h2 onClick={DeclCompanionRequest} style={{bottom: 0}} className="Edit-PB">Decline Companion Request</h2>)}
@@ -324,6 +362,30 @@ const TravelersBooks = ({UserData, setUserData}) => {
           ))}
         </div>
       </div>
+      {ShowReportWindow && (
+        <div className="Report-A-User-popup-main">
+        <h2 style={{marginBottom: '100px', textAlign: 'center'}}>Reporting User</h2>
+        <form style={{display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10%', height: '65%'}} onSubmit={handleReportSubmit}>
+          <input style={{padding: '10px',  width: '30%', fontSize:'20px',}} type="text" name="TravelerUserName" value={reportData.TravelerUserName} onChange={handleReportChange} placeholder="Reporting User's Name" required />
+          <select
+            name="ReasonForReport"
+            value={reportData.ReasonForReport}
+            onChange={handleReportChange}
+            style={{padding: '10px',  width: '30%', fontSize:'20px',}}
+          >
+            <option value="Harassment">Harassment</option>
+            <option value="Sexual Misconduct">Sexual Misconduct</option>
+            <option value="Racial Misconduct">Racial Misconduct</option>
+            <option value="Discriminatory">Discriminatory</option>
+            <option value="Threats">Threats</option>
+            <option value="Other">Other</option>
+          </select>
+          <textarea style={{resize: 'none', width: '50%', height: '30%', fontSize: '20px'}} name="ReportDetails" value={reportData.ReportDetails} onChange={handleReportChange} placeholder="Report Details" required></textarea>
+          <button type="submit">Submit Report</button>
+        </form>
+        <h3 style={{ position: 'absolute', bottom: '0', left: '10px', cursor: 'pointer' }} onClick={handleShowReportWindow}>Cancel</h3>
+      </div>
+      )}
     </div>
   );
 };
