@@ -1178,3 +1178,62 @@ a{
   padding: 20px;
   border-radius: 20px;
 }
+.guild-Elder-Messages-popup-main {
+  position: absolute;
+  top: 108px;
+  left: 40%;
+  right: 0%;
+  bottom: 0%;
+  background-color: rgba(1, 77, 77, 0.925);
+  color: rgb(255, 255, 255);
+  font-size: 30px;
+  word-wrap: break-word;
+  padding: 20px;
+  border-radius: 20px;
+}
+
+.guild-message-right {
+  display: block;
+  text-align: right;
+  margin-top: 30px;
+}
+
+.guild-message-left {
+  text-align: left;
+  display: block;
+  margin-top: 30px;
+}
+.guild-message-content-elder{
+  display: inline-flex;
+  padding: 15px;
+  font-size: 26px;
+  background-color: #299c6c;
+  border-top-left-radius: 20px;
+  border-bottom-left-radius: 20px;
+  border-top-right-radius: 20px;
+}
+.guild-message-content-owner{
+  display: inline-flex;
+  padding: 15px;
+  font-size: 26px;
+  background-color: #0f8878;
+  border-top-left-radius: 20px;
+  border-bottom-right-radius: 20px;
+  border-top-right-radius: 20px;
+}
+
+.message-container {
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  width: 100%;
+  height: 80%; /* Make sure the parent container has a defined height */
+}
+.owner-message-container{
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  width: 100%;
+  height: 80%;
+  margin-top: 5%;
+}
