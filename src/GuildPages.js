@@ -25,10 +25,13 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
   const [ShowGuildWarningUser, setShowGuildWarningUser] = useState(false);
   const [WarninginputValue, setWarningInputValue] = useState('');
   const [clickedMemberForWarning, setclickedMemberForWarning] = useState(null);
+  const [currentlyclickedelder, setcurrentlyclickedelder] = useState(null);
   const [ShowWarnings, setShowWarnings] = useState(false);
   const [ShowBannedTravelers, setShowBannedTravelers] = useState(false);
   const [ShowFinalLeave, setShowFinalLeave] = useState(false);
   const [ShowReportGuild, setShowReportGuild] = useState(false);
+  const [ShowElderMessages, setShowElderMessages] = useState(false);
+  const [messageInput, setMessageInput] = useState('');
   const [guildData, setGuildData] = useState({
     guildMoto: clickedGuild.guildMoto,
     bio: clickedGuild.bio,
@@ -345,6 +348,25 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
       socket.emit('Disband-Guild', GuildId, UserData.id || UserData._id);
     }
   };
+  const SendMessageToOwner = async () => {
+    if (socket) {
+      const ElderId = UserData.id || UserData._id
+      const content = messageInput
+      const GuildId = clickedGuild.id || clickedGuild._id
+      socket.emit('Guild-Elder-Messages-E-TO-O', GuildId, ElderId, content)
+      setMessageInput('');
+    }
+  };
+  const SendMessageToElder = async () => {
+    if (socket) {
+      const OwnerId = UserData.id || UserData._id
+      const content = messageInput
+      const ElderUserName = currentlyclickedelder
+      const GuildId = clickedGuild.id || clickedGuild._id
+      socket.emit('Guild-Elder-Messages-O-TO-E', GuildId, OwnerId, ElderUserName, content)
+      setMessageInput('');
+    }
+  };
 
   const ChangeGuidelines = (NewGuidelines) => {
     // check if this works pls
@@ -401,6 +423,9 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
   }
   const handleShowReportGuild= () => {
     setShowReportGuild(!ShowReportGuild)
+  }
+  const handleShowElderMessages= () => {
+    setShowElderMessages(!ShowElderMessages)
   }
   
   return (
@@ -505,7 +530,7 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
             <h2 onClick={handleViewGuildStats} style={{cursor: 'pointer'}}>View Guild Stats</h2>
             <h2 onClick={handleManageJoinReq} style={{cursor: 'pointer'}}>Manage Guild Join request <span className="guild-req-counter">{GuildRequestCount}</span></h2>
             <h2>Send A Guild Alert</h2>
-            <h3>View Elder messages</h3>
+            <h3 onClick={handleShowElderMessages}>View Elder messages</h3>
             <h2 className="guild-settings" onClick={handleGuildSettings}>Guild Settings</h2>
           </div>
         )}
@@ -522,7 +547,7 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
                 </span>
               )}
             </h2>
-            <h3>Send a message up to Guild Master</h3>
+            <h3 onClick={handleShowElderMessages}>Send a message up to Guild Master</h3>
             <h2 className="guild-settings" onClick={handleGuildSettings}>Guild Settings</h2>
           </div>
         )}
@@ -968,6 +993,93 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
             <button type="submit">Submit Report</button>
           </form>
           <h3 style={{ position: 'absolute', bottom: '0', left: '10px', cursor: 'pointer' }} onClick={handleShowReportGuild}>Cancel</h3>
+        </div>
+      )}
+      {ShowElderMessages && (
+        <div className="guild-Elder-Messages-popup-main">
+          {AllMembers && AllMembers.Elders.some(elder => elder.UserName === UserData.username) && (<div>Sending Messages To Owner</div>)}
+          {AllMembers && AllMembers.Elders.some(elder => elder.UserName === UserData.username) && (
+            <div className="message-container">
+              <div className="messages-alignment-div">
+                {clickedGuild.guildElderMessages
+                  .filter(convo => convo.ElderConvoStarter === UserData.username)
+                  .map((convo, index) => {
+                    // Merge and sort messages by timestamp
+                    const combinedMessages = [
+                      ...convo.EldersMessages.map(message => ({ ...message, type: 'elder' })),
+                      ...convo.OwnersMessages.map(message => ({ ...message, type: 'owner' }))
+                    ].sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+
+                    return (
+                      <div key={index}>
+                        {combinedMessages.map((message, idx) => (
+                          <div key={idx} className={message.type === 'elder' ? 'guild-message-right' : 'guild-message-left'}>
+                            <p style={{ margin: 0 }} className={message.type === 'elder' ? 'guild-message-content-elder' : 'guild-message-content-owner'}>
+                              {message.content}
+                            </p>
+                          </div>
+                        ))}
+                      </div>
+                    );
+                  })}
+              </div>
+              <div className="input-div">
+                <input 
+                  className="messages-input"
+                  value={messageInput}
+                  onChange={e => setMessageInput(e.target.value)}
+                />
+                <button onClick={SendMessageToOwner} className="send-btn">Send Message</button>
+              </div>
+            </div>
+          )}
+          {AllMembers && UserData.username === AllMembers.Owner.UserName && (
+            <div style={{display: "flex", flexDirection: 'Row', width: '100%', height: '100%'}}>
+              <div style={{display: 'flex', width: '25%', flexDirection: 'column'}} className="Elder-messages-left">
+                {clickedGuild.guildElderMessages.map((Convo, index) => (
+                  <div key={index} onClick={() => {setcurrentlyclickedelder(Convo.ElderConvoStarter)}}>
+                    {Convo.ElderConvoStarter}
+                  </div>
+                ))}
+              </div>
+              {currentlyclickedelder && (
+                <div className="owner-message-container">
+                  <div className="messages-alignment-div">
+                    {clickedGuild.guildElderMessages
+                      .filter(convo => convo.ElderConvoStarter === currentlyclickedelder)
+                      .map((convo, index) => {
+                        // Merge and sort messages by timestamp
+                        const combinedMessages = [
+                          ...convo.EldersMessages.map(message => ({ ...message, type: 'elder' })),
+                          ...convo.OwnersMessages.map(message => ({ ...message, type: 'owner' }))
+                        ].sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+
+                        return (
+                          <div key={index}>
+                            {combinedMessages.map((message, idx) => (
+                              <div key={idx} className={message.type === 'elder' ? 'guild-message-left' : 'guild-message-right'}>
+                                <p style={{ margin: 0 }} className={message.type === 'elder' ? 'guild-message-content-owner' : 'guild-message-content-elder'}>
+                                  {message.content}
+                                </p>
+                              </div>
+                            ))}
+                          </div>
+                        );
+                      })}
+                  </div>
+                  <div className="input-div">
+                    <input 
+                      className="messages-input"
+                      value={messageInput}
+                      onChange={e => setMessageInput(e.target.value)}
+                    />
+                    <button onClick={SendMessageToElder} className="send-btn">Send Message</button>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+          <h3 style={{ position: 'absolute', top: '-20px', right: '30px', cursor: 'pointer' }} onClick={() => {handleShowElderMessages(); setcurrentlyclickedelder(null)}}>Exit</h3>
         </div>
       )}
     </div>
