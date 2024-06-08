@@ -118,10 +118,36 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
     { name: 'orange', color1: '#F6AF75', color2: '#EA6A00' },
     { name: 'grey', color1: '#D3D3D3', color2: '#4D4545' },
   ];
+  const SettingsColors = [
+    { name: 'blue', color1: '#082142', color2: '#0C68E1' },
+    { name: 'green', color1: '#166830', color2: '#45965F' },
+    { name: 'red', color1: '#820101', color2: '#F14040' },
+    { name: 'purple', color1: '#4E1D86', color2: '#78096F' },
+    { name: 'yellow', color1: '#FCD128', color2: '#F5DF86' },
+    { name: 'orange', color1: '#E08421', color2: '#FBA54B' },
+    { name: 'grey', color1: '#3A3939', color2: '#797777' },
+  ];
+  const SettingsItemsColors = [
+    { name: 'blue', color1: '#0253BC'},
+    { name: 'green', color1: '#58996D'},
+    { name: 'red', color1: '#D14949'},
+    { name: 'purple', color1: '#7F55AF'},
+    { name: 'yellow', color1: '#F9CD21'},
+    { name: 'orange', color1: '#F6AF75'},
+    { name: 'grey', color1: '#5C5C5C' },
+  ];
 
   const getGuildColors = (guildColor) => {
     const selectedColorData = colors.find(color => color.name === guildColor);
     return selectedColorData ? `linear-gradient(to top, ${selectedColorData.color1}, ${selectedColorData.color2})` : '';
+  };
+  const getGuildSettingsColors = (guildColor) => {
+    const selectedColorData = SettingsColors.find(color => color.name === guildColor);
+    return selectedColorData ? `linear-gradient(to top, ${selectedColorData.color1}, ${selectedColorData.color2})` : '';
+  };
+  const getGuildSettingsItemsColors = (guildColor) => {
+    const selectedColorData = SettingsItemsColors.find(color => color.name === guildColor);
+    return selectedColorData ? `${selectedColorData.color1}` : '';
   };
 
 
@@ -621,21 +647,21 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
             </div>
           ) : (
             <div>
-              <p>Your guild is currently open for all to join. To change this, go to guild settings.</p>
+              <p style={{textAlign: 'center'}}>Your guild is currently open for all to join. To change this, go to guild settings.</p>
               <h3 onClick={handleManageJoinReq} style={{position: 'absolute', bottom: '0', right: '10px', cursor: 'pointer'}}>Finish</h3>
             </div>
           )}
         </div>
       )}
       {ShowGuildSettings && (
-        <div className="guild-settings-div">
+        <div style={{background: getGuildSettingsColors(clickedGuild.guildColor)}} className="guild-settings-div">
           {AllMembers && AllMembers.Members.some(Member => Member.UserName === UserData.username) && (
             <div className="guild-settings-popup">
               <div onClick={handleGuildSettings} style={{alignSelf: 'flex-start', cursor: 'pointer'}}>Finish</div>
-              <div className="guild-settings-popup-item" onClick={handleGuildGuidelines}>View Guild guidelines</div>
-              <div className="guild-settings-popup-item" onClick={handleReportAUser}>Report A Guild User</div>
-              <div className="guild-settings-popup-item" onClick={handleShowReportGuild}>Report Guild</div>
-              <div className="guild-settings-popup-item" onClick={() => {setShowFinalLeave(!ShowFinalLeave)}}>Retire From Guild</div>
+              <div style={{background: getGuildSettingsItemsColors(clickedGuild.guildColor)}} className="guild-settings-popup-item" onClick={handleGuildGuidelines}>View Guild guidelines</div>
+              <div style={{background: getGuildSettingsItemsColors(clickedGuild.guildColor)}} className="guild-settings-popup-item" onClick={handleReportAUser}>Report A Guild User</div>
+              <div style={{background: getGuildSettingsItemsColors(clickedGuild.guildColor)}} className="guild-settings-popup-item" onClick={handleShowReportGuild}>Report Guild</div>
+              <div style={{background: getGuildSettingsItemsColors(clickedGuild.guildColor)}} className="guild-settings-popup-item" onClick={() => {setShowFinalLeave(!ShowFinalLeave)}}>Retire From Guild</div>
               {ShowFinalLeave && (
                 <div className="guild-Report-A-User" style={{border: 'black solid 1px'}}>
                   <h2>Are you Sure You Want To Leave the Guild?</h2>
@@ -647,22 +673,23 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
           {AllMembers && AllMembers.Elders.some(elder => elder.UserName === UserData.username) && (
             <div className="guild-settings-popup">
               <div onClick={handleGuildSettings} style={{alignSelf: 'flex-start', cursor: 'pointer'}}>Finish</div>
-              <div className="guild-settings-popup-item" onClick={handleGuildGuidelines}>View Guild guidelines</div>
-              <div className="guild-settings-popup-item"onClick={handleReportAUser}>Report A Guild User</div>
-              <div className="guild-settings-popup-item" onClick={handleShowReportGuild}>Report Guild</div>
-              <div className="guild-settings-popup-item" onClick={() => {DemoteToMember(UserData.id || UserData._id)}}>Demote Self</div>
-              <div className="guild-settings-popup-item" onClick={handleGiveWarning}>Give User a Warning</div>
+              <div style={{background: getGuildSettingsItemsColors(clickedGuild.guildColor)}} className="guild-settings-popup-item" onClick={handleGuildGuidelines}>View Guild guidelines</div>
+              <div style={{background: getGuildSettingsItemsColors(clickedGuild.guildColor)}} className="guild-settings-popup-item"onClick={handleReportAUser}>Report A Guild User</div>
+              <div style={{background: getGuildSettingsItemsColors(clickedGuild.guildColor)}} className="guild-settings-popup-item" onClick={handleShowReportGuild}>Report Guild</div>
+              <div style={{background: getGuildSettingsItemsColors(clickedGuild.guildColor)}} className="guild-settings-popup-item" onClick={() => {DemoteToMember(UserData.id || UserData._id)}}>Demote Self</div>
+              <div style={{background: getGuildSettingsItemsColors(clickedGuild.guildColor)}} className="guild-settings-popup-item" onClick={handleGiveWarning}>Give User a Warning</div>
             </div>
           )}
           {AllMembers && UserData.username === AllMembers.Owner.UserName && (
             <div className="guild-settings-popup">
+              {/*make colors  */}
               <div onClick={handleGuildSettings} style={{alignSelf: 'flex-start', cursor: 'pointer'}}>Finish</div>
-              <div className="guild-settings-popup-item" onClick={handleGuildGuidelines}>Manage Guild guidelines</div>
-              <div className="guild-settings-popup-item" onClick={handleChangeFeatures}>Change Guild Features</div>
-              <div className="guild-settings-popup-item" onClick={handleSeeReportList}>See Report List</div>
-              <div className="guild-settings-popup-item" onClick={handleGiveWarning}>Give User a Warning</div>
-              <div className="guild-settings-popup-item" onClick={handleShowBanList}>Manage Banned Travelers</div>
-              <div className="guild-settings-popup-item" onClick={DisbandGuild}>Disband Guild</div>
+              <div style={{background: getGuildSettingsItemsColors(clickedGuild.guildColor)}} className="guild-settings-popup-item" onClick={handleGuildGuidelines}>Manage Guild guidelines</div>
+              <div style={{background: getGuildSettingsItemsColors(clickedGuild.guildColor)}} className="guild-settings-popup-item" onClick={handleChangeFeatures}>Change Guild Features</div>
+              <div style={{background: getGuildSettingsItemsColors(clickedGuild.guildColor)}} className="guild-settings-popup-item" onClick={handleSeeReportList}>See Report List</div>
+              <div style={{background: getGuildSettingsItemsColors(clickedGuild.guildColor)}} className="guild-settings-popup-item" onClick={handleGiveWarning}>Give User a Warning</div>
+              <div style={{background: getGuildSettingsItemsColors(clickedGuild.guildColor)}} className="guild-settings-popup-item" onClick={handleShowBanList}>Manage Banned Travelers</div>
+              <div style={{background: getGuildSettingsItemsColors(clickedGuild.guildColor)}} className="guild-settings-popup-item" onClick={DisbandGuild}>Disband Guild</div>
             </div>
           )}
         </div>
@@ -932,7 +959,7 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
         <div className="guild-Report-A-User-popup-main">
           <h2 style={{ textAlign: 'center' }}>Warnings</h2>
           {clickedGuild.Warnings.filter(warning => warning.TravelerUserName === UserData.username).length === 0 ? (
-            <h2>You currently have no warnings, keep up the good attitude!</h2>
+            <h2 style={{textAlign: 'center'}}>You currently have no warnings, keep up the good attitude!</h2>
           ) : (
             <div style={{overflowY: 'auto', height: '70%'}}>
               {clickedGuild.Warnings.filter(warning => warning.TravelerUserName === UserData.username).map((warning, index) => (
@@ -996,7 +1023,7 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
         </div>
       )}
       {ShowElderMessages && (
-        <div className="guild-Elder-Messages-popup-main">
+        <div style={{background: getGuildSettingsColors(clickedGuild.guildColor)}} className="guild-Elder-Messages-popup-main">
           {AllMembers && AllMembers.Elders.some(elder => elder.UserName === UserData.username) && (<div>Sending Messages To Owner</div>)}
           {AllMembers && AllMembers.Elders.some(elder => elder.UserName === UserData.username) && (
             <div className="message-container">
@@ -1014,7 +1041,7 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
                       <div key={index}>
                         {combinedMessages.map((message, idx) => (
                           <div key={idx} className={message.type === 'elder' ? 'guild-message-right' : 'guild-message-left'}>
-                            <p style={{ margin: 0 }} className={message.type === 'elder' ? 'guild-message-content-elder' : 'guild-message-content-owner'}>
+                            <p style={{ margin: 0, backgroundColor: getGuildSettingsItemsColors(clickedGuild.guildColor) }} className={message.type === 'elder' ? 'guild-message-content-elder' : 'guild-message-content-owner'}>
                               {message.content}
                             </p>
                           </div>
@@ -1029,7 +1056,7 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
                   value={messageInput}
                   onChange={e => setMessageInput(e.target.value)}
                 />
-                <button onClick={SendMessageToOwner} className="send-btn">Send Message</button>
+                <button style={{backgroundColor: getGuildSettingsItemsColors(clickedGuild.guildColor) }} onClick={SendMessageToOwner} className="send-btn">Send Message</button>
               </div>
             </div>
           )}
@@ -1058,7 +1085,7 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
                           <div key={index}>
                             {combinedMessages.map((message, idx) => (
                               <div key={idx} className={message.type === 'elder' ? 'guild-message-left' : 'guild-message-right'}>
-                                <p style={{ margin: 0 }} className={message.type === 'elder' ? 'guild-message-content-owner' : 'guild-message-content-elder'}>
+                                <p style={{ margin: 0, backgroundColor: getGuildSettingsItemsColors(clickedGuild.guildColor) }} className={message.type === 'elder' ? 'guild-message-content-owner' : 'guild-message-content-elder'}>
                                   {message.content}
                                 </p>
                               </div>
@@ -1073,7 +1100,7 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
                       value={messageInput}
                       onChange={e => setMessageInput(e.target.value)}
                     />
-                    <button onClick={SendMessageToElder} className="send-btn">Send Message</button>
+                    <button style={{ backgroundColor: getGuildSettingsItemsColors(clickedGuild.guildColor) }} onClick={SendMessageToElder} className="send-btn">Send Message</button>
                   </div>
                 </div>
               )}
