@@ -987,7 +987,7 @@ a{
 }
 .Guild-Request-popup{
   position: fixed;
-  top: 10%;
+  top: 108px;
   left: 10%;
   right: 10%;
   bottom: 10%;
@@ -1043,7 +1043,6 @@ a{
   cursor: pointer;
 }
 .guild-settings-popup-item {
-  background-color: #167263;
   width: 100%;
   text-align: center;
   padding-top: 10px;
@@ -1211,6 +1210,7 @@ a{
   border-top-left-radius: 20px;
   border-bottom-left-radius: 20px;
   border-top-right-radius: 20px;
+  border: solid rgb(59, 57, 57) 1px;
 }
 .guild-message-content-owner{
   display: inline-flex;
@@ -1220,6 +1220,7 @@ a{
   border-top-left-radius: 20px;
   border-bottom-right-radius: 20px;
   border-top-right-radius: 20px;
+  border: solid rgb(59, 57, 57) 1px;
 }
 
 .message-container {
