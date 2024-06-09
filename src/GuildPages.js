@@ -31,6 +31,7 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
   const [ShowFinalLeave, setShowFinalLeave] = useState(false);
   const [ShowReportGuild, setShowReportGuild] = useState(false);
   const [ShowElderMessages, setShowElderMessages] = useState(false);
+  const [ShowDisbandWarning,setShowDisbandWarning] = useState(false);
   const [messageInput, setMessageInput] = useState('');
   const [guildData, setGuildData] = useState({
     guildMoto: clickedGuild.guildMoto,
@@ -453,6 +454,9 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
   const handleShowElderMessages= () => {
     setShowElderMessages(!ShowElderMessages)
   }
+  const handleShowDisbandWarning= () => {
+    setShowDisbandWarning(!ShowDisbandWarning)
+  }
   
   return (
     <div style={{background: getGuildColors(clickedGuild.guildColor)}} className='Guild-Pages-main-div'>
@@ -625,7 +629,7 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
               {clickedGuild.guildJoinRequest.length !== 0 && (
                 <div>
                   {RequestedMembers.map((traveler, index) => ( // Added parentheses and index parameter
-                    <div className="ReqMember-item" key={index}> {/* Added key for each mapped element */}
+                    <div style={{background: getGuildSettingsColors(clickedGuild.guildColor)}} className="ReqMember-item" key={index}> {/* Added key for each mapped element */}
                       <div>
                         {traveler.UserName}
                         {traveler.AccPrivate ? (
@@ -689,13 +693,19 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
               <div style={{background: getGuildSettingsItemsColors(clickedGuild.guildColor)}} className="guild-settings-popup-item" onClick={handleSeeReportList}>See Report List</div>
               <div style={{background: getGuildSettingsItemsColors(clickedGuild.guildColor)}} className="guild-settings-popup-item" onClick={handleGiveWarning}>Give User a Warning</div>
               <div style={{background: getGuildSettingsItemsColors(clickedGuild.guildColor)}} className="guild-settings-popup-item" onClick={handleShowBanList}>Manage Banned Travelers</div>
-              <div style={{background: getGuildSettingsItemsColors(clickedGuild.guildColor)}} className="guild-settings-popup-item" onClick={DisbandGuild}>Disband Guild</div>
+              <div style={{background: getGuildSettingsItemsColors(clickedGuild.guildColor)}} className="guild-settings-popup-item" onClick={handleShowDisbandWarning}>Disband Guild</div>
+              {ShowDisbandWarning && (
+                <div className="guild-Report-A-User" style={{border: 'black solid 1px'}}>
+                  <h3>Disbanding the guild removes all members/elders and the deletes the guild forever!</h3>
+                  <div><span style={{paddingRight: '120px'}} onClick={DisbandGuild}>Confirm and Disband Guild</span>    <span onClick={() => {setShowDisbandWarning(false)}}>Cancel</span></div>
+                </div>
+              )}
             </div>
           )}
         </div>
       )}
       {ShowGuildGuidelines && (
-        <div className="guild-guidelines-popup-main">
+        <div style={{background: getGuildSettingsColors(clickedGuild.guildColor)}} className="guild-guidelines-popup-main">
           <h2>Guild Guidelines</h2>
           <p style={{textAlign: 'center'}}>Guild Guidelines are unique to each guild to make the guild a welcoming and safe place.</p>
           {AllMembers && UserData.username !== AllMembers.Owner.UserName && (
@@ -758,9 +768,9 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
         </div>
       )}
       {ShowChangeGuildFeatures && (
-        <div>
+        <div >
           {!ShowEditGuildFeatures && (
-            <div className="guild-features-popup-main">
+            <div style={{background: getGuildSettingsColors(clickedGuild.guildColor)}} className="guild-features-popup-main">
               <h2 style={{textAlign: 'center'}}>Guild Features</h2>
               <div>Guild Moto: {clickedGuild.guildMoto}</div>
               <div>Guild bio: {clickedGuild.bio}</div>
@@ -772,7 +782,7 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
             </div>
           )}
           {ShowEditGuildFeatures && (
-            <div className="guild-features-popup-main">
+            <div style={{background: getGuildSettingsColors(clickedGuild.guildColor)}} className="guild-features-popup-main">
             <h2 style={{ textAlign: 'center' }}>Edit Guild Features</h2>
             <form onSubmit={handleSubmit}>
               <div className="guild-features-form-divs">
@@ -841,7 +851,7 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
         </div>
       )}
       {ShowGuildReportList && (
-        <div className="guild-Report-A-User-popup-main">
+        <div style={{background: getGuildSettingsColors(clickedGuild.guildColor)}} className="guild-Report-A-User-popup-main">
           <h2 style={{ textAlign: 'center' }}>Report List</h2>
           <div style={{overflowY: 'auto', maxHeight: '65%',}}>
             {clickedGuild.Reports.map((report) => (
@@ -862,7 +872,7 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
         </div>
       )}
       {ShowGuildReportUser && (
-        <div className="guild-Report-A-User-popup-main">
+        <div style={{background: getGuildSettingsColors(clickedGuild.guildColor)}} className="guild-Report-A-User-popup-main">
           <h2>Report A Guild User</h2>
           <p>Who is the User you are reporting in the guild?</p>
           <div style={{overflowY: 'auto', maxHeight: '55%', border: 'white solid 3px', paddingLeft: '20px', paddingRight: '20px'}}>
@@ -908,7 +918,7 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
         </div>
       )}
       {ShowGuildWarningUser && (
-        <div className="guild-Report-A-User-popup-main">
+        <div style={{background: getGuildSettingsColors(clickedGuild.guildColor)}} className="guild-Report-A-User-popup-main">
           <h2>Give User A Warning</h2>
           <p>Who are you giving a warning?</p>
           <div style={{overflowY: 'auto', maxHeight: '55%', border: 'white solid 3px', paddingLeft: '20px', paddingRight: '20px'}}>
@@ -917,9 +927,9 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
               {AllMembers.Elders
               .filter(elder => elder.UserName !== UserData.username)
               .map((elder) => (
-                <div onClick={() => {WarnAUser(elder)}} className="Report-A-User-grid-item" key={elder.UserName}>
-                  <div>{elder.UserName}</div>
-                  <div>Elder</div>
+                <div style={{background: getGuildSettingsItemsColors(clickedGuild.guildColor)}} onClick={() => {WarnAUser(elder)}} className="Report-A-User-grid-item" key={elder.UserName}>
+                  <div style={{fontWeight: '500', fontSize: '30px'}}>{elder.UserName}</div>
+                  <div style={{fontSize: '28px'}}>Elder</div>
                   <div># of Warnings: {clickedGuild.Warnings.filter(warning => warning.TravelerUserName === elder.UserName).length}</div>
                 </div>
               ))}
@@ -956,7 +966,7 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
         </div>
       )}
       {ShowWarnings && (
-        <div className="guild-Report-A-User-popup-main">
+        <div style={{background: getGuildSettingsColors(clickedGuild.guildColor)}} className="guild-Report-A-User-popup-main">
           <h2 style={{ textAlign: 'center' }}>Warnings</h2>
           {clickedGuild.Warnings.filter(warning => warning.TravelerUserName === UserData.username).length === 0 ? (
             <h2 style={{textAlign: 'center'}}>You currently have no warnings, keep up the good attitude!</h2>
@@ -974,7 +984,7 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
         </div>
       )}
       {ShowBannedTravelers && (
-        <div className="guild-Report-A-User-popup-main">
+        <div style={{background: getGuildSettingsColors(clickedGuild.guildColor)}} className="guild-Report-A-User-popup-main">
           {clickedGuild.bannedTravelers.length === 0 && (
             <div>
               There are no banned travelers.
@@ -999,7 +1009,7 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
         </div>
       )}
       {ShowReportGuild && (
-        <div className="guild-Report-A-User-popup-main">
+        <div style={{background: getGuildSettingsColors(clickedGuild.guildColor)}} className="guild-Report-A-User-popup-main">
           <h2 style={{marginBottom: '100px', textAlign: 'center'}}>Reporting  Guild</h2>
           <form style={{display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10%', height: '65%'}} onSubmit={handleReportSubmit}>
             <input style={{padding: '10px',  width: '30%', fontSize:'20px',}} type="text" name="GuildName" value={reportData.GuildName} onChange={handleReportChange} placeholder="Reporting Guild's Name" required />
