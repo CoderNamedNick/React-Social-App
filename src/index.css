@@ -1238,3 +1238,22 @@ a{
   height: 80%;
   margin-top: 5%;
 }
+.Top-Middle-NavBar{
+  display: flex;
+  flex-direction: row;
+  margin-top: 108px;
+  width: 70%;
+  justify-content: space-between;
+  border: black solid 1px;
+  padding: 20px 15%;
+}
+.Bold{
+  font-family: "MedievalSharp", cursive;
+  font-weight: 600;
+  text-decoration: underline;
+  text-shadow: 2px 2px rgba(0, 0, 0, 0.171);
+  font-size: 28px;
+}
+.not{
+  font-size: 21px;
+}
