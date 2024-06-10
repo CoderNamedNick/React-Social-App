@@ -32,6 +32,8 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
   const [ShowReportGuild, setShowReportGuild] = useState(false);
   const [ShowElderMessages, setShowElderMessages] = useState(false);
   const [ShowDisbandWarning,setShowDisbandWarning] = useState(false);
+  const [MainFeedClicked, setMainFeedClicked] = useState(true);
+  const [GuildAlertsClicked, setGuildAlertsClicked] = useState(false);
   const [messageInput, setMessageInput] = useState('');
   const [guildData, setGuildData] = useState({
     guildMoto: clickedGuild.guildMoto,
@@ -457,6 +459,14 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
   const handleShowDisbandWarning= () => {
     setShowDisbandWarning(!ShowDisbandWarning)
   }
+  const handleMainFeedClick= () => {
+    setGuildAlertsClicked(false)
+    setMainFeedClicked(true)
+  }
+  const handleGuildAlertClick= () => {
+    setMainFeedClicked(false)
+    setGuildAlertsClicked(true)
+  }
   
   return (
     <div style={{background: getGuildColors(clickedGuild.guildColor)}} className='Guild-Pages-main-div'>
@@ -464,93 +474,101 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
         <div className="GP-left-side-2nd" >
           <p style={{width: '96%', paddingLeft: '2%'}} className="GP-guild-moto">{clickedGuild.guildMoto}</p>
         </div>
-          {AllMembers && (
-            <div className="members-div"
-            ref={containerRef}
-            onWheel={handleScroll}
-            onTouchStart={handleTouchStart}
-            onTouchMove={handleTouchMove}
-            style={{width: '98%'}}>
-              <h2 style={{cursor: 'pointer'}} onClick={() => toggleTooltip(AllMembers.Owner.id)}>{AllMembers.Owner.UserName} <span style={{fontSize: '14px', fontWeight: '400'}}>Owner</span></h2>
-              {UserData.username !== AllMembers.Owner.UserName && (
-                <div className="guild-Owner-tooltip" style={{ display: clickedMember === AllMembers.Owner.id ? 'block' : 'none' }}>
-                  <Link to={`/user/${AllMembers.Owner.UserName}`}><div>View {AllMembers.Owner.UserName}'s Profile</div></Link> 
-                </div>
-              )}
-              <hr/>
-              <div style={{display: 'flex', flexDirection: 'column', gap: '5px'}}>
-                {AllMembers.Elders
-                .map((elder) => (
-                  <div>
-                    <h2 style={{cursor: 'pointer'}} onClick={() => toggleTooltip(elder.id)}>{elder.UserName } <span style={{fontSize: '14px', fontWeight: '400'}}>Elder</span></h2>
-                    {UserData.username !== elder.UserName && (
-                      <div className="guild-member-tooltip" style={{ display: clickedMember === elder.id ? 'block' : 'none' }}>
-                      {!elder.AccPrivate && (<Link to={`/user/${elder.UserName}`}><div>View {elder.UserName}'s Profile</div></Link>)}
-                      {elder.AccPrivate && (<div>{elder.UserName}'s Profile Is Private</div>)}
-                        {UserData.username === AllMembers.Owner.UserName && (
-                          <div style={{cursor: 'pointer'}} onClick={() => {DemoteToMember(elder.id || elder._id)}}>Demote to Member</div>
-                        )}
-                        <hr style={{margin: '3px'}}/>
-                        {UserData.username === AllMembers.Owner.UserName  && (
-                          <div style={{cursor: 'pointer'}} onClick={() => {HandleBanMember(elder.id || elder._id)}}>Ban From Guild</div>
-                        )}
-                        { ShowBanReasonInput && (<div className="guild-ban-tooltip" style={{ display: clickedMember === elder.id ? 'block' : 'none' }}>
-                          <div>Reason For Ban: </div>
-                          <input
-                            type="text"
-                            value={BaninputValue}
-                            onChange={handleBanInputChange}
-                          />
-                          <button onClick={() => {BanMember(elder.id || elder._id, BaninputValue )}}>Confirm Ban</button>
-                        </div>)}
-                      </div>
-                    )}
-                  </div>
-                ))}
+        {AllMembers && (
+          <div className="members-div"
+          ref={containerRef}
+          onWheel={handleScroll}
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          style={{width: '98%'}}>
+            <h2 style={{cursor: 'pointer'}} onClick={() => toggleTooltip(AllMembers.Owner.id)}>{AllMembers.Owner.UserName} <span style={{fontSize: '14px', fontWeight: '400'}}>Owner</span></h2>
+            {UserData.username !== AllMembers.Owner.UserName && (
+              <div className="guild-Owner-tooltip" style={{ display: clickedMember === AllMembers.Owner.id ? 'block' : 'none' }}>
+                <Link to={`/user/${AllMembers.Owner.UserName}`}><div>View {AllMembers.Owner.UserName}'s Profile</div></Link> 
               </div>
-              {AllMembers.Elders.length !== 0 && (<hr/>)}
-              <div style={{display: 'flex', flexDirection: 'column', gap: '5px'}}>
-              {AllMembers.Members
-              .map((member) => (
-                <div key={member.id}>
-                  <h2 style={{cursor: 'pointer'}} onClick={() => toggleTooltip(member.id)}>
-                    {member.UserName} <span style={{fontSize: '14px', fontWeight: '400'}}>Member</span>
-                  </h2>
-                  {UserData.username !== member.UserName && (
-                    <div className="guild-member-tooltip" style={{ display: clickedMember === member.id ? 'block' : 'none' }}>
-                      {!member.AccPrivate && (<Link to={`/user/${member.UserName}`}><div>View {member.UserName}'s Profile</div></Link>)}
-                      {member.AccPrivate && (<div>{member.UserName}'s Profile Is Private</div>)}
+            )}
+            <hr/>
+            <div style={{display: 'flex', flexDirection: 'column', gap: '5px'}}>
+              {AllMembers.Elders
+              .map((elder) => (
+                <div>
+                  <h2 style={{cursor: 'pointer'}} onClick={() => toggleTooltip(elder.id)}>{elder.UserName } <span style={{fontSize: '14px', fontWeight: '400'}}>Elder</span></h2>
+                  {UserData.username !== elder.UserName && (
+                    <div className="guild-member-tooltip" style={{ display: clickedMember === elder.id ? 'block' : 'none' }}>
+                    {!elder.AccPrivate && (<Link to={`/user/${elder.UserName}`}><div>View {elder.UserName}'s Profile</div></Link>)}
+                    {elder.AccPrivate && (<div>{elder.UserName}'s Profile Is Private</div>)}
                       {UserData.username === AllMembers.Owner.UserName && (
-                        <div style={{cursor: 'pointer'}} onClick={() => {PromoteToElder(member.id || member._id)}}>Promote to Elder</div>
+                        <div style={{cursor: 'pointer'}} onClick={() => {DemoteToMember(elder.id || elder._id)}}>Demote to Member</div>
                       )}
                       <hr style={{margin: '3px'}}/>
-                      {(UserData.username === AllMembers.Owner.UserName || AllMembers.Elders.some(elder => elder.UserName === UserData.username)) && (
-                        <div style={{cursor: 'pointer'}} onClick={() => {HandleBanMember(member.id || member._id)}}>Ban From Guild</div>
+                      {UserData.username === AllMembers.Owner.UserName  && (
+                        <div style={{cursor: 'pointer'}} onClick={() => {HandleBanMember(elder.id || elder._id)}}>Ban From Guild</div>
                       )}
-                      { ShowBanReasonInput && (<div className="guild-ban-tooltip" style={{ display: clickedMember === member.id ? 'block' : 'none' }}>
+                      { ShowBanReasonInput && (<div className="guild-ban-tooltip" style={{ display: clickedMember === elder.id ? 'block' : 'none' }}>
                         <div>Reason For Ban: </div>
                         <input
                           type="text"
                           value={BaninputValue}
                           onChange={handleBanInputChange}
                         />
-                        <button onClick={() => {BanMember(member.id || member._id, BaninputValue )}}>Confirm Ban</button>
+                        <button onClick={() => {BanMember(elder.id || elder._id, BaninputValue )}}>Confirm Ban</button>
                       </div>)}
                     </div>
                   )}
                 </div>
               ))}
-              </div>
             </div>
-          )}
-        <div> 
-      </div>
+            {AllMembers.Elders.length !== 0 && (<hr/>)}
+            <div style={{display: 'flex', flexDirection: 'column', gap: '5px'}}>
+            {AllMembers.Members
+            .map((member) => (
+              <div key={member.id}>
+                <h2 style={{cursor: 'pointer'}} onClick={() => toggleTooltip(member.id)}>
+                  {member.UserName} <span style={{fontSize: '14px', fontWeight: '400'}}>Member</span>
+                </h2>
+                {UserData.username !== member.UserName && (
+                  <div className="guild-member-tooltip" style={{ display: clickedMember === member.id ? 'block' : 'none' }}>
+                    {!member.AccPrivate && (<Link to={`/user/${member.UserName}`}><div>View {member.UserName}'s Profile</div></Link>)}
+                    {member.AccPrivate && (<div>{member.UserName}'s Profile Is Private</div>)}
+                    {UserData.username === AllMembers.Owner.UserName && (
+                      <div style={{cursor: 'pointer'}} onClick={() => {PromoteToElder(member.id || member._id)}}>Promote to Elder</div>
+                    )}
+                    <hr style={{margin: '3px'}}/>
+                    {(UserData.username === AllMembers.Owner.UserName || AllMembers.Elders.some(elder => elder.UserName === UserData.username)) && (
+                      <div style={{cursor: 'pointer'}} onClick={() => {HandleBanMember(member.id || member._id)}}>Ban From Guild</div>
+                    )}
+                    { ShowBanReasonInput && (<div className="guild-ban-tooltip" style={{ display: clickedMember === member.id ? 'block' : 'none' }}>
+                      <div>Reason For Ban: </div>
+                      <input
+                        type="text"
+                        value={BaninputValue}
+                        onChange={handleBanInputChange}
+                      />
+                      <button onClick={() => {BanMember(member.id || member._id, BaninputValue )}}>Confirm Ban</button>
+                    </div>)}
+                  </div>
+                )}
+              </div>
+            ))}
+            </div>
+          </div>
+        )}
       </div>
       <div className="Guild-Pages-middle-side">
-        {
-         /*this will have Guild Name, main post and feed  */
-        }
-        <div style={{bottom: '1%', left: '21%', position: 'absolute'}}>Make A post</div>
+        <div className="Top-Middle-NavBar">
+          <div onClick={handleMainFeedClick} className={MainFeedClicked ? "Bold" : 'not'} >Main Feed</div>
+          <div style={{border: 'solid black 1px'}}></div>
+          <div onClick={handleGuildAlertClick}  className={GuildAlertsClicked ? "Bold" : 'not'} >Guild Alerts</div>
+        </div>
+        {MainFeedClicked && (
+          <div>
+            <div style={{position: 'fixed', left: '20%', top: '178px'}}>Reload Main Icon</div>
+            <div style={{marginTop: '10px', width: '100%'}} className="Main-Post-Feed">
+              
+            </div>
+            <div style={{bottom: '1%', left: '21%', position: 'absolute'}}>Make A post</div>
+          </div>
+        )}
       </div>
       <div className="Guild-Pages-right-side">
         <h4 style={{marginTop: '108px'}}>Configuration</h4>
@@ -596,11 +614,6 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
             <h2 className="guild-settings" onClick={handleGuildSettings}>Guild Settings</h2>
           </div>
         )}
-        {
-         /*this will have guild settings depending on role in guild
-         owner has all power/ elders can  ban / all users have option to Make Post,
-         guild settings send message to elders,  leave guild,  */
-        }
       </div>
       {ShowGuildStats && (
         <div className="Guild-stats-popup">
