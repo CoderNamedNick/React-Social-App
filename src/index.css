@@ -1253,7 +1253,9 @@ a{
   text-decoration: underline;
   text-shadow: 2px 2px rgba(0, 0, 0, 0.171);
   font-size: 28px;
+  cursor: pointer;
 }
 .not{
   font-size: 21px;
+  cursor: pointer
 }

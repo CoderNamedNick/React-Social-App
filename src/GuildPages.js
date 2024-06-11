@@ -569,6 +569,15 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
             <div style={{bottom: '1%', left: '21%', position: 'absolute'}}>Make A post</div>
           </div>
         )}
+        {GuildAlertsClicked && (
+          <div>
+            <div style={{position: 'fixed', left: '20%', top: '178px'}}>Reload Alerts Icon</div>
+            <div style={{marginTop: '10px', width: '100%'}} className="Main-Post-Feed">
+              
+            </div>
+            {AllMembers && UserData.username === AllMembers.Owner.UserName && (<div style={{bottom: '1%', left: '21%', position: 'absolute'}}>Make A Alert</div>)}
+          </div>
+        )}
       </div>
       <div className="Guild-Pages-right-side">
         <h4 style={{marginTop: '108px'}}>Configuration</h4>
