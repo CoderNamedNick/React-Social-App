@@ -16,6 +16,7 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
   const [BaninputValue, setBanInputValue] = useState('');
   const [ReportinputValue, setReportInputValue] = useState('');
   const [GuidelinesinputValue, setGuidelinesinputValue] = useState('');
+  const [AlertinputValue, setAlertinputValue] = useState('');
   const [ShowGuildSettings, setShowGuildSettings] = useState(false)
   const [ShowChangeGuildFeatures, setShowChangeGuildFeatures] = useState(false)
   const [ShowEditGuildFeatures, setShowEditGuildFeatures] = useState(false)
@@ -35,6 +36,8 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
   const [MainFeedClicked, setMainFeedClicked] = useState(true);
   const [GuildAlertsClicked, setGuildAlertsClicked] = useState(false);
   const [messageInput, setMessageInput] = useState('');
+  const [MakeAlertClicked, setMakeAlertClicked] = useState(false);
+  const [MakePostClicked, setMakePostClicked] = useState(false);
   const [guildData, setGuildData] = useState({
     guildMoto: clickedGuild.guildMoto,
     bio: clickedGuild.bio,
@@ -166,6 +169,10 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
   const handleGuidelinesInputChange = (event) => {
     setGuidelinesinputValue(event.target.value);
   }
+  const handleAlertInputChange = (event) => {
+    setAlertinputValue(event.target.value);
+  }
+  
   // Function to handle mouse wheel scroll
   const handleScroll = (e) => {
     const container = containerRef.current;
@@ -260,6 +267,11 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
       socket.on('guild-update', (updatedGuild) => {
         console.log('got new guild update')
         setclickedGuild(updatedGuild)
+      });
+      socket.on('Guild-Alert', (Alert) => {
+        console.log('got new guild Alert')
+        console.log(Alert)
+        setMakeAlertClicked(false)
       });
     }
   
@@ -394,6 +406,15 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
       const GuildId = clickedGuild.id || clickedGuild._id
       socket.emit('Guild-Elder-Messages-O-TO-E', GuildId, OwnerId, ElderUserName, content)
       setMessageInput('');
+    }
+  };
+  const SendAlert = async () => {
+    if (socket) {
+      const OwnerId = UserData.id || UserData._id
+      const content = AlertinputValue
+      const GuildId = clickedGuild.id || clickedGuild._id
+      socket.emit('Send-Guild-Alert', GuildId, OwnerId, content)
+      setAlertinputValue('');
     }
   };
 
@@ -575,7 +596,21 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
             <div style={{marginTop: '10px', width: '100%'}} className="Main-Post-Feed">
               
             </div>
-            {AllMembers && UserData.username === AllMembers.Owner.UserName && (<div style={{bottom: '1%', left: '21%', position: 'absolute'}}>Make A Alert</div>)}
+            {AllMembers && UserData.username === AllMembers.Owner.UserName && (<div onClick={() => {setMakeAlertClicked(true)}} style={{bottom: '1%', left: '21%', position: 'absolute'}}>Make A Alert</div>)}
+            {MakeAlertClicked && (
+              <div className="Make-Alert-main-div">
+                <div className="Make-Alert">
+                  <p><span style={{fontFamily: '"MedievalSharp", cursive'}}>FROM:</span> {UserData.username}</p>
+                  <textarea
+                    className="TA-make-alert"
+                    value={AlertinputValue}
+                    onChange={handleAlertInputChange}
+                  ></textarea> 
+                  <p><span style={{fontFamily: '"MedievalSharp", cursive'}}>TO:</span> {clickedGuild.guildName}</p>
+                  <div onClick={SendAlert} style={{alignSelf: "flex-end", fontSize: '28px', cursor: 'pointer', border: 'solid black 2px', borderRadius: '10px', padding: '5px', background: 'black', color: 'white'}}>Alert</div>
+                </div>
+              </div>
+            )}
           </div>
         )}
       </div>
