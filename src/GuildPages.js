@@ -7,6 +7,8 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
   const [AllMembers, setAllMembers] = useState(null);
   const [RequestedMembers, setRequestedMembers] = useState(null);
   const [clickedMember, setclickedMember] = useState(null);
+  const [AlertsArray, setAlertsArray] = useState(null);
+  const [PostsArray, setPostsArray] = useState(null);
   const [GuildRequestCount, setGuildRequestCount] = useState('0')
   const [ShowGuildStats, setShowGuildStats] = useState(false);
   const [ShowGuildJoinRequest, setShowGuildJoinRequest] = useState(false);
@@ -147,6 +149,10 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
     const selectedColorData = colors.find(color => color.name === guildColor);
     return selectedColorData ? `linear-gradient(to top, ${selectedColorData.color1}, ${selectedColorData.color2})` : '';
   };
+  const getGuildPostColors = (guildColor) => {
+    const selectedColorData = colors.find(color => color.name === guildColor);
+    return selectedColorData ? `${selectedColorData.color1}` : '';
+  };
   const getGuildSettingsColors = (guildColor) => {
     const selectedColorData = SettingsColors.find(color => color.name === guildColor);
     return selectedColorData ? `linear-gradient(to top, ${selectedColorData.color1}, ${selectedColorData.color2})` : '';
@@ -240,6 +246,7 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
        console.log('connected');
      });
      socket.emit('joinGuildRoom', guildId);
+     socket.emit('Get-Alerts-And-Post', guildId)
      // Clean up socket connection when component unmounts
     fetchGuildMembers();
     fetchRequestToJoinMembers()
@@ -272,6 +279,11 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
         console.log('got new guild Alert')
         console.log(Alert)
         setMakeAlertClicked(false)
+      });
+      socket.on('Guild-Alerts-And-Post', (GuildDoc) => {
+        console.log(GuildDoc)
+        setAlertsArray(GuildDoc.Alerts)
+        setPostsArray(GuildDoc.post)
       });
     }
   
@@ -584,7 +596,7 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
         {MainFeedClicked && (
           <div>
             <div style={{position: 'fixed', left: '20%', top: '178px'}}>Reload Main Icon</div>
-            <div style={{marginTop: '10px', width: '100%'}} className="Main-Post-Feed">
+            <div className="Main-Post-Feed">
               
             </div>
             <div style={{bottom: '1%', left: '21%', position: 'absolute'}}>Make A post</div>
@@ -593,8 +605,27 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
         {GuildAlertsClicked && (
           <div>
             <div style={{position: 'fixed', left: '20%', top: '178px'}}>Reload Alerts Icon</div>
-            <div style={{marginTop: '10px', width: '100%'}} className="Main-Post-Feed">
-              
+            <div  className="Main-Post-Feed">ALERTS
+            {AlertsArray.map(Alert => (
+              <div style={{background: getGuildPostColors(clickedGuild.guildColor)}} className="Alerts-Div" key={Alert.id}>
+                <div className="Alert-Content">
+                  <div>{Alert.PosterUserName}</div>
+                  <div>{Alert.content}</div>
+                </div>
+                {Alert.PosterUserName !== UserData.username && (
+                  <div className="Alert-Reactions">
+                    <span style={{ marginRight: '20%' }}>Likes</span>
+                    <span>Dislike</span>
+                  </div>
+                )}
+                {Alert.PosterUserName === UserData.username && (
+                  <div className="Alert-Reactions">
+                    <span style={{ marginRight: '20%', }}>Likes: {Alert.Likes}</span>
+                    <span>Dislikes: {Alert.Dislikes}</span>
+                  </div>
+                )}
+              </div>
+            ))}
             </div>
             {AllMembers && UserData.username === AllMembers.Owner.UserName && (<div onClick={() => {setMakeAlertClicked(true)}} style={{bottom: '1%', left: '21%', position: 'absolute'}}>Make A Alert</div>)}
             {MakeAlertClicked && (
