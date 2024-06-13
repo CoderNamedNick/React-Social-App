@@ -1293,3 +1293,48 @@ a{
   box-sizing: border-box;
   resize: none; 
 }
+.Main-Post-Feed {
+  margin-top: 10px;
+  position: absolute;
+  top: 195px;
+  left: 20%;
+  right: 20%;
+  bottom: 0;
+  width: 60%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow-y: auto;
+}
+.Alerts-Div {
+  background-color: rgb(255, 242, 242);
+  width: 95%;
+  height: auto;
+  min-height: 200px; /* Ensures a minimum height for the flex to work */
+  margin-top: 25px;
+  margin-bottom: 50px;
+  font-size: 26px;
+  padding-bottom: 8px;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border: black groove 3px;
+}
+
+.Alert-Content {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 5%;
+}
+.Alert-Reactions{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding-left: 5%;
+  padding-right: 5%;
+  border-top: solid 2px black;
+}
