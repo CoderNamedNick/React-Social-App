@@ -957,11 +957,11 @@ a{
   flex-direction: column;
   gap: 3px;
   align-items: center;
-  width: 96%;
+  width: 98%;
   margin-left: 2%;
   border-top: 1px solid rgb(0, 0, 0);
   color: rgb(31, 24, 24);
-  font-size: 18px;
+  font-size: 17px;
   text-align: center;
 }
 .guild-settings {
@@ -1270,7 +1270,7 @@ a{
 .Make-Alert{
   background-color: rgb(238, 235, 235);
   color: black;
-  margin-top: 35%;
+  margin-top: 15%;
   width: 65%;
   margin-left: 17%;
   display: flex;

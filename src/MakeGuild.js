@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 
 const MakeGuild = ({ UserData, setUserData }) => {
   const [errorMessage, setErrorMessage] = useState(null);
@@ -167,7 +168,7 @@ const MakeGuild = ({ UserData, setUserData }) => {
           <br/>
           <br/>
           <br/>
-          <h3 style={{textAlign: 'center', cursor: 'pointer'}}> Go To Guild Page </h3> 
+          <Link to="/All-Guilds"><h3 style={{textAlign: 'center', cursor: 'pointer'}}> Go To Guild Page </h3> </Link>
         </div>
       )}
     </div>
