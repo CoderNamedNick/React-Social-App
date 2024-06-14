@@ -8,6 +8,7 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
   const [RequestedMembers, setRequestedMembers] = useState(null);
   const [clickedMember, setclickedMember] = useState(null);
   const [AlertsArray, setAlertsArray] = useState(null);
+  const [alerts, setAlerts] = useState([]);
   const [PostsArray, setPostsArray] = useState(null);
   const [GuildRequestCount, setGuildRequestCount] = useState('0')
   const [ShowGuildStats, setShowGuildStats] = useState(false);
@@ -204,11 +205,6 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
     setShowBanReasonInput(false)
     setBanInputValue('')
   };
-  // need sockets for post 
-  //need socket for comments on post 
-  //no need for sokcets for likes and dislikes
-  // need original use effect fetch for guild data
-  // need post functions with sockets
 
   const fetchGuildMembers = async () => {
     try {
@@ -256,6 +252,39 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
     };
   }, []); 
   useEffect(() => {
+    setAlerts(AlertsArray);
+    if (socket) {
+      socket.on('like', ({ alertId, username }) => {
+        setAlerts(prevAlerts => {
+          const updatedAlerts = [...prevAlerts];
+          const alertIndex = updatedAlerts.findIndex(alert => alert.id === alertId);
+          if (alertIndex > -1 && !updatedAlerts[alertIndex].LikesList.includes(username)) {
+            updatedAlerts[alertIndex].LikesList.push(username);
+            updatedAlerts[alertIndex].Likes = updatedAlerts[alertIndex].LikesList.length;
+          }
+          return updatedAlerts;
+        });
+      });
+
+      socket.on('dislike', ({ alertId, username }) => {
+        setAlerts(prevAlerts => {
+          const updatedAlerts = [...prevAlerts];
+          const alertIndex = updatedAlerts.findIndex(alert => alert.id === alertId);
+          if (alertIndex > -1 && !updatedAlerts[alertIndex].DislikesList.includes(username)) {
+            updatedAlerts[alertIndex].DislikesList.push(username);
+            updatedAlerts[alertIndex].Dislikes = updatedAlerts[alertIndex].DislikesList.length;
+          }
+          return updatedAlerts;
+        });
+      });
+
+      return () => {
+        socket.off('like');
+        socket.off('dislike');
+      }
+    }
+  }, [AlertsArray]);
+  useEffect(() => {
     if (socket) {
       socket.on('memberUpdates', (guildMembersWithElders) => {
         console.log('got new member')
@@ -282,8 +311,10 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
       });
       socket.on('Guild-Alerts-And-Post', (GuildDoc) => {
         console.log(GuildDoc)
-        setAlertsArray(GuildDoc.Alerts)
-        setPostsArray(GuildDoc.post)
+        if (GuildDoc) {
+          setAlertsArray(GuildDoc.Alerts)
+          setPostsArray(GuildDoc.post)
+        }
       });
     }
   
@@ -500,6 +531,47 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
     setMainFeedClicked(false)
     setGuildAlertsClicked(true)
   }
+  const handleLike = (alertId) => {
+    setAlerts(prevAlerts => {
+      const updatedAlerts = [...prevAlerts];
+      const alertIndex = updatedAlerts.findIndex(alert => alert.id === alertId || alert._id === alertId);
+      if (alertIndex > -1 && !updatedAlerts[alertIndex].LikesList.includes(UserData.username)) {
+        updatedAlerts[alertIndex].LikesList.push(UserData.username);
+        updatedAlerts[alertIndex].Likes = updatedAlerts[alertIndex].LikesList.length;
+  
+        // Ensure the user isn't in the DislikesList if they liked the alert
+        const dislikeIndex = updatedAlerts[alertIndex].DislikesList.indexOf(UserData.username);
+        if (dislikeIndex !== -1) {
+          updatedAlerts[alertIndex].DislikesList.splice(dislikeIndex, 1);
+          updatedAlerts[alertIndex].Dislikes = updatedAlerts[alertIndex].DislikesList.length;
+        }
+      }
+      return updatedAlerts;
+    });
+    const GuildId = clickedGuild.id || clickedGuild._id
+    socket.emit('like-alert', { alertId, username: UserData.username}, GuildId);
+  };
+  
+  const handleDislike = (alertId) => {
+    setAlerts(prevAlerts => {
+      const updatedAlerts = [...prevAlerts];
+      const alertIndex = updatedAlerts.findIndex(alert => alert.id === alertId || alert._id === alertId);
+      if (alertIndex > -1 && !updatedAlerts[alertIndex].DislikesList.includes(UserData.username)) {
+        updatedAlerts[alertIndex].DislikesList.push(UserData.username);
+        updatedAlerts[alertIndex].Dislikes = updatedAlerts[alertIndex].DislikesList.length;
+  
+        // Ensure the user isn't in the LikesList if they disliked the alert
+        const likeIndex = updatedAlerts[alertIndex].LikesList.indexOf(UserData.username);
+        if (likeIndex !== -1) {
+          updatedAlerts[alertIndex].LikesList.splice(likeIndex, 1);
+          updatedAlerts[alertIndex].Likes = updatedAlerts[alertIndex].LikesList.length;
+        }
+      }
+      return updatedAlerts;
+    });
+    const GuildId = clickedGuild.id || clickedGuild._id
+    socket.emit('dislike-alert', { alertId, username: UserData.username }, GuildId);
+  };
   
   return (
     <div style={{background: getGuildColors(clickedGuild.guildColor)}} className='Guild-Pages-main-div'>
@@ -606,22 +678,46 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
           <div>
             <div style={{position: 'fixed', left: '20%', top: '178px'}}>Reload Alerts Icon</div>
             <div  className="Main-Post-Feed">ALERTS
-            {AlertsArray.map(Alert => (
-              <div style={{background: getGuildPostColors(clickedGuild.guildColor)}} className="Alerts-Div" key={Alert.id}>
+            {alerts && alerts.map(Alert => (
+              <div style={{ background: getGuildPostColors(clickedGuild.guildColor) }} className="Alerts-Div" key={Alert.id}>
                 <div className="Alert-Content">
                   <div>{Alert.PosterUserName}</div>
                   <div>{Alert.content}</div>
                 </div>
-                {Alert.PosterUserName !== UserData.username && (
+                {Alert.PosterUserName !== UserData.username && !Alert.LikesList.includes(UserData.username) && !Alert.DislikesList.includes(UserData.username) && (
                   <div className="Alert-Reactions">
-                    <span style={{ marginRight: '20%' }}>Likes</span>
-                    <span>Dislike</span>
+                    <span
+                      style={{ marginLeft: '10%', cursor: 'pointer' }}
+                      onClick={() => handleLike(Alert.id || Alert._id)}
+                    >Like</span>
+                    <span
+                      style={{ marginRight: '10%', cursor: 'pointer' }}
+                      onClick={() => handleDislike(Alert.id || Alert._id)}
+                    >Dislike</span>
+                  </div>
+                )}
+                {Alert.PosterUserName !== UserData.username && Alert.LikesList.includes(UserData.username) && (
+                  <div className="Alert-Reactions">
+                    <span style={{ color: 'blue', marginLeft: '10%', cursor: 'pointer' }}>Liked</span>
+                    <span
+                      style={{ marginRight: '10%', cursor: 'pointer' }}
+                      onClick={() => handleDislike(Alert.id || Alert._id)}
+                    >Dislike</span>
+                  </div>
+                )}
+                {Alert.PosterUserName !== UserData.username && Alert.DislikesList.includes(UserData.username) && (
+                  <div className="Alert-Reactions">
+                    <span
+                      style={{ marginLeft: '10%', cursor: 'pointer' }}
+                      onClick={() => handleLike(Alert.id || Alert._id)}
+                    >Like</span>
+                    <span style={{ color: 'Red', marginRight: '10%', cursor: 'pointer' }}>Disliked</span>
                   </div>
                 )}
                 {Alert.PosterUserName === UserData.username && (
                   <div className="Alert-Reactions">
-                    <span style={{ marginRight: '20%', }}>Likes: {Alert.Likes}</span>
-                    <span>Dislikes: {Alert.Dislikes}</span>
+                    <span style={{ marginLeft: '10%', cursor: 'pointer' }}>Likes: {Alert.Likes}</span>
+                    <span style={{ marginRight: '10%', cursor: 'pointer' }}>Dislikes: {Alert.Dislikes}</span>
                   </div>
                 )}
               </div>
