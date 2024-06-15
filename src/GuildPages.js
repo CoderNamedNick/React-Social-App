@@ -252,8 +252,10 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
     };
   }, []); 
   useEffect(() => {
-    setAlerts(AlertsArray);
+    setAlerts(AlertsArray); // Initialize alerts state with AlertsArray
+  
     if (socket) {
+      // Handle 'like' event
       socket.on('like', ({ alertId, username }) => {
         setAlerts(prevAlerts => {
           const updatedAlerts = [...prevAlerts];
@@ -265,7 +267,8 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
           return updatedAlerts;
         });
       });
-
+  
+      // Handle 'dislike' event
       socket.on('dislike', ({ alertId, username }) => {
         setAlerts(prevAlerts => {
           const updatedAlerts = [...prevAlerts];
@@ -277,13 +280,40 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
           return updatedAlerts;
         });
       });
-
+  
+      // Handle 'Removed-reaction' event
+      socket.on('Removed-reaction', ({ alertId, username }) => {
+        setAlerts(prevAlerts => {
+          const updatedAlerts = [...prevAlerts];
+          const alertIndex = updatedAlerts.findIndex(alert => alert.id === alertId);
+          
+          if (alertIndex > -1) {
+            // Remove username from DislikesList if present
+            const dislikeIndex = updatedAlerts[alertIndex].DislikesList.indexOf(username);
+            if (dislikeIndex !== -1) {
+              updatedAlerts[alertIndex].DislikesList.splice(dislikeIndex, 1);
+              updatedAlerts[alertIndex].Dislikes = updatedAlerts[alertIndex].DislikesList.length;
+            }
+  
+            // Remove username from LikesList if present
+            const likeIndex = updatedAlerts[alertIndex].LikesList.indexOf(username);
+            if (likeIndex !== -1) {
+              updatedAlerts[alertIndex].LikesList.splice(likeIndex, 1);
+              updatedAlerts[alertIndex].Likes = updatedAlerts[alertIndex].LikesList.length;
+            }
+          }
+          return updatedAlerts;
+        });
+      });
+  
+      // Cleanup: Remove event listeners when component unmounts
       return () => {
         socket.off('like');
         socket.off('dislike');
-      }
+        socket.off('Removed-reaction');
+      };
     }
-  }, [AlertsArray]);
+  }, [AlertsArray, socket]);
   useEffect(() => {
     if (socket) {
       socket.on('memberUpdates', (guildMembersWithElders) => {
@@ -572,6 +602,29 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
     const GuildId = clickedGuild.id || clickedGuild._id
     socket.emit('dislike-alert', { alertId, username: UserData.username }, GuildId);
   };
+  const handleRemoveReaction = (alertId) => {
+    setAlerts(prevAlerts => {
+      const updatedAlerts = [...prevAlerts];
+      const alertIndex = updatedAlerts.findIndex(alert => alert.id === alertId || alert._id === alertId);
+      if (alertIndex > -1 && !updatedAlerts[alertIndex].DislikesList.includes(UserData.username) || alertIndex > -1 && !updatedAlerts[alertIndex].LikesList.includes(UserData.username)) {
+        // Ensure the user isn't in the DislikesList if they liked the alert
+        const dislikeIndex = updatedAlerts[alertIndex].DislikesList.indexOf(UserData.username);
+        if (dislikeIndex !== -1) {
+          updatedAlerts[alertIndex].DislikesList.splice(dislikeIndex, 1);
+          updatedAlerts[alertIndex].Dislikes = updatedAlerts[alertIndex].DislikesList.length;
+        }
+        // Ensure the user isn't in the LikesList if they disliked the alert
+        const likeIndex = updatedAlerts[alertIndex].LikesList.indexOf(UserData.username);
+        if (likeIndex !== -1) {
+          updatedAlerts[alertIndex].LikesList.splice(likeIndex, 1);
+          updatedAlerts[alertIndex].Likes = updatedAlerts[alertIndex].LikesList.length;
+        }
+      }
+      return updatedAlerts;
+    });
+    const GuildId = clickedGuild.id || clickedGuild._id
+    socket.emit('Remove-Reaction', { alertId, username: UserData.username }, GuildId);
+  };
   
   return (
     <div style={{background: getGuildColors(clickedGuild.guildColor)}} className='Guild-Pages-main-div'>
@@ -698,7 +751,10 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
                 )}
                 {Alert.PosterUserName !== UserData.username && Alert.LikesList.includes(UserData.username) && (
                   <div className="Alert-Reactions">
-                    <span style={{ color: 'blue', marginLeft: '10%', cursor: 'pointer' }}>Liked</span>
+                    <span 
+                      style={{ color: 'blue', marginLeft: '10%', cursor: 'pointer' }}
+                      onClick={() => handleRemoveReaction(Alert.id || Alert._id)}
+                    >Liked</span>
                     <span
                       style={{ marginRight: '10%', cursor: 'pointer' }}
                       onClick={() => handleDislike(Alert.id || Alert._id)}
@@ -711,7 +767,10 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
                       style={{ marginLeft: '10%', cursor: 'pointer' }}
                       onClick={() => handleLike(Alert.id || Alert._id)}
                     >Like</span>
-                    <span style={{ color: 'Red', marginRight: '10%', cursor: 'pointer' }}>Disliked</span>
+                    <span 
+                      style={{ color: 'Red', marginRight: '10%', cursor: 'pointer' }}
+                      onClick={() => handleRemoveReaction(Alert.id || Alert._id)}
+                    >Disliked</span>
                   </div>
                 )}
                 {Alert.PosterUserName === UserData.username && (
