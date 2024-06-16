@@ -10,6 +10,7 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
   const [AlertsArray, setAlertsArray] = useState(null);
   const [alerts, setAlerts] = useState([]);
   const [PostsArray, setPostsArray] = useState(null);
+  const [posts, setPosts] = useState([]);
   const [GuildRequestCount, setGuildRequestCount] = useState('0')
   const [ShowGuildStats, setShowGuildStats] = useState(false);
   const [ShowGuildJoinRequest, setShowGuildJoinRequest] = useState(false);
@@ -256,7 +257,7 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
   
     if (socket) {
       // Handle 'like' event
-      socket.on('like', ({ alertId, username }) => {
+      socket.on('Alert-like', ({ alertId, username }) => {
         setAlerts(prevAlerts => {
           const updatedAlerts = [...prevAlerts];
           const alertIndex = updatedAlerts.findIndex(alert => alert.id === alertId);
@@ -269,7 +270,7 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
       });
   
       // Handle 'dislike' event
-      socket.on('dislike', ({ alertId, username }) => {
+      socket.on('Alert-dislike', ({ alertId, username }) => {
         setAlerts(prevAlerts => {
           const updatedAlerts = [...prevAlerts];
           const alertIndex = updatedAlerts.findIndex(alert => alert.id === alertId);
@@ -282,7 +283,7 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
       });
   
       // Handle 'Removed-reaction' event
-      socket.on('Removed-reaction', ({ alertId, username }) => {
+      socket.on('Alert-Removed-reaction', ({ alertId, username }) => {
         setAlerts(prevAlerts => {
           const updatedAlerts = [...prevAlerts];
           const alertIndex = updatedAlerts.findIndex(alert => alert.id === alertId);
@@ -344,6 +345,12 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
         if (GuildDoc) {
           setAlertsArray(GuildDoc.Alerts)
           setPostsArray(GuildDoc.post)
+        }
+      });
+      socket.on('Guild-Alerts-Refresh', (GuildDoc) => {
+        console.log(GuildDoc)
+        if (GuildDoc) {
+          setAlerts(GuildDoc.Alerts)
         }
       });
     }
@@ -561,7 +568,13 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
     setMainFeedClicked(false)
     setGuildAlertsClicked(true)
   }
-  const handleLike = (alertId) => {
+  const handleGuildAlertRefresh= () => {
+    if (socket) {
+      const guildId = clickedGuild.id || clickedGuild._id
+      socket.emit('Get-Alerts', guildId)
+    }
+  }
+  const handleAlertLike = (alertId) => {
     setAlerts(prevAlerts => {
       const updatedAlerts = [...prevAlerts];
       const alertIndex = updatedAlerts.findIndex(alert => alert.id === alertId || alert._id === alertId);
@@ -582,7 +595,7 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
     socket.emit('like-alert', { alertId, username: UserData.username}, GuildId);
   };
   
-  const handleDislike = (alertId) => {
+  const handleAlertDislike = (alertId) => {
     setAlerts(prevAlerts => {
       const updatedAlerts = [...prevAlerts];
       const alertIndex = updatedAlerts.findIndex(alert => alert.id === alertId || alert._id === alertId);
@@ -602,7 +615,7 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
     const GuildId = clickedGuild.id || clickedGuild._id
     socket.emit('dislike-alert', { alertId, username: UserData.username }, GuildId);
   };
-  const handleRemoveReaction = (alertId) => {
+  const handleAlertRemoveReaction = (alertId) => {
     setAlerts(prevAlerts => {
       const updatedAlerts = [...prevAlerts];
       const alertIndex = updatedAlerts.findIndex(alert => alert.id === alertId || alert._id === alertId);
@@ -623,7 +636,7 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
       return updatedAlerts;
     });
     const GuildId = clickedGuild.id || clickedGuild._id
-    socket.emit('Remove-Reaction', { alertId, username: UserData.username }, GuildId);
+    socket.emit('Alert-Remove-Reaction', { alertId, username: UserData.username }, GuildId);
   };
   
   return (
@@ -729,9 +742,9 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
         )}
         {GuildAlertsClicked && (
           <div>
-            <div style={{position: 'fixed', left: '20%', top: '178px'}}>Reload Alerts Icon</div>
+            <div onClick={handleGuildAlertRefresh} style={{position: 'fixed', left: '20%', top: '178px'}}>Reload Alerts Icon</div>
             <div  className="Main-Post-Feed">ALERTS
-            {alerts && alerts.map(Alert => (
+            {alerts && alerts.slice().reverse().map(Alert => (
               <div style={{ background: getGuildPostColors(clickedGuild.guildColor) }} className="Alerts-Div" key={Alert.id}>
                 <div className="Alert-Content">
                   <div>{Alert.PosterUserName}</div>
@@ -741,11 +754,11 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
                   <div className="Alert-Reactions">
                     <span
                       style={{ marginLeft: '10%', cursor: 'pointer' }}
-                      onClick={() => handleLike(Alert.id || Alert._id)}
+                      onClick={() => handleAlertLike(Alert.id || Alert._id)}
                     >Like</span>
                     <span
                       style={{ marginRight: '10%', cursor: 'pointer' }}
-                      onClick={() => handleDislike(Alert.id || Alert._id)}
+                      onClick={() => handleAlertDislike(Alert.id || Alert._id)}
                     >Dislike</span>
                   </div>
                 )}
@@ -753,11 +766,11 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
                   <div className="Alert-Reactions">
                     <span 
                       style={{ color: 'blue', marginLeft: '10%', cursor: 'pointer' }}
-                      onClick={() => handleRemoveReaction(Alert.id || Alert._id)}
+                      onClick={() => handleAlertRemoveReaction(Alert.id || Alert._id)}
                     >Liked</span>
                     <span
                       style={{ marginRight: '10%', cursor: 'pointer' }}
-                      onClick={() => handleDislike(Alert.id || Alert._id)}
+                      onClick={() => handleAlertDislike(Alert.id || Alert._id)}
                     >Dislike</span>
                   </div>
                 )}
@@ -765,11 +778,11 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
                   <div className="Alert-Reactions">
                     <span
                       style={{ marginLeft: '10%', cursor: 'pointer' }}
-                      onClick={() => handleLike(Alert.id || Alert._id)}
+                      onClick={() => handleAlertLike(Alert.id || Alert._id)}
                     >Like</span>
                     <span 
                       style={{ color: 'Red', marginRight: '10%', cursor: 'pointer' }}
-                      onClick={() => handleRemoveReaction(Alert.id || Alert._id)}
+                      onClick={() => handleAlertRemoveReaction(Alert.id || Alert._id)}
                     >Disliked</span>
                   </div>
                 )}
@@ -793,7 +806,10 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
                     onChange={handleAlertInputChange}
                   ></textarea> 
                   <p><span style={{fontFamily: '"MedievalSharp", cursive'}}>TO:</span> {clickedGuild.guildName}</p>
-                  <div onClick={SendAlert} style={{alignSelf: "flex-end", fontSize: '28px', cursor: 'pointer', border: 'solid black 2px', borderRadius: '10px', padding: '5px', background: 'black', color: 'white'}}>Alert</div>
+                  <div style={{ color: 'white', display: 'flex', flexDirection: 'row', justifyContent: 'space-between'}}>
+                  <div onClick={() => {setMakeAlertClicked(false)}} style={{ fontSize: '28px', cursor: 'pointer', border: 'solid black 2px', borderRadius: '10px', padding: '5px', background: 'red', color: 'white'}}>Cancel</div>
+                    <div onClick={SendAlert} style={{ fontSize: '28px', cursor: 'pointer', border: 'solid black 2px', borderRadius: '10px', padding: '5px', background: 'black', color: 'white'}}>Alert</div>
+                  </div>
                 </div>
               </div>
             )}
