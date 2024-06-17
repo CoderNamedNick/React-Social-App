@@ -2,6 +2,8 @@ import React, { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { io } from "socket.io-client";
 
+//MAKE REFRESH ONLY REFRESH THE USERS AND NOT EMIT TO ALL!!!!!!
+
 const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
   const [socket, setSocket] = useState(null);
   const [AllMembers, setAllMembers] = useState(null);
@@ -21,6 +23,7 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
   const [ReportinputValue, setReportInputValue] = useState('');
   const [GuidelinesinputValue, setGuidelinesinputValue] = useState('');
   const [AlertinputValue, setAlertinputValue] = useState('');
+  const [PostinputValue, setPostinputValue] = useState('');
   const [ShowGuildSettings, setShowGuildSettings] = useState(false)
   const [ShowChangeGuildFeatures, setShowChangeGuildFeatures] = useState(false)
   const [ShowEditGuildFeatures, setShowEditGuildFeatures] = useState(false)
@@ -180,6 +183,9 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
   const handleAlertInputChange = (event) => {
     setAlertinputValue(event.target.value);
   }
+  const handlePostInputChange = (event) => {
+    setPostinputValue(event.target.value);
+  }
   
   // Function to handle mouse wheel scroll
   const handleScroll = (e) => {
@@ -309,12 +315,75 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
   
       // Cleanup: Remove event listeners when component unmounts
       return () => {
-        socket.off('like');
-        socket.off('dislike');
-        socket.off('Removed-reaction');
+        socket.off('Alert-like');
+        socket.off('Alert-dislike');
+        socket.off('Alert-Removed-reaction');
       };
     }
   }, [AlertsArray, socket]);
+  useEffect(() => {
+    setPosts(PostsArray); // Initialize posts state with PostsArray
+  
+    if (socket) {
+      // Handle 'like' event
+      socket.on('Post-like', ({ postId, username }) => {
+        setPosts(prevPosts => {
+          const updatedPosts = [...prevPosts];
+          const postIndex = updatedPosts.findIndex(post => post.id === postId);
+          if (postIndex > -1 && !updatedPosts[postIndex].LikesList.includes(username)) {
+            updatedPosts[postIndex].LikesList.push(username);
+            updatedPosts[postIndex].Likes = updatedPosts[postIndex].LikesList.length;
+          }
+          return updatedPosts;
+        });
+      });
+  
+      // Handle 'dislike' event
+      socket.on('Post-dislike', ({ postId, username }) => {
+        setPosts(prevPosts => {
+          const updatedPosts = [...prevPosts];
+          const postIndex = updatedPosts.findIndex(post => post.id === postId);
+          if (postIndex > -1 && !updatedPosts[postIndex].DislikesList.includes(username)) {
+            updatedPosts[postIndex].DislikesList.push(username);
+            updatedPosts[postIndex].Dislikes = updatedPosts[postIndex].DislikesList.length;
+          }
+          return updatedPosts;
+        });
+      });
+  
+      // Handle 'Removed-reaction' event
+      socket.on('Post-Removed-reaction', ({ postId, username }) => {
+        setPosts(prevPosts => {
+          const updatedPosts = [...prevPosts];
+          const postIndex = updatedPosts.findIndex(post => post.id === postId);
+          
+          if (postIndex > -1) {
+            // Remove username from DislikesList if present
+            const dislikeIndex = updatedPosts[postIndex].DislikesList.indexOf(username);
+            if (dislikeIndex !== -1) {
+              updatedPosts[postIndex].DislikesList.splice(dislikeIndex, 1);
+              updatedPosts[postIndex].Dislikes = updatedPosts[postIndex].DislikesList.length;
+            }
+  
+            // Remove username from LikesList if present
+            const likeIndex = updatedPosts[postIndex].LikesList.indexOf(username);
+            if (likeIndex !== -1) {
+              updatedPosts[postIndex].LikesList.splice(likeIndex, 1);
+              updatedPosts[postIndex].Likes = updatedPosts[postIndex].LikesList.length;
+            }
+          }
+          return updatedPosts;
+        });
+      });
+  
+      // Cleanup: Remove event listeners when component unmounts
+      return () => {
+        socket.off('Post-like');
+        socket.off('Post-dislike');
+        socket.off('Post-Removed-reaction');
+      };
+    }
+  }, [PostsArray, socket]);
   useEffect(() => {
     if (socket) {
       socket.on('memberUpdates', (guildMembersWithElders) => {
@@ -340,6 +409,11 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
         console.log(Alert)
         setMakeAlertClicked(false)
       });
+      socket.on('Guild-Post', (Post) => {
+        console.log('got new guild Post')
+        console.log(Post)
+        setMakePostClicked(false)
+      });
       socket.on('Guild-Alerts-And-Post', (GuildDoc) => {
         console.log(GuildDoc)
         if (GuildDoc) {
@@ -351,6 +425,12 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
         console.log(GuildDoc)
         if (GuildDoc) {
           setAlerts(GuildDoc.Alerts)
+        }
+      });
+      socket.on('Guild-Posts-Refresh', (GuildDoc) => {
+        console.log(GuildDoc)
+        if (GuildDoc) {
+          setPosts(GuildDoc.post)
         }
       });
     }
@@ -497,6 +577,15 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
       setAlertinputValue('');
     }
   };
+  const SendPost = async () => {
+    if (socket) {
+      const posterId = UserData.id || UserData._id
+      const content = PostinputValue
+      const GuildId = clickedGuild.id || clickedGuild._id
+      socket.emit('Send-Guild-Post', GuildId, posterId, content)
+      setPostinputValue('');
+    }
+  };
 
   const ChangeGuidelines = (NewGuidelines) => {
     // check if this works pls
@@ -638,6 +727,76 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
     const GuildId = clickedGuild.id || clickedGuild._id
     socket.emit('Alert-Remove-Reaction', { alertId, username: UserData.username }, GuildId);
   };
+  const handleGuildPostRefresh= () => {
+    if (socket) {
+      const guildId = clickedGuild.id || clickedGuild._id
+      socket.emit('Get-Posts', guildId)
+    }
+  }
+  const handlePostLike = (postId) => {
+    setPosts(prevPosts => {
+      const updatedPosts = [...prevPosts];
+      const postIndex = updatedPosts.findIndex(post => post.id === postId || post._id === postId);
+      if (postIndex > -1 && !updatedPosts[postIndex].LikesList.includes(UserData.username)) {
+        updatedPosts[postIndex].LikesList.push(UserData.username);
+        updatedPosts[postIndex].Likes = updatedPosts[postIndex].LikesList.length;
+  
+        // Ensure the user isn't in the DislikesList if they liked the post
+        const dislikeIndex = updatedPosts[postIndex].DislikesList.indexOf(UserData.username);
+        if (dislikeIndex !== -1) {
+          updatedPosts[postIndex].DislikesList.splice(dislikeIndex, 1);
+          updatedPosts[postIndex].Dislikes = updatedPosts[postIndex].DislikesList.length;
+        }
+      }
+      return updatedPosts;
+    });
+    const GuildId = clickedGuild.id || clickedGuild._id
+    socket.emit('like-post', { postId, username: UserData.username}, GuildId);
+  };
+  
+  const handlePostDislike = (postId) => {
+    setPosts(prevPosts => {
+      const updatedPosts = [...prevPosts];
+      const postIndex = updatedPosts.findIndex(post => post.id === postId || post._id === postId);
+      if (postIndex > -1 && !updatedPosts[postIndex].DislikesList.includes(UserData.username)) {
+        updatedPosts[postIndex].DislikesList.push(UserData.username);
+        updatedPosts[postIndex].Dislikes = updatedPosts[postIndex].DislikesList.length;
+  
+        // Ensure the user isn't in the LikesList if they disliked the post
+        const likeIndex = updatedPosts[postIndex].LikesList.indexOf(UserData.username);
+        if (likeIndex !== -1) {
+          updatedPosts[postIndex].LikesList.splice(likeIndex, 1);
+          updatedPosts[postIndex].Likes = updatedPosts[postIndex].LikesList.length;
+        }
+      }
+      return updatedPosts;
+    });
+    const GuildId = clickedGuild.id || clickedGuild._id
+    socket.emit('dislike-post', { postId, username: UserData.username }, GuildId);
+  };
+  const handlePostRemoveReaction = (postId) => {
+    setPosts(prevPosts => {
+      const updatedPosts = [...prevPosts];
+      const postIndex = updatedPosts.findIndex(post => post.id === postId || post._id === postId);
+      if (postIndex > -1 && !updatedPosts[postIndex].DislikesList.includes(UserData.username) || postIndex > -1 && !updatedPosts[postIndex].LikesList.includes(UserData.username)) {
+        // Ensure the user isn't in the DislikesList if they liked the Post
+        const dislikeIndex = updatedPosts[postIndex].DislikesList.indexOf(UserData.username);
+        if (dislikeIndex !== -1) {
+          updatedPosts[postIndex].DislikesList.splice(dislikeIndex, 1);
+          updatedPosts[postIndex].Dislikes = updatedPosts[postIndex].DislikesList.length;
+        }
+        // Ensure the user isn't in the LikesList if they disliked the Post
+        const likeIndex = updatedPosts[postIndex].LikesList.indexOf(UserData.username);
+        if (likeIndex !== -1) {
+          updatedPosts[postIndex].LikesList.splice(likeIndex, 1);
+          updatedPosts[postIndex].Likes = updatedPosts[postIndex].LikesList.length;
+        }
+      }
+      return updatedPosts;
+    });
+    const GuildId = clickedGuild.id || clickedGuild._id
+    socket.emit('Post-Remove-Reaction', { postId, username: UserData.username }, GuildId);
+  };
   
   return (
     <div style={{background: getGuildColors(clickedGuild.guildColor)}} className='Guild-Pages-main-div'>
@@ -733,12 +892,89 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
         </div>
         {MainFeedClicked && (
           <div>
-            <div style={{position: 'fixed', left: '20%', top: '178px'}}>Reload Main Icon</div>
-            <div className="Main-Post-Feed">
-              
+          <div onClick={handleGuildPostRefresh} style={{position: 'fixed', left: '20%', top: '178px'}}>Reload Posts Icon</div>
+          <div  className="Main-Post-Feed">POSTS
+          {posts && posts.slice().reverse().map(Post => (
+            <div style={{ background: getGuildPostColors(clickedGuild.guildColor) }} className="Alerts-Div" key={Post.id}>
+              <div className="Alert-Content">
+                <div>{Post.PosterUserName}</div>
+                <div>{Post.content}</div>
+              </div>
+              {Post.PosterUserName !== UserData.username && !Post.LikesList.includes(UserData.username) && !Post.DislikesList.includes(UserData.username) && (
+                <div className="Alert-Reactions">
+                  <span
+                    style={{ marginLeft: '10%', cursor: 'pointer' }}
+                    onClick={() => handlePostLike(Post.id || Post._id)}
+                  >Like</span>
+                  <span
+                    style={{ marginLeft: '10%', cursor: 'pointer' }}
+                  >Comment</span>
+                  <span
+                    style={{ marginRight: '10%', cursor: 'pointer' }}
+                    onClick={() => handlePostDislike(Post.id || Post._id)}
+                  >Dislike</span>
+                </div>
+              )}
+              {Post.PosterUserName !== UserData.username && Post.LikesList.includes(UserData.username) && (
+                <div className="Alert-Reactions">
+                  <span 
+                    style={{ color: 'blue', marginLeft: '10%', cursor: 'pointer' }}
+                    onClick={() => handlePostRemoveReaction(Post.id || Post._id)}
+                  >Liked</span>
+                  <span
+                    style={{ marginLeft: '10%', cursor: 'pointer' }}
+                  >Comment</span>
+                  <span
+                    style={{ marginRight: '10%', cursor: 'pointer' }}
+                    onClick={() => handlePostDislike(Post.id || Post._id)}
+                  >Dislike</span>
+                </div>
+              )}
+              {Post.PosterUserName !== UserData.username && Post.DislikesList.includes(UserData.username) && (
+                <div className="Alert-Reactions">
+                  <span
+                    style={{ marginLeft: '10%', cursor: 'pointer' }}
+                    onClick={() => handlePostLike(Post.id || Post._id)}
+                  >Like</span>
+                  <span
+                    style={{ marginLeft: '10%', cursor: 'pointer' }}
+                  >Comment</span>
+                  <span 
+                    style={{ color: 'Red', marginRight: '10%', cursor: 'pointer' }}
+                    onClick={() => handlePostRemoveReaction(Post.id || Post._id)}
+                  >Disliked</span>
+                </div>
+              )}
+              {Post.PosterUserName === UserData.username && (
+                <div className="Alert-Reactions">
+                  <span style={{ marginLeft: '10%', cursor: 'pointer' }}>Likes: {Post.Likes}</span>
+                  <span style={{ marginLeft: '10%', cursor: 'pointer' }}>Comments: {Post.comments.length}</span>
+                  <span style={{ marginRight: '10%', cursor: 'pointer' }}>Dislikes: {Post.Dislikes}</span>
+                </div>
+              )}
             </div>
-            <div style={{bottom: '1%', left: '21%', position: 'absolute'}}>Make A post</div>
+          ))}
           </div>
+          <div onClick={() => {setMakePostClicked(true)}} style={{bottom: '1%', left: '21%', position: 'absolute'}}>Make A Post</div>
+          {MakePostClicked && (
+            <div className="Make-Alert-main-div">
+              <div className="Make-Alert">
+                THIS IS A POST
+                <p><span style={{fontFamily: '"MedievalSharp", cursive'}}>FROM:</span> {UserData.username}</p>
+                <textarea
+                  className="TA-make-alert"
+                  value={PostinputValue}
+                  onChange={handlePostInputChange}
+                ></textarea> 
+                <p><span style={{fontFamily: '"MedievalSharp", cursive'}}>TO:</span> {clickedGuild.guildName}</p>
+                <div style={{ color: 'white', display: 'flex', flexDirection: 'row', justifyContent: 'space-between'}}>
+                  <div onClick={() => {setMakePostClicked(false)}} style={{ fontSize: '28px', cursor: 'pointer', border: 'solid black 2px', borderRadius: '10px', padding: '5px', background: 'red', color: 'white'}}>Cancel</div>
+                  <div onClick={SendPost} style={{ fontSize: '28px', cursor: 'pointer', border: 'solid black 2px', borderRadius: '10px', padding: '5px', background: 'black', color: 'white'}}>Post</div>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
         )}
         {GuildAlertsClicked && (
           <div>
