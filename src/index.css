@@ -1338,3 +1338,33 @@ a{
   padding-right: 5%;
   border-top: solid 2px black;
 }
+.Make-Comment-main-div{
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: rgba(0, 0, 0, 0.473);
+  padding-left: 4%;
+}
+.comments-main-div{
+  margin-left: 2%;
+  padding: 1%;
+  margin-bottom: 20px;
+}
+.comments-main-comment{
+  background-color: rgba(0, 0, 0, 0.212);
+  border-radius: 20px;
+  border-top-left-radius: 0;
+  padding: 4%;
+}
+.comment-input{
+  background: rgba(255, 255, 255, 0.288);
+  width: 96%;
+  margin-left: 2%;
+  height: 10%;
+  font-size: 22px;
+  padding: 4px;
+  border: none;
+  margin-bottom: 2%;
+}
