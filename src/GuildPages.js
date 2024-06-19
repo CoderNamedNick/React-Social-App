@@ -47,6 +47,8 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
   const [messageInput, setMessageInput] = useState('');
   const [MakeAlertClicked, setMakeAlertClicked] = useState(false);
   const [MakePostClicked, setMakePostClicked] = useState(false);
+  const [NewPost, setNewPost] = useState(false);
+  const [CommentsForNow, setCommentsForNow] = useState([]);
   const [guildData, setGuildData] = useState({
     guildMoto: clickedGuild.guildMoto,
     bio: clickedGuild.bio,
@@ -254,6 +256,7 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
        console.log('connected');
      });
      socket.emit('joinGuildRoom', guildId);
+     socket.emit('storeUserIdForGuild', UserData.id || UserData._id)
      socket.emit('Get-Alerts-And-Post', guildId)
      // Clean up socket connection when component unmounts
     fetchGuildMembers();
@@ -432,10 +435,18 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
           setAlerts(GuildDoc.Alerts)
         }
       });
-      socket.on('Guild-Posts-Refresh', (GuildDoc) => {
+      socket.on('Guild-Posts-Refresh', (GuildDoc,) => {
         console.log(GuildDoc)
         if (GuildDoc) {
           setPosts(GuildDoc.post)
+        }
+      });
+      socket.on('New-Post-Notif', () => {
+        setNewPost(true)
+      });
+      socket.on('Comment-added', ( postId, comment ) => {
+        if ( postId) {
+          setCommentsForNow(prevComments => [...prevComments, comment]);
         }
       });
     }
@@ -665,12 +676,15 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
   const handleGuildAlertRefresh= () => {
     if (socket) {
       const guildId = clickedGuild.id || clickedGuild._id
-      socket.emit('Get-Alerts', guildId)
+      socket.emit('Get-Alerts', guildId, UserData.id || UserData._id)
     }
   }
   const handleCommentClick = (postId) => {
     if (CommentinputValue !== '') {
       setCommentInputValue('')
+    }
+    if (CommentsForNow.length !== 0) {
+      setCommentsForNow([])
     }
     if (CommentClicked === postId) {
       setCommentClicked(null); // Toggle off if the same post is clicked again
@@ -745,7 +759,8 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
   const handleGuildPostRefresh= () => {
     if (socket) {
       const guildId = clickedGuild.id || clickedGuild._id
-      socket.emit('Get-Posts', guildId)
+      socket.emit('Get-Posts', guildId, UserData.id || UserData._id)
+      setNewPost(false)
     }
   }
   const handlePostLike = (postId) => {
@@ -811,6 +826,12 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
     });
     const GuildId = clickedGuild.id || clickedGuild._id
     socket.emit('Post-Remove-Reaction', { postId, username: UserData.username }, GuildId);
+  };
+  const handlePostComment = (postId) => {
+    const CommenterId = UserData.id || UserData._id
+    const GuildId = clickedGuild.id || clickedGuild._id
+    const comment = CommentinputValue
+    socket.emit('Comment-post', postId, CommenterId, GuildId, comment)
   };
   
   return (
@@ -907,118 +928,95 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
         </div>
         {MainFeedClicked && (
           <div>
-          {!CommentClicked && (<div onClick={handleGuildPostRefresh} style={{position: 'fixed', left: '20%', top: '178px'}}>Reload Posts Icon</div>)}
-          <div  className="Main-Post-Feed">POSTS
-          {posts && posts.slice().reverse().map(Post => (
-            <div style={{ background: getGuildPostColors(clickedGuild.guildColor) }} className="Alerts-Div" key={Post.id}>
-              <div className="Alert-Content">
-                <div>{Post.PosterUserName}</div>
-                <div>{Post.content}</div>
-              </div>
-              {Post.PosterUserName !== UserData.username && !Post.LikesList.includes(UserData.username) && !Post.DislikesList.includes(UserData.username) && (
-                <div className="Alert-Reactions">
-                  <span
-                    style={{ marginLeft: '10%', cursor: 'pointer' }}
-                    onClick={() => handlePostLike(Post.id || Post._id)}
-                  >Like</span>
-                  <span
-                    onClick={() => handleCommentClick(Post.id || Post._id)}
-                    style={{ marginLeft: '10%', cursor: 'pointer' }}
-                  >Comment</span>
-                  <span
-                    style={{ marginRight: '10%', cursor: 'pointer' }}
-                    onClick={() => handlePostDislike(Post.id || Post._id)}
-                  >Dislike</span>
+            {NewPost && (<div>THERE IS A NEW POST</div>)}
+            {!CommentClicked && (<div onClick={handleGuildPostRefresh} style={{position: 'fixed', left: '20%', top: '178px'}}>Reload Posts Icon</div>)}
+            <div  className="Main-Post-Feed">POSTS
+            {posts && posts.slice().reverse().map(Post => (
+              <div style={{ background: getGuildPostColors(clickedGuild.guildColor) }} className="Alerts-Div" key={Post.id}>
+                <div className="Alert-Content">
+                  <div>{Post.PosterUserName}</div>
+                  <div>{Post.content}</div>
                 </div>
-              )}
-              {Post.PosterUserName !== UserData.username && Post.LikesList.includes(UserData.username) && (
-                <div className="Alert-Reactions">
-                  <span 
-                    style={{ color: 'blue', marginLeft: '10%', cursor: 'pointer' }}
-                    onClick={() => handlePostRemoveReaction(Post.id || Post._id)}
-                  >Liked</span>
-                  <span
-                    onClick={() => handleCommentClick(Post.id || Post._id)}
-                    style={{ marginLeft: '10%', cursor: 'pointer' }}
-                  >Comment</span>
-                  <span
-                    style={{ marginRight: '10%', cursor: 'pointer' }}
-                    onClick={() => handlePostDislike(Post.id || Post._id)}
-                  >Dislike</span>
-                </div>
-              )}
-              {Post.PosterUserName !== UserData.username && Post.DislikesList.includes(UserData.username) && (
-                <div className="Alert-Reactions">
-                  <span
-                    style={{ marginLeft: '10%', cursor: 'pointer' }}
-                    onClick={() => handlePostLike(Post.id || Post._id)}
-                  >Like</span>
-                  <span
-                    onClick={() => handleCommentClick(Post.id || Post._id)}
-                    style={{ marginLeft: '10%', cursor: 'pointer' }}
-                  >Comment</span>
-                  <span 
-                    style={{ color: 'Red', marginRight: '10%', cursor: 'pointer' }}
-                    onClick={() => handlePostRemoveReaction(Post.id || Post._id)}
-                  >Disliked</span>
-                </div>
-              )}
-              {Post.PosterUserName === UserData.username && (
-                <div className="Alert-Reactions">
-                  <span style={{ marginLeft: '10%', cursor: 'pointer' }}>Likes: {Post.Likes}</span>
-                  <span onClick={() => handleCommentClick(Post.id || Post._id)} style={{ marginLeft: '10%', cursor: 'pointer' }}>Comments: {Post.comments.length}</span>
-                  <span style={{ marginRight: '10%', cursor: 'pointer' }}>Dislikes: {Post.Dislikes}</span>
-                </div>
-              )}
-              {CommentClicked === (Post.id || Post._id) && (
-                <div  className="Make-Comment-main-div">
-                  <div  style={{ background: getGuildPostColors(clickedGuild.guildColor) }} className="Alerts-Div">
-                    <div className="Alert-Content">
-                      <div>{Post.PosterUserName}</div>
-                      <div>{Post.content}</div>
-                    </div>
-                    <div style={{width: '100%', borderTop: 'black solid 2px', fontSize: '18px', paddingBottom: '20px'}}>Comments: {Post.comments.length}</div>
-                    <div style={{height: '100%'}}>
-                      <div style={{height: '400px', overflowY: 'auto'}}>
-                        {Post.comments && Post.comments.slice().reverse().map(Comment => (
-                          <div className="comments-main-div" key={Comment.id}>
-                            <div style={{fontSize: '18px'}}>{Comment.commentingUserName}</div>
-                            <div className="comments-main-comment">{Comment.commentPost.content}</div>
-                          </div>
-                        ))}
-                        <div className="comments-main-div">
-                          <div style={{fontSize: '18px'}}>blah blah blah</div>
-                          <div> blah blah blah v blah blah blahblahblahblahblahv</div>
-                        </div>
-                        <div className="comments-main-div">
-                          <div style={{fontSize: '18px'}}>blah blah blah</div>
-                          <div> blah blah blah v blah blah blahblahblahblahblahv</div>
-                        </div>
-                        <div className="comments-main-div">
-                          <div style={{fontSize: '18px'}}>blah blah blah</div>
-                          <div> blah blah blah v blah blah blahblahblahblahblahv</div>
-                        </div>
-                        <div className="comments-main-div">
-                          <div style={{fontSize: '18px'}}>blah blah blah</div>
-                          <div> blah blah blah v blah blah blahblahblahblahblahv</div>
-                        </div>
-                        <div className="comments-main-div">
-                          <div style={{fontSize: '18px'}}>blah blah blah</div>
-                          <div> blah blah blah v blah blah blahblahblahblahblahv</div>
-                        </div>
-                        <div className="comments-main-div">
-                          <div style={{fontSize: '18px'}}>blah blah blah</div>
-                          <div className="comments-main-comment"> blah blah blah v blah blah blahblahblahblahblahv</div>
+                {Post.PosterUserName !== UserData.username && !Post.LikesList.includes(UserData.username) && !Post.DislikesList.includes(UserData.username) && (
+                  <div className="Alert-Reactions">
+                    <span
+                      style={{ marginLeft: '10%', cursor: 'pointer' }}
+                      onClick={() => handlePostLike(Post.id || Post._id)}
+                    >Like</span>
+                    <span
+                      onClick={() => handleCommentClick(Post.id || Post._id)}
+                      style={{ marginLeft: '10%', cursor: 'pointer' }}
+                    >Comment</span>
+                    <span
+                      style={{ marginRight: '10%', cursor: 'pointer' }}
+                      onClick={() => handlePostDislike(Post.id || Post._id)}
+                    >Dislike</span>
+                  </div>
+                )}
+                {Post.PosterUserName !== UserData.username && Post.LikesList.includes(UserData.username) && (
+                  <div className="Alert-Reactions">
+                    <span 
+                      style={{ color: 'blue', marginLeft: '10%', cursor: 'pointer' }}
+                      onClick={() => handlePostRemoveReaction(Post.id || Post._id)}
+                    >Liked</span>
+                    <span
+                      onClick={() => handleCommentClick(Post.id || Post._id)}
+                      style={{ marginLeft: '10%', cursor: 'pointer' }}
+                    >Comment</span>
+                    <span
+                      style={{ marginRight: '10%', cursor: 'pointer' }}
+                      onClick={() => handlePostDislike(Post.id || Post._id)}
+                    >Dislike</span>
+                  </div>
+                )}
+                {Post.PosterUserName !== UserData.username && Post.DislikesList.includes(UserData.username) && (
+                  <div className="Alert-Reactions">
+                    <span
+                      style={{ marginLeft: '10%', cursor: 'pointer' }}
+                      onClick={() => handlePostLike(Post.id || Post._id)}
+                    >Like</span>
+                    <span
+                      onClick={() => handleCommentClick(Post.id || Post._id)}
+                      style={{ marginLeft: '10%', cursor: 'pointer' }}
+                    >Comment</span>
+                    <span 
+                      style={{ color: 'Red', marginRight: '10%', cursor: 'pointer' }}
+                      onClick={() => handlePostRemoveReaction(Post.id || Post._id)}
+                    >Disliked</span>
+                  </div>
+                )}
+                {Post.PosterUserName === UserData.username && (
+                  <div className="Alert-Reactions">
+                    <span style={{ marginLeft: '10%', cursor: 'pointer' }}>Likes: {Post.Likes}</span>
+                    <span onClick={() => handleCommentClick(Post.id || Post._id)} style={{ marginLeft: '10%', cursor: 'pointer' }}>Comments: {Post.comments.length}</span>
+                    <span style={{ marginRight: '10%', cursor: 'pointer' }}>Dislikes: {Post.Dislikes}</span>
+                  </div>
+                )}
+                {CommentClicked === (Post.id || Post._id) && (
+                  <div  className="Make-Comment-main-div">
+                    <div  style={{ background: getGuildPostColors(clickedGuild.guildColor) }} className="Alerts-Div">
+                      <div className="Alert-Content">
+                        <div>{Post.PosterUserName}</div>
+                        <div>{Post.content}</div>
+                      </div>
+                      <div style={{width: '100%', borderTop: 'black solid 2px', fontSize: '18px', paddingBottom: '20px'}}>Comments: {Post.comments.length}</div>
+                      <div style={{height: '100%'}}>
+                        <div style={{height: '400px', overflowY: 'auto'}}>
+                          {Post.comments && Post.comments.slice().reverse().map(Comment => (
+                            <div className="comments-main-div" key={Comment.id}>
+                              <div style={{fontSize: '18px'}}>{Comment.commentingUserName}</div>
+                              <div className="comments-main-comment">{Comment.commentPost.content}</div>
+                            </div>
+                          ))}
                         </div>
                       </div>
+                      <input className="comment-input" placeholder="Comment: " value={CommentinputValue} onChange={handleCommentInputChange}></input>
+                      <div style={{width: '90%',paddingRight: '5%' ,paddingLeft: '5%', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', paddingTop: '2%', borderTop: '4px groove black'}}><span onClick={() => handleCommentClick(null)}>BACK</span><span onClick={() => {handlePostComment(Post.id || Post._id)}}>Post</span></div>
                     </div>
-                    <input className="comment-input" placeholder="Comment: " value={CommentinputValue} onChange={handleCommentInputChange}></input>
-                    {Post.PosterUserName !== UserData.username && (<div style={{width: '90%',paddingRight: '5%' ,paddingLeft: '5%', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', paddingTop: '2%', borderTop: '4px groove black'}}><span onClick={() => handleCommentClick(null)}>BACK</span><span>Post</span></div>)}
                   </div>
-                </div>
-              )}
-            </div>
-          ))}
+                )}
+              </div>
+            ))}
           </div>
           {!CommentClicked && (<div onClick={() => {setMakePostClicked(true)}} style={{bottom: '1%', left: '21%', position: 'absolute'}}>Make A Post</div>)}
           {MakePostClicked && (
