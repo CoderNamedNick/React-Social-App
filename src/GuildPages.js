@@ -48,7 +48,6 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
   const [MakeAlertClicked, setMakeAlertClicked] = useState(false);
   const [MakePostClicked, setMakePostClicked] = useState(false);
   const [NewPost, setNewPost] = useState(false);
-  const [CommentsForNow, setCommentsForNow] = useState([]);
   const [guildData, setGuildData] = useState({
     guildMoto: clickedGuild.guildMoto,
     bio: clickedGuild.bio,
@@ -444,11 +443,6 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
       socket.on('New-Post-Notif', () => {
         setNewPost(true)
       });
-      socket.on('Comment-added', ( postId, comment ) => {
-        if ( postId) {
-          setCommentsForNow(prevComments => [...prevComments, comment]);
-        }
-      });
     }
   
     // Clean up event listener when component unmounts
@@ -459,7 +453,28 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
       }
     };
   }, [AllMembers]);
-  console.log(clickedGuild)
+
+  useEffect(() => {
+    const handleCommentAdded = (postId, newComment) => {
+      setPosts(prevPosts =>
+        prevPosts.map(post =>
+          (post.id || post._id) === postId ? { ...post, comments: [...post.comments, newComment] } : post
+        )
+      );
+    };
+  
+    // Listen for the server's confirmation that the comment was added
+    if (socket) {
+      socket.on('Comment-added', handleCommentAdded);
+    }
+  
+    // Cleanup the event listener on component unmount
+    return () => {
+      if (socket) {
+        socket.off('Comment-added', handleCommentAdded);
+      }
+    };
+  }, [socket]);
 
   const PromoteToElder = (TravelerId) => {
     if (socket) {
@@ -683,9 +698,6 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
     if (CommentinputValue !== '') {
       setCommentInputValue('')
     }
-    if (CommentsForNow.length !== 0) {
-      setCommentsForNow([])
-    }
     if (CommentClicked === postId) {
       setCommentClicked(null); // Toggle off if the same post is clicked again
     } else {
@@ -828,10 +840,16 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
     socket.emit('Post-Remove-Reaction', { postId, username: UserData.username }, GuildId);
   };
   const handlePostComment = (postId) => {
-    const CommenterId = UserData.id || UserData._id
-    const GuildId = clickedGuild.id || clickedGuild._id
-    const comment = CommentinputValue
-    socket.emit('Comment-post', postId, CommenterId, GuildId, comment)
+    const CommenterId = UserData.id || UserData._id;
+  const GuildId = clickedGuild.id || clickedGuild._id;
+  const comment = {
+    id: new Date().toISOString(),
+    commentingUserName: UserData.username,
+    commentPost: { content: CommentinputValue }
+    };
+    // Emit the comment event to the server
+    socket.emit('Comment-post', postId, CommenterId, GuildId, comment);
+    setCommentInputValue('');
   };
   
   return (
@@ -993,25 +1011,25 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
                   </div>
                 )}
                 {CommentClicked === (Post.id || Post._id) && (
-                  <div  className="Make-Comment-main-div">
-                    <div  style={{ background: getGuildPostColors(clickedGuild.guildColor) }} className="Alerts-Div">
+                  <div className="Make-Comment-main-div">
+                    <div style={{ background: getGuildPostColors(clickedGuild.guildColor) }} className="Alerts-Div">
                       <div className="Alert-Content">
                         <div>{Post.PosterUserName}</div>
                         <div>{Post.content}</div>
                       </div>
-                      <div style={{width: '100%', borderTop: 'black solid 2px', fontSize: '18px', paddingBottom: '20px'}}>Comments: {Post.comments.length}</div>
-                      <div style={{height: '100%'}}>
-                        <div style={{height: '400px', overflowY: 'auto'}}>
+                      <div style={{ width: '100%', borderTop: 'black solid 2px', fontSize: '18px', paddingBottom: '20px' }}>Comments: {Post.comments.length}</div>
+                      <div style={{ height: '100%' }}>
+                        <div style={{ height: '400px', overflowY: 'auto' }}>
                           {Post.comments && Post.comments.slice().reverse().map(Comment => (
                             <div className="comments-main-div" key={Comment.id}>
-                              <div style={{fontSize: '18px'}}>{Comment.commentingUserName}</div>
+                              <div style={{ fontSize: '18px' }}>{Comment.commentingUserName}</div>
                               <div className="comments-main-comment">{Comment.commentPost.content}</div>
                             </div>
                           ))}
                         </div>
                       </div>
                       <input className="comment-input" placeholder="Comment: " value={CommentinputValue} onChange={handleCommentInputChange}></input>
-                      <div style={{width: '90%',paddingRight: '5%' ,paddingLeft: '5%', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', paddingTop: '2%', borderTop: '4px groove black'}}><span onClick={() => handleCommentClick(null)}>BACK</span><span onClick={() => {handlePostComment(Post.id || Post._id)}}>Post</span></div>
+                      <div style={{ width: '90%', paddingRight: '5%', paddingLeft: '5%', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', paddingTop: '2%', borderTop: '4px groove black' }}><span onClick={() => handleCommentClick(null)}>BACK</span><span onClick={() => { handlePostComment(Post.id || Post._id) }}>Post</span></div>
                     </div>
                   </div>
                 )}
