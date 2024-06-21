@@ -6,6 +6,7 @@ import { io } from "socket.io-client";
 
 const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
   const [socket, setSocket] = useState(null);
+  const topMainFeedRef = useRef(null);
   const [AllMembers, setAllMembers] = useState(null);
   const [RequestedMembers, setRequestedMembers] = useState(null);
   const [clickedMember, setclickedMember] = useState(null);
@@ -476,6 +477,17 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
       }
     };
   }, [socket]);
+
+  const handleRefreshAndScrollToTop = () => {
+    handleGuildPostRefresh();
+    topMainFeedRef.current.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  useEffect(() => {
+    if (MainFeedClicked) {
+      topMainFeedRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [MainFeedClicked]);
 
   const PromoteToElder = (TravelerId) => {
     if (socket) {
@@ -957,12 +969,13 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
         {MainFeedClicked && (
           <div>
             {NewPost && (<div>THERE IS A NEW POST</div>)}
-            {!CommentClicked && (<div onClick={handleGuildPostRefresh} style={{position: 'fixed', left: '20%', top: '178px'}}>Reload Posts Icon</div>)}
-            <div  className="Main-Post-Feed">POSTS
+            {!CommentClicked && (<div onClick={handleRefreshAndScrollToTop} style={{position: 'fixed', left: '20%', top: '178px'}}>Reload Posts Icon</div>)}
+            <div  className="Main-Post-Feed">
+              <div ref={topMainFeedRef}>POSTS</div>
             {posts && posts.slice().reverse().map(Post => (
               <div style={{ background: getGuildPostColors(clickedGuild.guildColor) }} className="Alerts-Div" key={Post.id}>
                 <div className="Alert-Content">
-                  <div>{Post.PosterUserName}</div>
+                  <div style={{fontWeight: '600'}}>{Post.PosterUserName}</div>
                   <div>{Post.content}</div>
                 </div>
                 {Post.PosterUserName !== UserData.username && !Post.LikesList.includes(UserData.username) && !Post.DislikesList.includes(UserData.username) && (
@@ -1072,8 +1085,8 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
             <div  className="Main-Post-Feed"> YOUR POSTS
             {posts && posts.filter(Post => Post.PosterUserName === UserData.username).slice().reverse().map(Post => (
               <div style={{ background: getGuildPostColors(clickedGuild.guildColor) }} className="Alerts-Div" key={Post.id}>
-                <div className="Alert-Content">
-                  <div>{Post.PosterUserName}</div>
+                <div  className="Alert-Content">
+                  <div style={{fontWeight: '600'}}>{Post.PosterUserName}</div>
                   <div>{Post.content}</div>
                 </div>
                 {Post.PosterUserName === UserData.username && (
@@ -1137,7 +1150,7 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
             {alerts && alerts.slice().reverse().map(Alert => (
               <div style={{ background: getGuildPostColors(clickedGuild.guildColor) }} className="Alerts-Div" key={Alert.id}>
                 <div className="Alert-Content">
-                  <div>{Alert.PosterUserName}</div>
+                  <div style={{fontWeight: '600'}}>{Alert.PosterUserName}</div>
                   <div>{Alert.content}</div>
                 </div>
                 {Alert.PosterUserName !== UserData.username && !Alert.LikesList.includes(UserData.username) && !Alert.DislikesList.includes(UserData.username) && (
