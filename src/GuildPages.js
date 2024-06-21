@@ -43,7 +43,8 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
   const [ShowDisbandWarning,setShowDisbandWarning] = useState(false);
   const [CommentClicked, setCommentClicked] = useState(null); 
   const [MainFeedClicked, setMainFeedClicked] = useState(true);
-  const [GuildAlertsClicked, setGuildAlertsClicked] = useState(false);
+  const [GuildAlertsClicked, setGuildAlertsClicked] = useState(false); 
+  const [YourPostClicked, setYourPostClicked] = useState(false);
   const [messageInput, setMessageInput] = useState('');
   const [MakeAlertClicked, setMakeAlertClicked] = useState(false);
   const [MakePostClicked, setMakePostClicked] = useState(false);
@@ -680,13 +681,20 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
   const handleShowDisbandWarning= () => {
     setShowDisbandWarning(!ShowDisbandWarning)
   }
+  const handleYourPostClicked= () => {
+    setMainFeedClicked(false)
+    setGuildAlertsClicked(false)
+    setYourPostClicked(true)
+  }
   const handleMainFeedClick= () => {
     setGuildAlertsClicked(false)
     setMainFeedClicked(true)
+    setYourPostClicked(false)
   }
   const handleGuildAlertClick= () => {
     setMainFeedClicked(false)
     setGuildAlertsClicked(true)
+    setYourPostClicked(false)
   }
   const handleGuildAlertRefresh= () => {
     if (socket) {
@@ -868,7 +876,7 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
             <h2 style={{cursor: 'pointer'}} onClick={() => toggleTooltip(AllMembers.Owner.id)}>{AllMembers.Owner.UserName} <span style={{fontSize: '14px', fontWeight: '400'}}>Owner</span></h2>
             {UserData.username !== AllMembers.Owner.UserName && (
               <div className="guild-Owner-tooltip" style={{ display: clickedMember === AllMembers.Owner.id ? 'block' : 'none' }}>
-                <Link to={`/user/${AllMembers.Owner.UserName}`}><div>View {AllMembers.Owner.UserName}'s Profile</div></Link> 
+                <Link to={`/user/${AllMembers.Owner.UserName}`}><div style={{color: 'white'}}>View {AllMembers.Owner.UserName}'s Profile</div></Link> 
               </div>
             )}
             <hr/>
@@ -879,7 +887,7 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
                   <h2 style={{cursor: 'pointer'}} onClick={() => toggleTooltip(elder.id)}>{elder.UserName } <span style={{fontSize: '14px', fontWeight: '400'}}>Elder</span></h2>
                   {UserData.username !== elder.UserName && (
                     <div className="guild-member-tooltip" style={{ display: clickedMember === elder.id ? 'block' : 'none' }}>
-                    {!elder.AccPrivate && (<Link to={`/user/${elder.UserName}`}><div>View {elder.UserName}'s Profile</div></Link>)}
+                    {!elder.AccPrivate && (<Link to={`/user/${elder.UserName}`}><div style={{color: 'white'}}>View {elder.UserName}'s Profile</div></Link>)}
                     {elder.AccPrivate && (<div>{elder.UserName}'s Profile Is Private</div>)}
                       {UserData.username === AllMembers.Owner.UserName && (
                         <div style={{cursor: 'pointer'}} onClick={() => {DemoteToMember(elder.id || elder._id)}}>Demote to Member</div>
@@ -912,7 +920,7 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
                 </h2>
                 {UserData.username !== member.UserName && (
                   <div className="guild-member-tooltip" style={{ display: clickedMember === member.id ? 'block' : 'none' }}>
-                    {!member.AccPrivate && (<Link to={`/user/${member.UserName}`}><div>View {member.UserName}'s Profile</div></Link>)}
+                    {!member.AccPrivate && (<Link to={`/user/${member.UserName}`}><div style={{color: 'white'}}>View {member.UserName}'s Profile</div></Link>)}
                     {member.AccPrivate && (<div>{member.UserName}'s Profile Is Private</div>)}
                     {UserData.username === AllMembers.Owner.UserName && (
                       <div style={{cursor: 'pointer'}} onClick={() => {PromoteToElder(member.id || member._id)}}>Promote to Elder</div>
@@ -940,9 +948,11 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
       </div>
       <div className="Guild-Pages-middle-side">
         <div className="Top-Middle-NavBar">
-          <div style={{marginLeft: '-6%'}} onClick={handleMainFeedClick} className={MainFeedClicked ? "Bold" : 'not'} >Main Feed</div>
+        <div style={{marginLeft: '-20%'}} onClick={handleYourPostClicked} className={YourPostClicked ? "Bold" : 'not'} >Your Post</div>
           <div style={{border: 'solid black 1px'}}></div>
-          <div style={{marginRight: '-6%'}} onClick={handleGuildAlertClick}  className={GuildAlertsClicked ? "Bold" : 'not'} >Guild Alerts</div>
+          <div onClick={handleMainFeedClick} className={MainFeedClicked ? "Bold" : 'not'} >Main Feed</div>
+          <div style={{border: 'solid black 1px'}}></div>
+          <div style={{marginRight: '-21%'}} onClick={handleGuildAlertClick}  className={GuildAlertsClicked ? "Bold" : 'not'} >Guild Alerts</div>
         </div>
         {MainFeedClicked && (
           <div>
@@ -958,15 +968,15 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
                 {Post.PosterUserName !== UserData.username && !Post.LikesList.includes(UserData.username) && !Post.DislikesList.includes(UserData.username) && (
                   <div className="Alert-Reactions">
                     <span
-                      style={{ marginLeft: '10%', cursor: 'pointer' }}
+                      style={{ marginLeft: '0%', cursor: 'pointer' }}
                       onClick={() => handlePostLike(Post.id || Post._id)}
                     >Like</span>
                     <span
                       onClick={() => handleCommentClick(Post.id || Post._id)}
-                      style={{ marginLeft: '10%', cursor: 'pointer' }}
+                      style={{ marginLeft: '2%', marginRight: '2%', cursor: 'pointer' }}
                     >Comment</span>
                     <span
-                      style={{ marginRight: '10%', cursor: 'pointer' }}
+                      style={{ marginRight: '0%', cursor: 'pointer' }}
                       onClick={() => handlePostDislike(Post.id || Post._id)}
                     >Dislike</span>
                   </div>
@@ -974,7 +984,7 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
                 {Post.PosterUserName !== UserData.username && Post.LikesList.includes(UserData.username) && (
                   <div className="Alert-Reactions">
                     <span 
-                      style={{ color: 'blue', marginLeft: '10%', cursor: 'pointer' }}
+                      style={{ color: 'blue', marginLeft: '0%', cursor: 'pointer' }}
                       onClick={() => handlePostRemoveReaction(Post.id || Post._id)}
                     >Liked</span>
                     <span
@@ -1005,9 +1015,72 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
                 )}
                 {Post.PosterUserName === UserData.username && (
                   <div className="Alert-Reactions">
-                    <span style={{ marginLeft: '10%', cursor: 'pointer' }}>Likes: {Post.Likes}</span>
-                    <span onClick={() => handleCommentClick(Post.id || Post._id)} style={{ marginLeft: '10%', cursor: 'pointer' }}>Comments: {Post.comments.length}</span>
-                    <span style={{ marginRight: '10%', cursor: 'pointer' }}>Dislikes: {Post.Dislikes}</span>
+                    <span style={{ fontSize: '20px', marginLeft: '0%', cursor: 'pointer' }}>Likes: {Post.Likes}</span>
+                    <span onClick={() => handleCommentClick(Post.id || Post._id)} style={{ fontSize: '20px', marginLeft: '0%', cursor: 'pointer' }}>Comments: {Post.comments.length}</span>
+                    <span style={{ fontSize: '20px', marginRight: '0%', cursor: 'pointer' }}>Dislikes: {Post.Dislikes}</span>
+                  </div>
+                )}
+                {CommentClicked === (Post.id || Post._id) && (
+                  <div className="Make-Comment-main-div">
+                    <div style={{ background: getGuildPostColors(clickedGuild.guildColor) }} className="Alerts-Div">
+                      <div className="Alert-Content">
+                        <div>{Post.PosterUserName}</div>
+                        <div>{Post.content}</div>
+                      </div>
+                      <div style={{ width: '100%', borderTop: 'black solid 2px', fontSize: '18px', paddingBottom: '20px' }}>Comments: {Post.comments.length}</div>
+                      <div style={{ height: '100%' }}>
+                        <div style={{ height: '400px', overflowY: 'auto' }}>
+                          {Post.comments && Post.comments.slice().reverse().map(Comment => (
+                            <div className="comments-main-div" key={Comment.id}>
+                              <div style={{ fontSize: '18px' }}>{Comment.commentingUserName}</div>
+                              <div className="comments-main-comment">{Comment.commentPost.content}</div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                      <input className="comment-input" placeholder="Comment: " value={CommentinputValue} onChange={handleCommentInputChange}></input>
+                      <div style={{ width: '90%', paddingRight: '5%', paddingLeft: '5%', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', paddingTop: '2%', borderTop: '4px groove black' }}><span onClick={() => handleCommentClick(null)}>BACK</span><span onClick={() => { handlePostComment(Post.id || Post._id) }}>Post</span></div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+          {!CommentClicked && (<div onClick={() => {setMakePostClicked(true)}} style={{bottom: '1%', left: '21%', position: 'absolute'}}>Make A Post</div>)}
+          {MakePostClicked && (
+            <div className="Make-Alert-main-div">
+              <div className="Make-Alert">
+                THIS IS A POST
+                <p><span style={{fontFamily: '"MedievalSharp", cursive'}}>FROM:</span> {UserData.username}</p>
+                <textarea
+                  className="TA-make-alert"
+                  value={PostinputValue}
+                  onChange={handlePostInputChange}
+                ></textarea> 
+                <p><span style={{fontFamily: '"MedievalSharp", cursive'}}>TO:</span> {clickedGuild.guildName}</p>
+                <div style={{ color: 'white', display: 'flex', flexDirection: 'row', justifyContent: 'space-between'}}>
+                  <div onClick={() => {setMakePostClicked(false)}} style={{ fontSize: '28px', cursor: 'pointer', border: 'solid black 2px', borderRadius: '10px', padding: '5px', background: 'red', color: 'white'}}>Cancel</div>
+                  <div onClick={SendPost} style={{ fontSize: '28px', cursor: 'pointer', border: 'solid black 2px', borderRadius: '10px', padding: '5px', background: 'black', color: 'white'}}>Post</div>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+        )}
+        {YourPostClicked && (
+          <div>
+            <div  className="Main-Post-Feed"> YOUR POSTS
+            {posts && posts.filter(Post => Post.PosterUserName === UserData.username).slice().reverse().map(Post => (
+              <div style={{ background: getGuildPostColors(clickedGuild.guildColor) }} className="Alerts-Div" key={Post.id}>
+                <div className="Alert-Content">
+                  <div>{Post.PosterUserName}</div>
+                  <div>{Post.content}</div>
+                </div>
+                {Post.PosterUserName === UserData.username && (
+                  <div className="Alert-Reactions">
+                    <span style={{ fontSize: '20px', marginLeft: '0%', cursor: 'pointer' }}>Likes: {Post.Likes}</span>
+                    <span onClick={() => handleCommentClick(Post.id || Post._id)} style={{fontSize: '20px',  marginLeft: '0%', cursor: 'pointer' }}>Comments: {Post.comments.length}</span>
+                    <span style={{fontSize: '20px',  marginRight: '0%', cursor: 'pointer' }}>Dislikes: {Post.Dislikes}</span>
                   </div>
                 )}
                 {CommentClicked === (Post.id || Post._id) && (
@@ -1140,7 +1213,6 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
           <div className="guild-rightside-div">
             <h2 onClick={handleViewGuildStats} style={{cursor: 'pointer'}}>View Guild Stats</h2>
             <h2 onClick={handleManageJoinReq} style={{cursor: 'pointer'}}>Manage Guild Join request <span className="guild-req-counter">{GuildRequestCount}</span></h2>
-            <h2>Send A Guild Alert</h2>
             <h3 onClick={handleShowElderMessages}>View Elder messages</h3>
             <h2 className="guild-settings" onClick={handleGuildSettings}>Guild Settings</h2>
           </div>
