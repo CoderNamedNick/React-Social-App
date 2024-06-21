@@ -944,13 +944,14 @@ a{
   margin-top: 5%;
 }
 .guild-member-tooltip{
-  background-color: rgba(0, 0, 0, 0.452);
+  background-color: rgba(0, 0, 0, 0.863);
   color: white;
   position: absolute;
   margin-left: 20%;
   padding: 10px;
   border-radius: 15px;
   margin-top: -8%;
+  z-index: 1000;
 }
 .guild-rightside-div{
   display: flex;
@@ -1252,11 +1253,11 @@ a{
   font-weight: 600;
   text-decoration: underline;
   text-shadow: 2px 2px rgba(0, 0, 0, 0.171);
-  font-size: 28px;
+  font-size: 27px;
   cursor: pointer;
 }
 .not{
-  font-size: 21px;
+  font-size: 20px;
   cursor: pointer
 }
 .Make-Alert-main-div{
@@ -1339,11 +1340,11 @@ a{
   border-top: solid 2px black;
 }
 .Make-Comment-main-div{
-  position: absolute;
-  top: 0;
+  position: fixed;
+  top: 180px;
   bottom: 0;
-  left: 0;
-  right: 0;
+  left: 20%;
+  right: 20%;
   background-color: rgba(0, 0, 0, 0.473);
   padding-left: 4%;
 }
