@@ -45,7 +45,7 @@ a{
   border-radius: 20px;
 }
 .signup-square{
-  height: 550px;
+  height: 600px;
   margin-top: 80px;
 }
 .LoginBars{
@@ -79,13 +79,13 @@ a{
 }
 .signup-labels{
   font-weight: 100;
-  font-size: 22px;
+  font-size: 20px;
 }
 .signup-inputs{
   font-weight: 100;
   font-size: 22px;
   border: black 1px solid;
-  padding: 5px 0px;
+  padding: 10px 4px;
   border-radius: 5px;
 }
 .signup-submit-btn{
@@ -95,7 +95,7 @@ a{
   font-weight: 700;
   font-size: 30px;
   padding-left: 70px;
-  margin-top: 40px;
+  margin-top: 30px;
   cursor: pointer;
 }
 .signup-submit-btn:hover{
