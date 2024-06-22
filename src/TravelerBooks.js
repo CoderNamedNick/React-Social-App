@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
+import { io } from 'socket.io-client'
 
 const TravelersBooks = ({UserData, setUserData}) => {
   const { username } = useParams(); // Get the username parameter from the URL
@@ -10,6 +11,24 @@ const TravelersBooks = ({UserData, setUserData}) => {
   const [isCompanion, setisCompanion] = useState(false);
   const [isBlocked, setisBlocked] = useState(false);
   const [ShowReportWindow, setShowReportWindow] = useState(false);
+  const [socket, setSocket] = useState(null);
+  useEffect(() => {
+    // Establish Socket connection
+    const socket = io('http://localhost:5000');
+    setSocket(socket)
+   // make a socket for notifs
+    socket.on('connect', () => {
+      console.log('connected');
+      const userId = UserData.id || UserData._id;
+      socket.emit('storeUserIdForInTheMessages', userId);
+    });
+   
+    // Clean up socket connection when component unmounts
+    return () => {
+      socket.disconnect();
+    };
+  
+  }, []);
   const colors = 
   [
   {name: 'Blue', color1: '#F5F6FC', color2: '#0F2180'},
@@ -155,6 +174,9 @@ const TravelersBooks = ({UserData, setUserData}) => {
       const data = await response.json();
       if (response.ok) {
         // Companion request sent successfully
+        if (socket) {
+          socket.emit('update-user', receiverUserId)
+        }
         setSentRequest(true); // Update state to indicate that the request has been sent
         console.log(data.message); // Log the success message from the server
       } else {
@@ -192,6 +214,9 @@ const TravelersBooks = ({UserData, setUserData}) => {
         setisCompanion(true); // Update state to indicate that the request has been sent
         setAcceptRequest(false);
         DeclCompanionRequest();
+        if (socket) {
+          socket.emit('update-user', acceptieId)
+        }
         console.log(data.message); // Log the success message from the server
       } else {
         // Handle error response from the server
@@ -333,7 +358,7 @@ const TravelersBooks = ({UserData, setUserData}) => {
             {!isBlocked && !AcceptRequest && SentRequest && (<h2 className="Edit-PB">Companion request Sent</h2>)}
             {!isBlocked && AcceptRequest && (<h2 onClick={AccCompanionRequest} className="Edit-PB">Accept Companion Request</h2>)}
             {!isBlocked && AcceptRequest && (<h2 onClick={DeclCompanionRequest} style={{bottom: 0}} className="Edit-PB">Decline Companion Request</h2>)}
-            {!isBlocked && isCompanion && (<Link to="/Messages"><h2 style={{bottom: 0}} className="Edit-PB">Send Message</h2></Link>)}
+            {!isBlocked && isCompanion && (<Link to="/Conversations"><h2 style={{bottom: 0}} className="Edit-PB">Start A Convo</h2></Link>)}
           </div> 
           <div className='Trav-negatives'>
             {!isBlocked && !isCompanion && (<div onClick={BlockTrav} style={{cursor: 'pointer'}}>Block Traveler</div>)}
