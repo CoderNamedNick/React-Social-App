@@ -16,6 +16,7 @@ import Conversations from "./Conversations";
 import Messages from "./Messages";
 import GuildPages from "./GuildPages"
 import TavernNews from "./TavernNews";
+import FormAParty from "./FormAParty";
 
 function App() {
   const [loggedIn, setLoggedIn] = useState(false);
@@ -85,6 +86,7 @@ function App() {
               <Route path="/Join-Guild" element={<JoinAGuild UserData={UserData} setUserData={setUserData} />} />
               <Route path="/Conversations" element={<Conversations UserData={UserData} setUserData={setUserData} ClickedConvo={ClickedConvo} setClickedConvo={setClickedConvo} />} />
               <Route path="/Messages" element={<Messages UserData={UserData} setUserData={setUserData} ClickedConvo={ClickedConvo} setClickedConvo={setClickedConvo} />} />
+              <Route path="/Form-A-Party" element={<FormAParty UserData={UserData} setUserData={setUserData}/>} />
               <Route path="/GuildPages" element={<GuildPages UserData={UserData} setUserData={setUserData} clickedGuild={clickedGuild} setclickedGuild={setclickedGuild} />} />
               <Route path="/Tavern-News" element={<TavernNews UserData={UserData} setUserData={setUserData} />} />
             </Routes>
