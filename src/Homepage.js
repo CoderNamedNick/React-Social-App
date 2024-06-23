@@ -97,7 +97,7 @@ const HomePage = ({UserData, setUserData}) => {
 
         {/* Div for Party content */}
         <div className="Homepage-contents-divs">
-          <h2>Party Content</h2>
+          <h2>Messages & Party Content</h2>
           {/* Display party notifications or "Make a party with travelers" */}
         </div>
 
