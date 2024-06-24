@@ -4,6 +4,10 @@ import { io } from 'socket.io-client'
 
 const Messages = ({ UserData, setUserData, ClickedConvo, setClickedConvo }) => {
   const [ConversationsArray, setConversationsArray] = useState([]);
+  const [ConvosClicked, setConvosClicked] = useState(true)
+  const [PartiesClicked, setPartiesClicked] = useState(false)
+  const [Party, setParty] = useState(null)
+  const [PartiesArray, setPartiesArray] = useState([]);
   const [CurrentConvo, setCurrentConvo] = useState(null);
   const [NoCurrentConvo, SetNoCurrentConvo] = useState(false)
   const [messagesArray, setmessagesArray] = useState([]);
@@ -21,6 +25,7 @@ const Messages = ({ UserData, setUserData, ClickedConvo, setClickedConvo }) => {
       console.log('connected');
       const userId = UserData.id || UserData._id;
       socket.emit('storeUserIdForInTheMessages', userId);
+      socket.emit('Find-Parties', userId)
     });
    
     // Clean up socket connection when component unmounts
@@ -49,18 +54,30 @@ const Messages = ({ UserData, setUserData, ClickedConvo, setClickedConvo }) => {
         console.log('got a read update')
         fetchData()
       })
+      socket.on('Parties-Found', (parties) => {
+        setPartiesArray(parties)
+        console.log("this is parties")
+        console.log(parties)
+      })
+      socket.on('Message-to-Party-update', (party) => {
+        if (Party && Party._id === party._id) {
+          setmessagesArray(party.messages);
+        }
+      });
     }
   
     // Clean up event listener when component unmounts
     return () => {
       if (socket) {
         socket.off('New-Message-update');
+        socket.off('Message-to-Party-update');
       }
     };
-  }, [socket, setmessagesArray, UserData.id, UserData._id, CurrentConvo]);
+  }, [socket, Party]);
 
 
   const ConvoCLick = (ConvoID, CompanionsNames, Convo) => {
+    setParty(null)
     setmessagesArray([]);
     if (CompanionsNames !== '') {
       setCurrentConvoCompanionName(CompanionsNames)
@@ -79,12 +96,31 @@ const Messages = ({ UserData, setUserData, ClickedConvo, setClickedConvo }) => {
         setmessagesArray(data.messages)
         SetNoCurrentConvo(false)
         setCurrentConvo(Convo)
+        setParty(null)
         console.log(messagesArray)
       })
     .catch(error => {
       console.error('Error fetching conversations:', error);
     });
     
+  }
+
+  const PartyClick = (PartyID, PartyName, itsParty) => {
+    setParty(itsParty);
+    setmessagesArray([]);
+    if (PartyName !== '') {
+      setCurrentConvoCompanionName(PartyName)
+    }
+    if (socket) {
+      socket.emit('get-party-messages', PartyID, (response) => {
+        if (response.error) {
+          console.error('Error fetching party messages:', response.error);
+        } else {
+          setmessagesArray(response.messages)
+          SetNoCurrentConvo(false)
+        }
+      });
+    }
   }
   
   useEffect(() => {
@@ -186,28 +222,37 @@ const Messages = ({ UserData, setUserData, ClickedConvo, setClickedConvo }) => {
   };
 
   const sendAMessage = async () => {
-    try {
-      console.log('this is current convo', CurrentConvo)
-      console.log(UserData.id , UserData._id)
-      //do this if mesaages are only between 2 people
-      if (CurrentConvo.messengers.length === 2) {
-        console.log('less than two')
-        if (socket) {
-          const Convocompanionid = CurrentConvo.messengers.filter(id => id !== UserData.id && id !== UserData._id)[0];
-          if (!UserData.companions.includes(Convocompanionid)) {
-            seterrorMessage('this Traveler is No longer your Companion')
-            return
-          } 
-          const userId = UserData.id || UserData._id
-          const content = messageInput
-          console.log(Convocompanionid)
-          socket.emit('sending-A-New-Message', userId, Convocompanionid, content)
-          setMessageInput('');
-        }
-      } 
-    }catch (error) {
-      console.error('Error posting to API:', error.message);
-      // Handle error, show an error message
+    if (Party === null) {
+      try {
+        if (CurrentConvo.messengers.length === 2) {
+          console.log('less than two')
+          if (socket) {
+            const Convocompanionid = CurrentConvo.messengers.filter(id => id !== UserData.id && id !== UserData._id)[0];
+            if (!UserData.companions.includes(Convocompanionid)) {
+              seterrorMessage('this Traveler is No longer your Companion')
+              return
+            } 
+            const userId = UserData.id || UserData._id
+            const content = messageInput
+            console.log(Convocompanionid)
+            socket.emit('sending-A-New-Message', userId, Convocompanionid, content)
+            setMessageInput('');
+          }
+        } 
+      }catch (error) {
+        console.error('Error posting to API:', error.message);
+        // Handle error, show an error message
+      }
+    }
+    if (Party !== null) {
+      if (socket) {
+        console.log('party is not null')
+        const userId = UserData.id || UserData._id
+        const partyId = Party.id || Party._id
+        const content = messageInput
+        socket.emit('Send-Message-To-Party', userId, partyId, content)
+        setMessageInput('');
+      }
     }
   };
 
@@ -226,25 +271,41 @@ const Messages = ({ UserData, setUserData, ClickedConvo, setClickedConvo }) => {
       socket.emit('Mark-As-Read', UserData.id || UserData._id, Convocompanionid)
     }
   }
+  const handlePartyandConvoswitch = () => {
+    setConvosClicked(!ConvosClicked)
+    setPartiesClicked(!PartiesClicked)
+  }
   
   return (
     <div className="main-messages-div">
       <div className="messages-div">{/*Make this have padding top with flexdir row */}
-        <div className="left-side-with-Conversations">
-          <h4>Convos</h4>
-          {ConversationsArray.map(Convo => {
-              // Check if Convo.UserNames is defined before filtering
-              const otherUsernames = Convo.UserNames ? Convo.UserNames.filter(username => username !== UserData.username) : [];
-              return (
-                <div onClick={() => {ConvoCLick(Convo.messageId, otherUsernames.join(', '), Convo)}} className='current-convos-messages' key={Convo.messageId}>
-                  <h2>{otherUsernames.join(', ')}</h2>
-                  <div className="Notif-Counter">{Convo.NotifNumber}</div>
-                </div>
-              );
-            })}
-        
-          {/*loop thru array after fetch  post convos on left side with username of person*/}
-        </div>
+        { ConvosClicked && !PartiesClicked &&  (
+          <div className="left-side-with-Conversations">
+            <h4>Convos</h4>
+            <div onClick={handlePartyandConvoswitch}>switch to parties</div>
+            {ConversationsArray.map(Convo => {
+                // Check if Convo.UserNames is defined before filtering
+                const otherUsernames = Convo.UserNames ? Convo.UserNames.filter(username => username !== UserData.username) : [];
+                return (
+                  <div onClick={() => {ConvoCLick(Convo.messageId, otherUsernames.join(', '), Convo)}} className='current-convos-messages' key={Convo.messageId}>
+                    <h2>{otherUsernames.join(', ')}</h2>
+                    <div className="Notif-Counter">{Convo.NotifNumber}</div>
+                  </div>
+                );
+              })}
+          </div>
+        )}
+        { !ConvosClicked && PartiesClicked && (
+          <div className="left-side-with-Conversations">
+            <h4>Parties</h4>
+            <div onClick={handlePartyandConvoswitch}>switch to convos</div>
+            {PartiesArray.map(TheParty => (
+              <div onClick={() => {PartyClick(TheParty.id || TheParty._id, TheParty.partyname, TheParty)}} className='current-convos-messages' key={TheParty.messageId}>
+                <h2>{TheParty.partyname}</h2>
+              </div>
+              ))}
+          </div>
+        )}
         <div className="right-side-with-messages">
           {NoCurrentConvo && (<h1>Select A Conversation</h1>)}
           {!NoCurrentConvo && (
@@ -253,8 +314,11 @@ const Messages = ({ UserData, setUserData, ClickedConvo, setClickedConvo }) => {
               <div onWheel={handleWheelScroll} className="Messages-alignment-div">
                 {messagesArray.map((message, index) => (
                   <div key={index} className={message.senderUsername === UserData.username ? "message-right" : "message-left"}>
-                    {message.senderUsername === UserData.username && (
+                    {Party === null && message.senderUsername === UserData.username && (
                       <p style={{margin: 0, marginTop: '30px'}}>{message.read ? "Read" : "Sent"}</p>
+                    )}
+                    {Party !== null && message.senderUsername !== UserData.username && (
+                      <p style={{margin: 0, marginTop: '30px'}}>{message.senderUsername}</p>
                     )}
                     <p style={{margin: 0}} className={message.senderUsername === UserData.username ? "message-content" : "message-content2"}>{message.content}</p>
                   </div>
