@@ -6,6 +6,7 @@ const FormAParty = ({ UserData, setUserData }) => {
   const [companionsData, setCompanionsData] = useState([]);
   const [NewPartyList, setNewPartyList] = useState([]);
   const [NewPartyListIds, setNewPartyListIds] = useState([]);
+  const [NewPartyName, setNewPartyName] = useState('');
   const [NewPartyListUsernames, setNewPartyListUsernames] = useState([]);
   const [socket, setSocket] = useState(null);
   const navigate = useNavigate();
@@ -72,7 +73,7 @@ const FormAParty = ({ UserData, setUserData }) => {
         userId: companion.id,
         userName: companion.userData.username
       })),
-      partyname: "My New Party" 
+      partyname: NewPartyName 
     });
   };
 
@@ -80,26 +81,38 @@ const FormAParty = ({ UserData, setUserData }) => {
     <div className='Conversations-main-div'>
       <div className='Convos-div'>
         <h2>Make a Party with companions</h2>
-        <div>
-          <h2>New Party</h2>
+        <input 
+          placeholder="new party's name"
+          style={{ fontSize: '20px', padding: '5px', marginBottom: '40px', height: '40px'}}
+          value={NewPartyName} // Bind input value to state
+          onChange={e => setNewPartyName(e.target.value)} // Update state on change
+        />
+        <div style={{width: '90%', marginLeft: '5%'}}>
           {NewPartyList.length === 0 ? (
-            <div>Empty</div>
+            <div style={{marginBottom: "40px", marginLeft: '40%'}}>Empty</div>
           ) : (
-            <div>
+            <div style={{marginBottom: "40px"}} className='Make-A-convo-grid'>
               {NewPartyList.map(companion => (
-                <div key={companion.id}>
+                <div className='Convo-companion-map-div' key={companion.id}>
                   <p>{companion.userData.username}</p>
+                  <div style={{ display: 'flex', flexDirection: 'row', gap: '15px', justifyContent: 'space-between' }}>
+                    <Link to={`/user/${companion.userData.username}`}><div>View Profile</div></Link>
+                  </div>
                   <p style={{ cursor: 'pointer', color: 'red' }} onClick={() => removeFromPartyList(companion)}>Remove</p>
                 </div>
               ))}
             </div>
           )}
-          {NewPartyList.length > 1 && (
-            <div style={{ cursor: 'pointer', color: 'green' }} onClick={formParty}>
-              Form Party
-            </div>
-          )}
         </div>
+        {NewPartyList.length > 1 && (
+            <button 
+              style={{ cursor: 'pointer', marginBottom: '30px', fontSize: '34px', background: 'rgba(0, 0, 0, 0.138)', borderRadius: '10px' }}
+              
+              onClick={formParty}
+            >
+              Form Party
+            </button>
+          )}
         <div className='Make-A-convo-grid'>
           {companionsData.map(({ userData }, index) => (
             <div className='Convo-companion-map-div' key={userData._id || userData.id}>
