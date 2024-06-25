@@ -154,7 +154,7 @@ const Header = ({ title, LogOut, UserData, setUserData, clickedGuild, }) => {
           <Link to="/Guild-Registry"><div className="Menu-p-s">Make A Guild</div></Link>
           <div className="Menu-p-s">Tavern News</div>
           <Link to="/Block-List"><div className="Menu-p-s">Blocked Travelers</div></Link>
-          <Link to="/Login"><p className="menu-leave" onClick={LogOut}>Leave the Tavern</p></Link>
+          <Link to="/Login"><p style={{marginLeft: '25px'}} className="menu-leave" onClick={LogOut}>Leave the Tavern</p></Link>
         </div>
       </div>
     </div>

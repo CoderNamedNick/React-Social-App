@@ -248,6 +248,7 @@ a{
   padding-left: 10px;
   border-right: rgba(0, 0, 0, 0.678) 3px solid;
   border-bottom: rgba(0, 0, 0, 0.678) 3px solid;
+  overflow-y: hidden;
 }
 .Travelers-hompage-info{
   margin-left: -10px;
@@ -316,8 +317,9 @@ a{
 }
 .Homepage-content-div{
   width: 100%;
+  margin-left: 180px;
   display: flex;
-  padding-right: 5%;
+  padding-right: 0%;
   flex-direction: column;
   align-items: center;
   gap: 25px;
@@ -333,6 +335,7 @@ a{
   border-radius: 10px;
   text-align: center;
 }
+
 .Homepage-contents-divs:hover{
   border: rgba(0, 0, 0, 0.185) solid 3px;
   border-bottom: rgba(0, 0, 0, 0.767) solid 6px;
@@ -352,6 +355,51 @@ a{
   padding: 10px;
   border-radius: 10px;
   margin-top: 10px;
+}
+@media screen and (max-width: 1075px) {
+  .Homepage-contents-divs{
+    width: 700px;
+  }
+  .Hompage-daily-input{
+    margin-left: 28%;
+  }
+}
+@media screen and (max-width: 968px) {
+  .Homepage-contents-divs{
+    width: 600px;
+  }
+  .Hompage-daily-input{
+    margin-left: 25%;
+  }
+}
+@media screen and (max-width: 863px) {
+  .Homepage-contents-divs{
+    width: 500px;
+  }
+  .Hompage-daily-input{
+    margin-left: 20%;
+  }
+}
+@media screen and (max-width: 757px) {
+  .Homepage-contents-divs{
+    width: 400px;
+  }
+  .Hompage-daily-input{
+    margin-left: 14%;
+  }
+}
+@media screen and (max-width: 653px) {
+  .Homepage-contents-divs{
+    width: 300px;
+  }
+  .Homepage-content-div{
+    padding-right: 0%;
+    width: 90%;
+    margin-left: 10%;
+  }
+  .Hompage-daily-input{
+    margin-left: 0%;
+  }
 }
 .travelors-info-div{
   position: relative;
@@ -742,8 +790,11 @@ a{
 .messages-div {
   display: flex;
   flex-direction: row;
-  height: 89%;
-  padding-top: 108px;
+  position: fixed;
+  top: 108px;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }
 .left-side-with-Conversations {
   flex: 1;
@@ -775,7 +826,6 @@ a{
   padding-left: 3%;
   cursor: pointer;
   margin-top: 10px;
-  height: 100px;
   position: relative;
   margin-bottom: 10px;
 }
@@ -827,13 +877,32 @@ a{
   color: white;
   flex: 1; /* Expand to fill the remaining space */
   display: flex;
+ height: 88%;
   flex-direction: column;
-  height: auto;
   width: 77vw;
   max-height: 70vh;
   overflow-y: hidden;
 }
-
+@media screen and (max-height: 800px) {
+  .Messages-alignment-div {
+    height: 75%;
+  }
+}
+@media screen and (max-height: 700px) {
+  .Messages-alignment-div {
+    height: 65%;
+  }
+}
+@media screen and (max-height: 600px) {
+  .Messages-alignment-div {
+    height: 55%;
+  }
+}
+@media screen and (max-height: 500px) {
+  .Messages-alignment-div {
+    height: 45%;
+  }
+}
 .message-right {
   display: block;
   text-align: right;

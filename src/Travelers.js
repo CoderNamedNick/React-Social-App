@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Resizable } from 'react-resizable';
 import 'react-resizable/css/styles.css';
 import { Link } from "react-router-dom";
@@ -12,6 +12,7 @@ const Travelers = ({ UserData, setUserData }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [showMore, setShowMore] = useState(false);
   const [width, setWidth] = useState(140); // Initial width
+  const containerRef = useRef(null);
   const [socket, setSocket] = useState(null);
   
 
@@ -133,6 +134,15 @@ const Travelers = ({ UserData, setUserData }) => {
   const handleResize = (event, { size }) => {
     setWidth(size.width);
   };
+  // Handle scroll wheel event to scroll the div
+  const handleWheel = (e) => {
+    if (containerRef.current) {
+      containerRef.current.scrollBy({
+        top: e.deltaY,
+        behavior: 'smooth',
+      });
+    }
+  };
 
   return (
     <div className='Travelers-container'>
@@ -145,7 +155,7 @@ const Travelers = ({ UserData, setUserData }) => {
         resizeHandles={['ne']}
         style={{ position: 'fixed', bottom: '0', top: '108px' }}
       >
-        <div className="Travelers-homepage-div" style={{ width }}>
+        <div onWheel={handleWheel} ref={containerRef} className="Travelers-homepage-div" style={{ width }}>
           <Link to="/FindCompanions"><div className="Travelers-hompage-search-h2">Find Travelers</div></Link>
           <br />
           <Link to="/Companion-Request"><div className="Travelers-hompage-search-h2">Companion Requests: {UserData.CompanionRequest ? UserData.CompanionRequest.length : 0}</div></Link>

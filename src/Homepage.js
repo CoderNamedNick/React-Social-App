@@ -66,10 +66,10 @@ const HomePage = ({UserData, setUserData}) => {
 
   return (
     <div className='Homepage-main-div'>
-      <div className="Travelelers-homepage-div">
+      <div>
         <Travelers UserData={UserData} setUserData={setUserData}/>
       </div>
-      <div style={{marginTop: '10px', marginLeft: '150px'}} className="Homepage-content-div">
+      <div className="Homepage-content-div">
         {/* Div for setting daily objective */}
         <div className="Homepage-contents-divs"> 
           <h2>Set your daily objective</h2>

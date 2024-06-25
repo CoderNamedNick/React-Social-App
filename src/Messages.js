@@ -288,7 +288,7 @@ const Messages = ({ UserData, setUserData, ClickedConvo, setClickedConvo }) => {
                 const otherUsernames = Convo.UserNames ? Convo.UserNames.filter(username => username !== UserData.username) : [];
                 return (
                   <div onClick={() => {ConvoCLick(Convo.messageId, otherUsernames.join(', '), Convo)}} className='current-convos-messages' key={Convo.messageId}>
-                    <h2>{otherUsernames.join(', ')}</h2>
+                    <h2 style={{wordBreak: 'break-word'}}>{otherUsernames.join(', ')}</h2>
                     <div className="Notif-Counter">{Convo.NotifNumber}</div>
                   </div>
                 );
@@ -301,7 +301,7 @@ const Messages = ({ UserData, setUserData, ClickedConvo, setClickedConvo }) => {
             <div onClick={handlePartyandConvoswitch}>switch to convos</div>
             {PartiesArray.map(TheParty => (
               <div onClick={() => {PartyClick(TheParty.id || TheParty._id, TheParty.partyname, TheParty)}} className='current-convos-messages' key={TheParty.messageId}>
-                <h2>{TheParty.partyname}</h2>
+                <h3 style={{wordBreak: 'break-word'}}>{TheParty.partyname}</h3>
               </div>
               ))}
           </div>
@@ -309,7 +309,7 @@ const Messages = ({ UserData, setUserData, ClickedConvo, setClickedConvo }) => {
         <div className="right-side-with-messages">
           {NoCurrentConvo && (<h1>Select A Conversation</h1>)}
           {!NoCurrentConvo && (
-            <div>
+            <div style={{width: '100%'}}>
               <div style={{margin: '0',  fontSize: '34px',display: 'flex', flexDirection: 'column', marginBottom: '20px', backgroundColor: 'rgba(172, 175, 185, 0.288)', paddingBottom: '20px', alignItems: 'center'}}>{CurrentConvoCompanionName}</div>
               <div onWheel={handleWheelScroll} className="Messages-alignment-div">
                 {messagesArray.map((message, index) => (
