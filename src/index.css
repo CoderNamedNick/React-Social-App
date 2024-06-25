@@ -800,6 +800,9 @@ a{
   bottom: 0;
   right: 0;
   z-index: 1;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
 }
 
 .messages-input {
@@ -818,13 +821,13 @@ a{
   border-radius: 10px;
   background-color: #299c6c;
   cursor: pointer;
+  margin-top: 4px;
 }
 .Messages-alignment-div {
   color: white;
   flex: 1; /* Expand to fill the remaining space */
   display: flex;
   flex-direction: column;
-  gap: 5px;
   height: auto;
   width: 77vw;
   max-height: 70vh;

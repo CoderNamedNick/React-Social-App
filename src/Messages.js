@@ -310,7 +310,7 @@ const Messages = ({ UserData, setUserData, ClickedConvo, setClickedConvo }) => {
           {NoCurrentConvo && (<h1>Select A Conversation</h1>)}
           {!NoCurrentConvo && (
             <div>
-              <h1 style={{margin: '0', marginBottom: '20px', paddingLeft: '50%', backgroundColor: 'rgba(172, 175, 185, 0.288)', paddingBottom: '20px'}}>{CurrentConvoCompanionName}</h1>
+              <div style={{margin: '0',  fontSize: '34px',display: 'flex', flexDirection: 'column', marginBottom: '20px', backgroundColor: 'rgba(172, 175, 185, 0.288)', paddingBottom: '20px', alignItems: 'center'}}>{CurrentConvoCompanionName}</div>
               <div onWheel={handleWheelScroll} className="Messages-alignment-div">
                 {messagesArray.map((message, index) => (
                   <div key={index} className={message.senderUsername === UserData.username ? "message-right" : "message-left"}>

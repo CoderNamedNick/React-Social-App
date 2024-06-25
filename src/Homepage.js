@@ -96,10 +96,10 @@ const HomePage = ({UserData, setUserData}) => {
         </Link>
 
         {/* Div for Party content */}
-        <div className="Homepage-contents-divs">
+        <Link to="/Messages"><div className="Homepage-contents-divs">
           <h2>Messages & Party Content</h2>
           {/* Display party notifications or "Make a party with travelers" */}
-        </div>
+        </div></Link>
 
         {/* Div for finding travelers */}
         <Link to="/FindCompanions"><div className="Homepage-contents-divs">
