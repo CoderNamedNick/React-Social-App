@@ -317,7 +317,7 @@ a{
 }
 .Homepage-content-div{
   width: 100%;
-  margin-left: 180px;
+  margin-left: 150px;
   display: flex;
   padding-right: 0%;
   flex-direction: column;
@@ -390,12 +390,7 @@ a{
 }
 @media screen and (max-width: 653px) {
   .Homepage-contents-divs{
-    width: 300px;
-  }
-  .Homepage-content-div{
-    padding-right: 0%;
-    width: 90%;
-    margin-left: 10%;
+    width: 340px;
   }
   .Hompage-daily-input{
     margin-left: 0%;
@@ -420,7 +415,7 @@ a{
   margin-left: 5%;
 }
 .Traveler-Bio{
-  border: rgba(0, 0, 0, 0.384) solid 2px;
+  border: rgba(0, 0, 0, 0.384) groove 4px;
   width: 900px; 
   font-size: 28px;
   overflow: auto; 
@@ -429,8 +424,7 @@ a{
   padding: 5px;
 }
 .PB-dailyObj{
-  margin-left: 200px;
-  margin-top: -49px;
+  margin-top: 0px;
   padding-bottom: 30px;
   font-size: 26px;
 }
@@ -532,7 +526,7 @@ a{
   grid-template-columns: repeat(3, minmax(300px, 1fr)); 
   grid-auto-rows: minmax(100px, auto); 
   grid-gap: 10px; 
-  width: 94vw;
+  width: 92%;
   background-color: rgba(42, 44, 173, 0.144);
   padding: 20px;
   border: black 2px solid;
@@ -833,8 +827,8 @@ a{
   background-color: red;
   color: white;
   position: absolute;
-  bottom: 10px;
-  right: 10px;
+  bottom: 2px;
+  right: 2px;
   padding: 0px 3px ;
   border-radius: 50%;
   border: red solid 1px;
