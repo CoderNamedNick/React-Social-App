@@ -1,72 +1,74 @@
 import { useState, useEffect, useRef } from "react";
 import { io } from 'socket.io-client'
 
-
 const Messages = ({ UserData, setUserData, ClickedConvo, setClickedConvo }) => {
   const [ConversationsArray, setConversationsArray] = useState([]);
-  const [ConvosClicked, setConvosClicked] = useState(true)
-  const [PartiesClicked, setPartiesClicked] = useState(false)
-  const [Party, setParty] = useState(null)
+  const [ConvosClicked, setConvosClicked] = useState(true);
+  const [PartiesClicked, setPartiesClicked] = useState(false);
+  const [Party, setParty] = useState(null);
   const [PartiesArray, setPartiesArray] = useState([]);
-  const [CurrentConvo, setCurrentConvo] = useState(null);
-  const [NoCurrentConvo, SetNoCurrentConvo] = useState(false)
+  const [THECurrentConvo, setCurrentConvo] = useState(null);
+  const [NoCurrentConvo, SetNoCurrentConvo] = useState(false);
   const [messagesArray, setmessagesArray] = useState([]);
-  const [CurrentConvoCompanionName, setCurrentConvoCompanionName] = useState(``);
+  const [CurrentConvoCompanionName, setCurrentConvoCompanionName] = useState('');
   const [messageInput, setMessageInput] = useState('');
-  const [errorMessage, seterrorMessage] = useState('')
+  const [errorMessage, seterrorMessage] = useState('');
   const [socket, setSocket] = useState(null);
 
   useEffect(() => {
-    // Establish Socket connection
     const socket = io('http://localhost:5000');
-    setSocket(socket)
-   // make a socket for notifs
+    setSocket(socket);
+
     socket.on('connect', () => {
       console.log('connected');
       const userId = UserData.id || UserData._id;
       socket.emit('storeUserIdForInTheMessages', userId);
-      socket.emit('Find-Parties', userId)
+      socket.emit('Find-Parties', userId);
     });
-   
-    // Clean up socket connection when component unmounts
+
+    fetchConversations();
+    SetNoCurrentConvo(true);
+
     return () => {
       socket.disconnect();
     };
-  
   }, []);
 
   useEffect(() => {
     if (socket) {
-      // Listen for socket event indicating message update
       socket.on('New-Message-update', (Conversation) => {
-        // Check if the current user is part of the conversation
         const currentUserInConversation = Conversation.messengers.includes(UserData.id) || Conversation.messengers.includes(UserData._id);
-        console.log('Current convo message Id', CurrentConvo?.messageId); // Use optional chaining
-        console.log('new convo received id', Conversation._id);
-        fetchData()
-        // Check if the current user is part of the conversation and the message id matches the current conversation's message id
-        if (currentUserInConversation && CurrentConvo && CurrentConvo.messageId === Conversation._id) {
-          setmessagesArray(Conversation.messages);
-          MarkMessagesRead();
-        }
+        fetchData();
+        console.log('New-M');
+        console.log(currentUserInConversation, THECurrentConvo, Conversation);
+
+        setCurrentConvo((prevConvo) => {
+          if (currentUserInConversation && prevConvo && prevConvo.messageId === Conversation._id) {
+            setmessagesArray(Conversation.messages);
+            MarkMessagesRead();
+          }
+          return prevConvo;
+        });
       });
+
       socket.on('Read-update', (NewUnreadNotifNumber) => {
-        console.log('got a read update')
-        fetchData()
-      })
+        console.log('got a read update');
+        fetchData();
+      });
+
       socket.on('Parties-Found', (parties) => {
-        setPartiesArray(parties)
-        console.log("this is parties")
-        console.log(parties)
-      })
+        setPartiesArray(parties);
+        console.log("this is parties");
+        console.log(parties);
+      });
+
       socket.on('Message-to-Party-update', (party) => {
         if (Party && Party._id === party._id) {
           setmessagesArray(party.messages);
         }
       });
     }
-  
-    // Clean up event listener when component unmounts
+
     return () => {
       if (socket) {
         socket.off('New-Message-update');
@@ -75,13 +77,13 @@ const Messages = ({ UserData, setUserData, ClickedConvo, setClickedConvo }) => {
     };
   }, [socket, Party]);
 
-
   const ConvoCLick = (ConvoID, CompanionsNames, Convo) => {
-    setParty(null)
+    setCurrentConvo(Convo);
+    setParty(null);
     setmessagesArray([]);
     if (CompanionsNames !== '') {
-      setCurrentConvoCompanionName(CompanionsNames)
-      console.log(CompanionsNames)
+      setCurrentConvoCompanionName(CompanionsNames);
+      console.log(CompanionsNames);
     }
     fetch(`http://localhost:5000/Messages/messagesById/id/${ConvoID}`)
       .then(response => {
@@ -92,69 +94,44 @@ const Messages = ({ UserData, setUserData, ClickedConvo, setClickedConvo }) => {
         }
       })
       .then(data => {
-        console.log(data.messages);
-        setmessagesArray(data.messages)
-        SetNoCurrentConvo(false)
-        setCurrentConvo(Convo)
-        setParty(null)
-        console.log(messagesArray)
+        console.log(data);
+        console.log(Convo);
+        SetNoCurrentConvo(false);
+        setParty(null);
+        setmessagesArray(data.messages);
+        console.log(messagesArray);
       })
-    .catch(error => {
-      console.error('Error fetching conversations:', error);
-    });
-    
-  }
+      .catch(error => {
+        console.error('Error fetching conversations:', error);
+      });
+  };
 
   const PartyClick = (PartyID, PartyName, itsParty) => {
     setParty(itsParty);
     setmessagesArray([]);
     if (PartyName !== '') {
-      setCurrentConvoCompanionName(PartyName)
+      setCurrentConvoCompanionName(PartyName);
     }
     if (socket) {
       socket.emit('get-party-messages', PartyID, (response) => {
         if (response.error) {
           console.error('Error fetching party messages:', response.error);
         } else {
-          setmessagesArray(response.messages)
-          SetNoCurrentConvo(false)
+          setmessagesArray(response.messages);
+          SetNoCurrentConvo(false);
         }
       });
     }
-  }
-  
+  };
   useEffect(() => {
-    if (CurrentConvo) {
+    if (THECurrentConvo) {
       MarkMessagesRead();
     }
-  }, [CurrentConvo]);
-  
-  useEffect(() => {
-    setCurrentConvoCompanionName('')
-    //setting Current with what convo was clicked
-    if (ClickedConvo && ClickedConvo.UserNames) {
-      const othersNames = ClickedConvo.UserNames.filter(name => name !== UserData.username);
-      const OtherN = othersNames.join(', ')
-      setCurrentConvoCompanionName(`${OtherN}`);
-    }
-    fetchConversations()
-    if (ClickedConvo === null) {
-      SetNoCurrentConvo(true)
-    } else{
-      setCurrentConvo(ClickedConvo)
-      ConvoCLick(ClickedConvo.messageId,CurrentConvoCompanionName)
-      console.log(messagesArray)
-    }
-    // when getting cliked convo compare it to fetch new array and display it on launch
-    return () => {
-      setClickedConvo(null)
-    };
-  }, []); 
+  }, [THECurrentConvo]);
 
 
   const fetchData = async () => {
     try {
-      // Fetch conversations
       const response = await fetch(`http://localhost:5000/Messages/Conversations/${UserData.id || UserData._id}`);
       if (!response.ok) {
         throw new Error('Failed to fetch conversations');
@@ -183,17 +160,12 @@ const Messages = ({ UserData, setUserData, ClickedConvo, setClickedConvo }) => {
       console.error('Error fetching conversations:', error);
     }
   };
+
   useEffect(() => {
     if (socket) {
       fetchData();
     }
   }, [socket, UserData.id, UserData._id]);
-
-  useEffect(() => {
-    console.log(messagesArray);
-    console.log('current Convo', CurrentConvo)
-    console.log('convo array', ConversationsArray)
-  }, [messagesArray, setmessagesArray]);
 
   const fetchConversations = () => {
     fetch(`http://localhost:5000/Messages/Conversations/${UserData.id || UserData._id}`)
@@ -208,15 +180,14 @@ const Messages = ({ UserData, setUserData, ClickedConvo, setClickedConvo }) => {
         console.log(data.conversations);
         setConversationsArray(data.conversations);
       })
-    .catch(error => {
-      console.error('Error fetching conversations:', error);
-    }); 
+      .catch(error => {
+        console.error('Error fetching conversations:', error);
+      });
   };
 
-  
   const handleWheelScroll = (event) => {
     const deltaY = event.deltaY;
-    const scrollSpeed = 50; // Adjust scroll speed as needed
+    const scrollSpeed = 50;
     const messageDiv = document.querySelector('.Messages-alignment-div');
     messageDiv.scrollTop += deltaY > 0 ? scrollSpeed : -scrollSpeed;
   };
@@ -224,33 +195,32 @@ const Messages = ({ UserData, setUserData, ClickedConvo, setClickedConvo }) => {
   const sendAMessage = async () => {
     if (Party === null) {
       try {
-        if (CurrentConvo.messengers.length === 2) {
-          console.log('less than two')
+        if (THECurrentConvo.messengers.length === 2) {
           if (socket) {
-            const Convocompanionid = CurrentConvo.messengers.filter(id => id !== UserData.id && id !== UserData._id)[0];
+            const Convocompanionid = THECurrentConvo.messengers.filter(id => id !== UserData.id && id !== UserData._id)[0];
             if (!UserData.companions.includes(Convocompanionid)) {
-              seterrorMessage('this Traveler is No longer your Companion')
-              return
-            } 
-            const userId = UserData.id || UserData._id
-            const content = messageInput
-            console.log(Convocompanionid)
-            socket.emit('sending-A-New-Message', userId, Convocompanionid, content)
+              seterrorMessage('this Traveler is No longer your Companion');
+              return;
+            }
+            const userId = UserData.id || UserData._id;
+            const content = messageInput;
+            MarkMessagesRead()
+            console.log(Convocompanionid);
+            socket.emit('sending-A-New-Message', userId, Convocompanionid, content);
             setMessageInput('');
           }
-        } 
-      }catch (error) {
+        }
+      } catch (error) {
         console.error('Error posting to API:', error.message);
-        // Handle error, show an error message
       }
     }
     if (Party !== null) {
       if (socket) {
-        console.log('party is not null')
-        const userId = UserData.id || UserData._id
-        const partyId = Party.id || Party._id
-        const content = messageInput
-        socket.emit('Send-Message-To-Party', userId, partyId, content)
+        console.log('party is not null');
+        const userId = UserData.id || UserData._id;
+        const partyId = Party.id || Party._id;
+        const content = messageInput;
+        socket.emit('Send-Message-To-Party', userId, partyId, content);
         setMessageInput('');
       }
     }
@@ -263,19 +233,19 @@ const Messages = ({ UserData, setUserData, ClickedConvo, setClickedConvo }) => {
       messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
     }
   }, [messagesArray]);
-  
 
   const MarkMessagesRead = () => {
-    if (socket) {
-      const Convocompanionid = CurrentConvo.messengers.filter(id => id !== UserData.id && id !== UserData._id)[0];
-      socket.emit('Mark-As-Read', UserData.id || UserData._id, Convocompanionid)
+    if (socket && THECurrentConvo) {
+      const Convocompanionid = THECurrentConvo.messengers.filter(id => id !== UserData.id && id !== UserData._id)[0];
+      socket.emit('Mark-As-Read', UserData.id || UserData._id, Convocompanionid);
     }
-  }
+  };
+
   const handlePartyandConvoswitch = () => {
-    setConvosClicked(!ConvosClicked)
-    setPartiesClicked(!PartiesClicked)
-  }
-  
+    setConvosClicked(!ConvosClicked);
+    setPartiesClicked(!PartiesClicked);
+  };
+
   return (
     <div className="main-messages-div">
       <div className="messages-div">{/*Make this have padding top with flexdir row */}
@@ -288,7 +258,7 @@ const Messages = ({ UserData, setUserData, ClickedConvo, setClickedConvo }) => {
                 const otherUsernames = Convo.UserNames ? Convo.UserNames.filter(username => username !== UserData.username) : [];
                 return (
                   <div onClick={() => {ConvoCLick(Convo.messageId, otherUsernames.join(', '), Convo)}} className='current-convos-messages' key={Convo.messageId}>
-                    <h2 style={{wordBreak: 'break-word'}}>{otherUsernames.join(', ')}</h2>
+                    <h2 style={{wordBreak: 'break-word', paddingRight: '10px'}}>{otherUsernames.join(', ')}</h2>
                     <div className="Notif-Counter">{Convo.NotifNumber}</div>
                   </div>
                 );
@@ -320,7 +290,7 @@ const Messages = ({ UserData, setUserData, ClickedConvo, setClickedConvo }) => {
                     {Party !== null && message.senderUsername !== UserData.username && (
                       <p style={{margin: 0, marginTop: '30px'}}>{message.senderUsername}</p>
                     )}
-                    <p style={{margin: 0}} className={message.senderUsername === UserData.username ? "message-content" : "message-content2"}>{message.content}</p>
+                    <p style={{marginTop: '5px'}} className={message.senderUsername === UserData.username ? "message-content" : "message-content2"}>{message.content}</p>
                   </div>
                 ))}
                <div ref={messagesEndRef} />

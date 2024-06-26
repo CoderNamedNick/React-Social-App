@@ -128,7 +128,6 @@ const Conversations = ({ UserData, setUserData, ClickedConvo, setClickedConvo })
   };
 
   const ConvoClicked = (ConvoData) => {
-    setClickedConvo(ConvoData);
     navigate(`/Messages`)
   }
 
