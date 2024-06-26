@@ -157,7 +157,7 @@ const ProfileBook = ({ UserData, setUserData }) => {
         {!EditProfile && (
           <div style={{border: 'Solid Black 3px'}}>
             <div className="travelors-info-div">
-              <div className="Traveler-Pic">PROFILE PIC</div>
+              <div className="Traveler-Pic">PROFILE PIC's coming soon</div>
               <div className="Traveler-Info">
                 <h1>{UserData.username}</h1>
                 <h2>Daily Objective: </h2>

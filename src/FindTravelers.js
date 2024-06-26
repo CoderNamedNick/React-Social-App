@@ -132,7 +132,7 @@ const FindTravelers = ({UserData, setUserData}) => {
       <h1 style={{ paddingTop: '118px' }}>Current Companions</h1>
       {/* Search bar for companions */}
       <input
-        style={{ marginBottom: '5px' }}
+        style={{ marginBottom: '5px', padding: '5px', width: '200px' }}
         type="text"
         value={searchTerm}
         onChange={handleSearchChange}
@@ -156,7 +156,7 @@ const FindTravelers = ({UserData, setUserData}) => {
       {/* Search bar for travelers */}
       <h1>Search Travelers</h1>
       <input
-        style={{ marginBottom: '5px' }}
+        style={{ marginBottom: '5px', padding: '5px', width: '200px' }}
         type="text"
         value={searchTermTravelers}
         onChange={handleSearchTravelersChange}
