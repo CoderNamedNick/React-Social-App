@@ -408,11 +408,16 @@ a{
   gap: 60px;
 }
 .Traveler-Pic{
-  width: 60%;
+  width: 40%;
   max-width: 650px;
   height: auto;
   border: black solid 2px;
-  margin-left: 5%;
+  margin-left: 2%;
+  padding-top: 15%;
+  padding-bottom: 15%;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
 }
 .Traveler-Bio{
   border: rgba(0, 0, 0, 0.384) groove 4px;
@@ -794,13 +799,15 @@ a{
   flex: 1;
   height: 100%;
   max-width: 20%;
-  min-width: 15%;
+  min-width: 20%;
   border-right: black solid 4px;
   background-color: rgba(255, 255, 255, 0.096);
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 10px;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 .right-side-with-messages {
   flex: 4;
@@ -833,7 +840,16 @@ a{
   border-radius: 50%;
   border: red solid 1px;
 }
-
+.Parties-questionmark{
+  color: rgb(0, 0, 0);
+  font-weight: 700;
+  font-size: 20px;
+  position: absolute;
+  bottom: 2px;
+  right: 2px;
+  padding: 0px 3px ;
+  border-radius: 50%;
+}
 
 .input-div {
   width: 96%;

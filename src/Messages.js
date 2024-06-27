@@ -5,6 +5,7 @@ const Messages = ({ UserData, setUserData, ClickedConvo, setClickedConvo }) => {
   const [ConversationsArray, setConversationsArray] = useState([]);
   const [ConvosClicked, setConvosClicked] = useState(true);
   const [PartiesClicked, setPartiesClicked] = useState(false);
+  const [showPartysettings, setshowPartysettings] = useState(false);
   const [Party, setParty] = useState(null);
   const [PartiesArray, setPartiesArray] = useState([]);
   const [THECurrentConvo, setCurrentConvo] = useState(null);
@@ -66,6 +67,14 @@ const Messages = ({ UserData, setUserData, ClickedConvo, setClickedConvo }) => {
         if (Party && Party._id === party._id) {
           setmessagesArray(party.messages);
         }
+      });
+      socket.on('Left-Party', (partyId) => {
+        console.log('leftparty')
+        const userId = UserData.id || UserData._id
+        socket.emit('Find-Parties', userId);
+        setParty(null)
+        fetchConversations();
+        SetNoCurrentConvo(true);
       });
     }
 
@@ -241,9 +250,25 @@ const Messages = ({ UserData, setUserData, ClickedConvo, setClickedConvo }) => {
     }
   };
 
+  const PartySettingsClicked = (TheParty) => {
+    if (!showPartysettings) {
+      setshowPartysettings(true)
+      setParty(TheParty)
+    }
+    if (showPartysettings) {
+      setshowPartysettings(false)
+      setParty(null)
+    }
+  }
+
   const handlePartyandConvoswitch = () => {
     setConvosClicked(!ConvosClicked);
     setPartiesClicked(!PartiesClicked);
+  };
+  const handlePartyLeave = () => {
+    const userId = UserData.id || UserData._id
+    const PartyId = Party.id || Party._id
+    socket.emit('Leave-Party', userId, PartyId )
   };
 
   return (
@@ -272,42 +297,62 @@ const Messages = ({ UserData, setUserData, ClickedConvo, setClickedConvo }) => {
             {PartiesArray.map(TheParty => (
               <div onClick={() => {PartyClick(TheParty.id || TheParty._id, TheParty.partyname, TheParty)}} className='current-convos-messages' key={TheParty.messageId}>
                 <h3 style={{wordBreak: 'break-word'}}>{TheParty.partyname}</h3>
+                <div onClick={() => {PartySettingsClicked(TheParty)}} className="Parties-questionmark">?</div>
               </div>
               ))}
           </div>
         )}
-        <div className="right-side-with-messages">
-          {NoCurrentConvo && (<h1>Select A Conversation</h1>)}
-          {!NoCurrentConvo && (
-            <div style={{width: '100%'}}>
-              <div style={{margin: '0',  fontSize: '34px',display: 'flex', flexDirection: 'column', marginBottom: '20px', backgroundColor: 'rgba(172, 175, 185, 0.288)', paddingBottom: '20px', alignItems: 'center'}}>{CurrentConvoCompanionName}</div>
-              <div onWheel={handleWheelScroll} className="Messages-alignment-div">
-                {messagesArray.map((message, index) => (
-                  <div key={index} className={message.senderUsername === UserData.username ? "message-right" : "message-left"}>
-                    {Party === null && message.senderUsername === UserData.username && (
-                      <p style={{margin: 0, marginTop: '30px'}}>{message.read ? "Read" : "Sent"}</p>
-                    )}
-                    {Party !== null && message.senderUsername !== UserData.username && (
-                      <p style={{margin: 0, marginTop: '30px'}}>{message.senderUsername}</p>
-                    )}
-                    <p style={{marginTop: '5px'}} className={message.senderUsername === UserData.username ? "message-content" : "message-content2"}>{message.content}</p>
-                  </div>
-                ))}
-               <div ref={messagesEndRef} />
-              </div>
-               {/*on click of convo get new messages with messages box and a array getting looped thru newest messages*/}
-                <div className="input-div">
-                  {errorMessage}
-                  <input 
-                  className="messages-input"
-                  value={messageInput}
-                  onChange={e => setMessageInput(e.target.value)}
-                  ></input>
-                  <button onClick={sendAMessage} className="send-btn">Send Message</button>
+        {!showPartysettings && (
+          <div className="right-side-with-messages">
+            {NoCurrentConvo && (<h1>Select A Conversation</h1>)}
+            {!NoCurrentConvo && (
+              <div style={{width: '100%'}}>
+                <div style={{margin: '0',  fontSize: '34px',display: 'flex', flexDirection: 'column', marginBottom: '20px', backgroundColor: 'rgba(172, 175, 185, 0.288)', paddingBottom: '20px', alignItems: 'center'}}>{CurrentConvoCompanionName}</div>
+                <div onWheel={handleWheelScroll} className="Messages-alignment-div">
+                  {messagesArray.map((message, index) => (
+                    <div key={index} className={message.senderUsername === UserData.username ? "message-right" : "message-left"}>
+                      {Party === null && message.senderUsername === UserData.username && (
+                        <p style={{margin: 0, marginTop: '30px'}}>{message.read ? "Read" : "Sent"}</p>
+                      )}
+                      {Party !== null && message.senderUsername !== UserData.username && (
+                        <p style={{margin: 0, marginTop: '30px'}}>{message.senderUsername}</p>
+                      )}
+                      <p style={{marginTop: '5px'}} className={message.senderUsername === UserData.username ? "message-content" : "message-content2"}>{message.content}</p>
+                    </div>
+                  ))}
+                <div ref={messagesEndRef} />
                 </div>
+                {/*on click of convo get new messages with messages box and a array getting looped thru newest messages*/}
+                  <div className="input-div">
+                    {errorMessage}
+                    <input 
+                    className="messages-input"
+                    value={messageInput}
+                    onChange={e => setMessageInput(e.target.value)}
+                    ></input>
+                    <button onClick={sendAMessage} className="send-btn">Send Message</button>
+                  </div>
+              </div>
+            )}
+          </div>
+        )}
+        {Party && showPartysettings && (
+          <div className="right-side-with-messages">
+            <h1>Party Settings</h1>
+            <div>
+              <div>Party Name: {Party.partyname}</div>
+              <div>Creator: {Party.creatorUserName}</div>
+              <div>
+                Members: 
+                {Party.UserNames.map(user => (
+                  <div>{user}</div>
+                ))}
+              </div>
+              <div>Total Messages: {Party.messages.length}</div>
             </div>
-          )}
-        </div>
+            <div onClick={handlePartyLeave}>Leave Party</div>
+          </div>
+        )}
       </div>
     </div>
   )
