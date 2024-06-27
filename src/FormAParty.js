@@ -9,6 +9,7 @@ const FormAParty = ({ UserData, setUserData }) => {
   const [NewPartyName, setNewPartyName] = useState('');
   const [NewPartyListUsernames, setNewPartyListUsernames] = useState([]);
   const [socket, setSocket] = useState(null);
+  const [errorMessage, setErrorMessage] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -67,6 +68,11 @@ const FormAParty = ({ UserData, setUserData }) => {
   };
 
   const formParty = () => {
+    if (NewPartyName.trim() === '') {
+      setErrorMessage('Party name cannot be empty');
+      return;
+    }
+
     socket.emit('Create-Party', {
       creatorId: UserData.id,
       messengers: NewPartyList.map(companion => ({
@@ -75,6 +81,7 @@ const FormAParty = ({ UserData, setUserData }) => {
       })),
       partyname: NewPartyName 
     });
+    setErrorMessage('');
   };
 
   return (
@@ -84,9 +91,13 @@ const FormAParty = ({ UserData, setUserData }) => {
         <input 
           placeholder="new party's name"
           style={{ fontSize: '20px', padding: '5px', marginBottom: '40px', height: '40px'}}
-          value={NewPartyName} // Bind input value to state
+          value={NewPartyName} 
+          maxLength={16}
           onChange={e => setNewPartyName(e.target.value)} // Update state on change
         />
+        {errorMessage && (
+          <p style={{ color: 'red' }}>{errorMessage}</p>
+        )}
         <div style={{width: '90%', marginLeft: '5%'}}>
           {NewPartyList.length === 0 ? (
             <div style={{marginBottom: "40px", marginLeft: '40%'}}>Empty</div>
