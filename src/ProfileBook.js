@@ -1,4 +1,10 @@
 import React, { useState, useEffect } from "react";
+import wine from "./images/wine-glass.png.png"
+import beer from './images/Jug-Of-Beer.png.png'
+import axes from './images/axes.png.png'
+import bow from './images/bow-and-arrow.png.png'
+import mouse from './images/mouse.webp'
+import cat from './images/cat.png.png'
 
 const ProfileBook = ({ UserData, setUserData }) => {
   const [EditProfile, setEditProfile] = useState(false);
@@ -157,7 +163,7 @@ const ProfileBook = ({ UserData, setUserData }) => {
         {!EditProfile && (
           <div style={{border: 'Solid Black 3px'}}>
             <div className="travelors-info-div">
-              <div className="Traveler-Pic">PROFILE PIC's coming soon</div>
+              <img src={bow} className="Traveler-Pic"></img>
               <div className="Traveler-Info">
                 <h1>{UserData.username}</h1>
                 <h2>Daily Objective: </h2>
