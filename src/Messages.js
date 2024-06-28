@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { io } from 'socket.io-client'
+import { Link } from "react-router-dom";
 
 const Messages = ({ UserData, setUserData, ClickedConvo, setClickedConvo }) => {
   const [ConversationsArray, setConversationsArray] = useState([]);
@@ -339,18 +340,20 @@ const Messages = ({ UserData, setUserData, ClickedConvo, setClickedConvo }) => {
         {Party && showPartysettings && (
           <div className="right-side-with-messages">
             <h1>Party Settings</h1>
-            <div>
+            <div className="party-setting-div">
               <div>Party Name: {Party.partyname}</div>
               <div>Creator: {Party.creatorUserName}</div>
+              <div> Members: </div>
               <div>
-                Members: 
-                {Party.UserNames.map(user => (
-                  <div>{user}</div>
-                ))}
+                <div style={{display: 'flex', flexDirection: 'row', gap: '25px'}}>
+                  {Party.UserNames.map(user => (
+                    <Link to={`/user/${user}`}><div style={{border: 'solid black 1px', padding: '5px 10px'}}>{user}</div></Link>
+                  ))}
+                </div>
               </div>
               <div>Total Messages: {Party.messages.length}</div>
             </div>
-            <div onClick={handlePartyLeave}>Leave Party</div>
+            <div className="LeaveParty" onClick={handlePartyLeave}>Leave Party</div>
           </div>
         )}
       </div>

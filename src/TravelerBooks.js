@@ -1,6 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { io } from 'socket.io-client'
+import wine from "./images/wine-glass.png.png"
+import beer from './images/Jug-Of-Beer.png.png'
+import axes from './images/axes.png.png'
+import bow from './images/bow-and-arrow.png.png'
+import mouse from './images/mouse.webp'
+import cat from './images/cat.png.png'
 
 const TravelersBooks = ({UserData, setUserData}) => {
   const { username } = useParams(); // Get the username parameter from the URL
