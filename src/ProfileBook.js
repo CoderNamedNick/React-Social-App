@@ -1,33 +1,49 @@
 import React, { useState, useEffect } from "react";
-import wine from "./images/wine-glass.png.png"
-import beer from './images/Jug-Of-Beer.png.png'
-import axes from './images/axes.png.png'
-import bow from './images/bow-and-arrow.png.png'
-import mouse from './images/mouse.webp'
-import cat from './images/cat.png.png'
+import wine from "./images/wine-glass.png.png";
+import beer from './images/Jug-Of-Beer.png.png';
+import axes from './images/axes.png.png';
+import bow from './images/bow-and-arrow.png.png';
+import mouse from './images/mouse.webp';
+import cat from './images/cat.png.png';
+
+const imageMap = {
+  bow: bow,
+  axes: axes,
+  beer: beer,
+  wine: wine,
+  mouse: mouse,
+  cat: cat,
+};
 
 const ProfileBook = ({ UserData, setUserData }) => {
   const [EditProfile, setEditProfile] = useState(false);
   const [ShowColors, setShowColors] = useState(false);
   const [JoinedGuilds, setJoinedGuilds] = useState([]);
+  const [ProfileImage, setProfileImage] = useState(UserData.ProfileImg || '');
+  const [ProfileImageBgColor, setProfileImageBgColor] = useState(UserData.ProfileImgBgColor || '');
   const [color, setcolor] = useState('');
-  const colors = 
-  [
-  {name: 'Blue', color1: '#F5F6FC', color2: '#0F2180'},
-  {name: 'Green', color1: '#9FE5A6', color2: '#0F6617'},
-  {name: 'Red', color1: '#C26D6D', color2: '#A70909'},
-  {name: 'Purple', color1: '#D8B4D9', color2: '#78096F'},
-  {name: 'Yellow', color1: '#F9F1C7', color2: '#F6D936'},
-  {name: 'Orange', color1: '#F6AF75', color2: '#EA6A00'},
-  {name: 'Gray', color1: '#D3D3D3', color2: '#4D4545'},
+  const [selectedProfileImage, setSelectedProfileImage] = useState(UserData.ProfileImg || '');
+  const [selectedBgColor, setSelectedBgColor] = useState(UserData.ProfileImgBgColor || '');
+
+  const colors = [
+    {name: 'Blue', color1: '#F5F6FC', color2: '#0F2180'},
+    {name: 'Green', color1: '#9FE5A6', color2: '#0F6617'},
+    {name: 'Red', color1: '#C26D6D', color2: '#A70909'},
+    {name: 'Purple', color1: '#D8B4D9', color2: '#78096F'},
+    {name: 'Yellow', color1: '#F9F1C7', color2: '#F6D936'},
+    {name: 'Orange', color1: '#F6AF75', color2: '#EA6A00'},
+    {name: 'Gray', color1: '#D3D3D3', color2: '#4D4545'},
   ];
+
   const [editedUserData, setEditedUserData] = useState({
     username: UserData?.username || '',
     dailyObj: UserData?.dailyObj || '',
-    bio: UserData?.bio || ''
+    bio: UserData?.bio || '',
+    ProfileImg: UserData?.ProfileImg || '',
+    ProfileImgBgColor: UserData?.ProfileImgBgColor || '',
   });
+
   const [selectedColor, setSelectedColor] = useState(() => {
-    // If UserData.ProfileColor exists and is a valid color option, return its corresponding color1 and color2
     if (
       UserData.ProfileColor &&
       ["Blue", "Green", "Red", "Purple", "Yellow", "Orange", "Gray"].includes(UserData.ProfileColor)
@@ -35,7 +51,6 @@ const ProfileBook = ({ UserData, setUserData }) => {
       const selectedColorData = colors.find(color => color.name === UserData.ProfileColor);
       return `${selectedColorData.color1}, ${selectedColorData.color2}`;
     }
-    // Default to an empty string if UserData.ProfileColor is null or invalid
     return '';
   });
 
@@ -58,9 +73,7 @@ const ProfileBook = ({ UserData, setUserData }) => {
   useEffect(() => {
     const fetchGuildData = async () => {
       if (UserData.guildsJoined) {
-        
         const joinedGuildsPromises = UserData.guildsJoined.map(async (id) => {
-          // Assuming you have a function to fetch guild data by ID, replace `fetchGuildDataById` with that function
           const guildData = await fetchGuildDataById(id);
           return guildData;
         });
@@ -68,22 +81,17 @@ const ProfileBook = ({ UserData, setUserData }) => {
         const joinedGuildsData = await Promise.all(joinedGuildsPromises);
         setJoinedGuilds(joinedGuildsData);
       }
-
     };
     fetchGuildData();
   }, [UserData.guildsJoined]);
 
-
-  // Function to fetch guild data by ID (replace this with your actual implementation)
   const fetchGuildDataById = async (id) => {
-    // Example fetch call
     const response = await fetch(`http://localhost:5000/Guilds/id/${id}`);
     const guildData = await response.json();
     return guildData;
   };
 
   const saveProfile = () => {
-    console.log(UserData.id)
     fetch(`http://localhost:5000/Users/id/${UserData.id || UserData._id}`, {
       method: "PATCH",
       headers: {
@@ -93,12 +101,9 @@ const ProfileBook = ({ UserData, setUserData }) => {
     })
     .then((response) => response.json())
     .then((data) => {
-      console.log('Updated user data:', data);
-      // Perform another fetch request to get the updated data from the database
       fetch(`http://localhost:5000/Users/id/${UserData.id || UserData._id}`)
       .then((response) => response.json())
       .then((updatedUserData) => {
-        console.log('Fetched updated user data:', updatedUserData);
         setEditProfile(false);
         setUserData(updatedUserData);
       })
@@ -110,15 +115,13 @@ const ProfileBook = ({ UserData, setUserData }) => {
       console.error("Error updating profile:", error);
     });
   };
+
   const changeBackgroundColor = (colorname, color1, color2) => {
     setSelectedColor(`${color1}, ${color2}`);
-    // You can add additional logic here if needed, such as saving the colors to the database
-    setcolor(colorname)
+    setcolor(colorname);
   };
 
   const SaveColor = () => {
-    console.log(color)
-    //Make a post theat saves color  in ProfileColor: colorName
     fetch(`http://localhost:5000/Users/id/${UserData.id || UserData._id}`, {
       method: 'PATCH',
       body: JSON.stringify({ ProfileColor: color }),
@@ -130,40 +133,50 @@ const ProfileBook = ({ UserData, setUserData }) => {
         if (!response.ok) {
           throw new Error('Failed to update Profile Color');
         }
-        // Handle successful response (if needed)
-        console.log('Profile Color updated successfully');
-
-        // Fetch updated user data after successful patch
-        fetch(`http://localhost:5000/Users/id/${UserData.id || UserData._id}`)
-          .then(response => {
-            if (!response.ok) {
-              throw new Error('Failed to fetch updated user data');
-            }
-            return response.json();
-          })
-          .then(data => {
-            // Update UserData with fetched data
-            setUserData(data);
-          })
-          .catch(error => {
-            // Handle error (if needed)
-            console.error('Error fetching updated user data:', error);
-          });
+        return response.json();
+      })
+      .then(data => {
+        setUserData(data);
       })
       .catch(error => {
-        // Handle error (if needed)
         console.error('Error updating daily objective:', error);
       });
-    setShowColors(false)
-  }
+    setShowColors(false);
+  };
+
+  const handleProfileImageChange = (imageName) => {
+    setSelectedProfileImage(imageName);
+    setProfileImage(imageName);
+    setEditedUserData({
+      ...editedUserData,
+      ProfileImg: imageName
+    });
+  };
+
+  const handleBgColorChange = (color) => {
+    setSelectedBgColor(color);
+    setProfileImageBgColor(color);
+    setEditedUserData({
+      ...editedUserData,
+      ProfileImgBgColor: color
+    });
+  };
 
   return (
     <div className="PB-main-div" style={{ background: `linear-gradient(to bottom, ${selectedColor})` }}>
       <div>
         {!EditProfile && (
-          <div style={{border: 'Solid Black 3px'}}>
+          <div style={{ border: 'Solid Black 3px' }}>
             <div className="travelors-info-div">
-              <img src={bow} className="Traveler-Pic"></img>
+              {UserData.ProfileImg !== '' && (
+                <img
+                  style={{backgroundColor: ProfileImageBgColor}}
+                  src={imageMap[UserData.ProfileImg]}
+                  className="Traveler-Pic"
+                  alt="Profile"
+                />
+              )}
+              {UserData.ProfileImg === '' && (<div className="Traveler-Pic"></div>)}
               <div className="Traveler-Info">
                 <h1>{UserData.username}</h1>
                 <h2>Daily Objective: </h2>
@@ -177,7 +190,7 @@ const ProfileBook = ({ UserData, setUserData }) => {
                 <p>Traveler Since: {UserData.AccDate ? UserData.AccDate.substring(0, 10) : ''}</p>
                 {ShowColors && (<div className="Save-color-btn" onClick={SaveColor}>Save color</div>)}
               </div>
-              <h4 style={{bottom: 0}} onClick={Editprofile} className="Edit-PB">
+              <h4 style={{ bottom: 0 }} onClick={Editprofile} className="Edit-PB">
                 Edit ProfileBook
               </h4>
               <h4 onClick={EditColor} className="Edit-PB">
@@ -187,7 +200,16 @@ const ProfileBook = ({ UserData, setUserData }) => {
             {ShowColors && (
               <div className="Color-Div">
                 {colors.map((color, index) => (
-                  <div style={{cursor: "pointer"}} key={index} onClick={() => changeBackgroundColor(color.name, color.color1, color.color2)}>
+                  <div 
+                    key={index} 
+                    onClick={() => changeBackgroundColor(color.name, color.color1, color.color2)}
+                    style={{
+                      cursor: "pointer",
+                      border: selectedBgColor === color.name ? '2px solid black' : 'none',
+                      padding: '5px',
+                      borderRadius: '5px',
+                    }}
+                  >
                     {color.name}
                   </div>
                 ))}
@@ -197,7 +219,42 @@ const ProfileBook = ({ UserData, setUserData }) => {
         )}
         {EditProfile && (
           <div className="travelors-info-div">
-            <div className="Traveler-Pic">PROFILE PIC</div>
+            <div className="Traveler-Pic-edit">
+              <div style={{marginLeft: '30%'}}>Pick A User Icon</div>
+              <div>
+                {Object.keys(imageMap).map((key, index) => (
+                  <img
+                    key={index}
+                    onClick={() => handleProfileImageChange(key)}
+                    style={{
+                      width: '60px',
+                      height: '50px',
+                      border: selectedProfileImage === key ? '2px solid black' : 'none',
+                      padding: '5px',
+                      borderRadius: '5px',
+                    }}
+                    src={imageMap[key]}
+                    alt={key}
+                  />
+                ))}
+              </div>
+              <div style={{marginLeft: '30%'}}>Pick A Background Color</div>
+              <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between'}}> 
+                {['lightblue', 'skyblue', 'lightgrey', 'lightgreen', 'lightpink', 'pink', 'lightyellow', 'violet', 'white'].map((color, index) => (
+                  <div
+                    key={index}
+                    onClick={() => handleBgColorChange(color)}
+                    style={{
+                      border: selectedBgColor === color ? '2px solid black' : 'solid 1px black',
+                      width: '20px',
+                      height: '20px',
+                      backgroundColor: color,
+                    }}
+                  ></div>
+                ))}
+              </div>
+            </div>
+
             <div className="Traveler-Info">
               <h1>
                 UserName:{" "}
@@ -226,11 +283,11 @@ const ProfileBook = ({ UserData, setUserData }) => {
                 Bio:
                 <br />
                 <textarea
-                    name="bio"
-                    value={editedUserData.bio}
-                    onChange={handleInputChange}
-                    className="Bio-input"
-                    maxLength={120}
+                  name="bio"
+                  value={editedUserData.bio}
+                  onChange={handleInputChange}
+                  className="Bio-input"
+                  maxLength={120}
                 ></textarea>
               </div>
               <p>Traveler Since: {UserData.AccDate.substring(0, 10)}</p>
@@ -244,22 +301,21 @@ const ProfileBook = ({ UserData, setUserData }) => {
         <br />
         <div className="ProfileBook-guilds-div">
           <h2>Guilds Traveler is part of</h2>
-          {/*loop through user.Guilds array and then display guilds in this format */}
           {JoinedGuilds
-          .filter(guild => guild.Findable === true) // Filter out the guilds where Findable is true
-          .map((Guild) => (
-            <div className="PB-guilds-div" style={{ display: 'flex', marginBottom: '20px' }}>
-              <div style={{ flex: '0 0 30%', paddingLeft: "20px" }}>
-                <h1 className="PB-guilds-name">{Guild.guildName}</h1>
-                <h4># of guild Members: {Guild.joinedTravelers.length}</h4>
-                <h5>Guild Since: {Guild.guildDate ? Guild.guildDate.substring(0, 10) : ''}</h5>
+            .filter(guild => guild.Findable === true)
+            .map((Guild) => (
+              <div className="PB-guilds-div" style={{ display: 'flex', marginBottom: '20px' }}>
+                <div style={{ flex: '0 0 30%', paddingLeft: "20px" }}>
+                  <h1 className="PB-guilds-name">{Guild.guildName}</h1>
+                  <h4># of guild Members: {Guild.joinedTravelers.length}</h4>
+                  <h5>Guild Since: {Guild.guildDate ? Guild.guildDate.substring(0, 10) : ''}</h5>
+                </div>
+                <div style={{ flex: '1', marginLeft: '50px', paddingRight: '10px', maxWidth: '50%' }}>
+                  <p style={{ fontSize: '20px', display: 'inline' }}>Guild Bio:</p>
+                  <div style={{ fontSize: '20px', width: '100%', overflowWrap: 'break-word', maxWidth: '100%' }}>{Guild.bio}</div>
+                </div>
               </div>
-              <div style={{ flex: '1', marginLeft: '50px', paddingRight: '10px', maxWidth: '50%' }}>
-                <p style={{ fontSize: '20px', display: 'inline' }}>Guild Bio:</p>
-                <div style={{ fontSize: '20px', width: '100%', overflowWrap: 'break-word', maxWidth: '100%' }}>{Guild.bio}</div>
-              </div>
-            </div>
-          ))}
+            ))}
         </div>
       </div>
     </div>

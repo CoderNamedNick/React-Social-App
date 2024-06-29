@@ -7,6 +7,14 @@ import axes from './images/axes.png.png'
 import bow from './images/bow-and-arrow.png.png'
 import mouse from './images/mouse.webp'
 import cat from './images/cat.png.png'
+const imageMap = {
+  bow: bow,
+  axes: axes,
+  beer: beer,
+  wine: wine,
+  mouse: mouse,
+  cat: cat,
+};
 
 const TravelersBooks = ({UserData, setUserData}) => {
   const { username } = useParams(); // Get the username parameter from the URL
@@ -16,6 +24,7 @@ const TravelersBooks = ({UserData, setUserData}) => {
   const [AcceptRequest, setAcceptRequest] = useState(false)
   const [isCompanion, setisCompanion] = useState(false);
   const [isBlocked, setisBlocked] = useState(false);
+  const [ProfileImageBgColor, setProfileImageBgColor] = useState('');
   const [ShowReportWindow, setShowReportWindow] = useState(false);
   const [socket, setSocket] = useState(null);
   useEffect(() => {
@@ -132,6 +141,9 @@ const TravelersBooks = ({UserData, setUserData}) => {
     }
     if(userDetails && UserData.CompanionRequest.includes(userDetails.id || userDetails._id)){
       setAcceptRequest(true)
+    }
+    if(userDetails) {
+      setProfileImageBgColor(userDetails.ProfileImgBgColor)
     }
   }, [userDetails]);
   
@@ -346,7 +358,8 @@ const TravelersBooks = ({UserData, setUserData}) => {
       <div>
         <div className='Trav-div'>
           <div className="travelors-info-div">
-            <div className="Traveler-Pic">PROFILE PIC</div>
+            {userDetails.ProfileImg !== '' && (<img style={{backgroundColor: ProfileImageBgColor}} src={imageMap[userDetails.ProfileImg]} className="Traveler-Pic" alt="Profile" />)}
+            {userDetails.ProfileImg === '' && (<div className="Traveler-Pic"></div>)}
             <div className="Traveler-Info">
               <h1>{userDetails.username}</h1>
               <h2>Daily Objective: </h2>

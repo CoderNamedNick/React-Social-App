@@ -417,6 +417,19 @@ a{
   padding-bottom: 45px;
   border-radius: 50px;
 }
+.Traveler-Pic-edit{
+  width: 400px;
+  max-width: 400px;
+  height: 210px;
+  max-height: 250px;
+  border: black solid 2px;
+  padding-top: 45px;
+  padding-bottom: 45px;
+  border-radius: 50px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
 .Traveler-Bio{
   border: rgba(0, 0, 0, 0.384) groove 4px;
   width: 100%; 
