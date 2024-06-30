@@ -54,7 +54,11 @@ const Header = ({ title, LogOut, UserData, setUserData, clickedGuild, }) => {
       case "/Conversations":
         return "Conversations";
       case "/Messages":
-        return "Messages";
+        return "Messages & Parties";
+      case "/Form-A-Party":
+        return "Form A Party";
+      case "/Tavern-News":
+        return "TAVERN NEWS";
       case "/GuildPages":
         if (clickedGuild) {
           return `${clickedGuild.guildName}`;
@@ -152,7 +156,7 @@ const Header = ({ title, LogOut, UserData, setUserData, clickedGuild, }) => {
           <Link to="/Form-A-Party"><div className="Menu-p-s">Form a Party</div></Link>
           <Link to="/Join-Guild"><div className="Menu-p-s">Join A Guild</div></Link>
           <Link to="/Guild-Registry"><div className="Menu-p-s">Make A Guild</div></Link>
-          <div className="Menu-p-s">Tavern News</div>
+          <Link to="/Tavern-News"><div className="Menu-p-s">Tavern News</div></Link>
           <Link to="/Block-List"><div className="Menu-p-s">Blocked Travelers</div></Link>
           <Link to="/Login"><p style={{marginLeft: '25px'}} className="menu-leave" onClick={LogOut}>Leave the Tavern</p></Link>
         </div>

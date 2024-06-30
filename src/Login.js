@@ -65,6 +65,12 @@ const LoginPage = ({ onSignupClick, onLogin, UserData, setUserData }) => {
     }
   };
 
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      handleLogin();
+    }
+  };
+
   return (
     <div className="main-login-page-div">
       <img src={Logo} alt="TAVERN"></img>
@@ -76,6 +82,7 @@ const LoginPage = ({ onSignupClick, onLogin, UserData, setUserData }) => {
           placeholder="Email" 
           value={email} 
           onChange={handleEmailChange} 
+          onKeyDown={handleKeyDown}
         />
         <input 
           className="LoginBars" 
@@ -83,6 +90,7 @@ const LoginPage = ({ onSignupClick, onLogin, UserData, setUserData }) => {
           placeholder="Password" 
           value={password} 
           onChange={(e) => setPassword(e.target.value)} 
+          onKeyDown={handleKeyDown}
         />
         <h2 className="loginlink medievalsharp-regular" onClick={handleLogin}>LOG IN!</h2>
         <p className="new-p-login medievalsharp-regular">New? <Link to="/SignUp"><span className="signuplink" onClick={onSignupClick}>Sign Up</span></Link></p>
