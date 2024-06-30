@@ -129,7 +129,7 @@ const AllGuilds = ({ UserData, setUserData, clickedGuild, setclickedGuild }) => 
     <div className="Travelelers-homepage-div">
       <Travelers UserData={UserData} setUserData={setUserData}/>
     </div>
-    {NoGuild && (<div style={{marginLeft: '180px', marginTop: '120px'}} className="No-request">You Currently Have No Guild Connections</div>)}
+    {NoGuild && (<div style={{position: 'absolute', top: '130px', left: '25%', right: '25%'}} className="No-request">You Currently Have No Guild Connections</div>)}
     {!NoGuild && (
       <div style={{width: '100vw'}}>
         <div className="All-Guilds-content-div">

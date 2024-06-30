@@ -39,7 +39,7 @@ const CompanionReq = ({ UserData, setUserData }) => {
       <div className="Travelelers-homepage-div">
         <Travelers UserData={UserData} setUserData={setUserData}/>
       </div>
-      {NoRequest && (<div style={{marginLeft: '120px'}} className="No-request">You Have No Companion New Requests</div>)}
+      {NoRequest && (<div style={{position: 'absolute', top: '130px', left: '25%', right: '25%'}} className="No-request">You Have No Companion New Requests</div>)}
     {!NoRequest && (
       <div style={{marginTop: '10px'}} className="CompReq-content-div">
         {CompanionReqs.map((traveler) => (
