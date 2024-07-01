@@ -885,7 +885,7 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
           onTouchStart={handleTouchStart}
           onTouchMove={handleTouchMove}
           style={{width: '98%'}}>
-            <h2 style={{cursor: 'pointer'}} onClick={() => toggleTooltip(AllMembers.Owner.id)}>{AllMembers.Owner.UserName} <span style={{fontSize: '14px', fontWeight: '400'}}>Owner</span></h2>
+            <h3 style={{cursor: 'pointer'}} onClick={() => toggleTooltip(AllMembers.Owner.id)}>{AllMembers.Owner.UserName} <span style={{fontSize: '14px', fontWeight: '400'}}>Owner</span></h3>
             {UserData.username !== AllMembers.Owner.UserName && (
               <div className="guild-Owner-tooltip" style={{ display: clickedMember === AllMembers.Owner.id ? 'block' : 'none' }}>
                 <Link to={`/user/${AllMembers.Owner.UserName}`}><div style={{color: 'white'}}>View {AllMembers.Owner.UserName}'s Profile</div></Link> 
@@ -896,7 +896,7 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
               {AllMembers.Elders
               .map((elder) => (
                 <div>
-                  <h2 style={{cursor: 'pointer'}} onClick={() => toggleTooltip(elder.id)}>{elder.UserName } <span style={{fontSize: '14px', fontWeight: '400'}}>Elder</span></h2>
+                  <h3 style={{cursor: 'pointer', wordBreak: 'break-word'}} onClick={() => toggleTooltip(elder.id)}>{elder.UserName } <span style={{fontSize: '14px', fontWeight: '400'}}>Elder</span></h3>
                   {UserData.username !== elder.UserName && (
                     <div className="guild-member-tooltip" style={{ display: clickedMember === elder.id ? 'block' : 'none' }}>
                     {!elder.AccPrivate && (<Link to={`/user/${elder.UserName}`}><div style={{color: 'white'}}>View {elder.UserName}'s Profile</div></Link>)}
@@ -927,9 +927,9 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
             {AllMembers.Members
             .map((member) => (
               <div key={member.id}>
-                <h2 style={{cursor: 'pointer'}} onClick={() => toggleTooltip(member.id)}>
+                <h3 style={{cursor: 'pointer', wordBreak: 'break-word'}} onClick={() => toggleTooltip(member.id)}>
                   {member.UserName} <span style={{fontSize: '14px', fontWeight: '400'}}>Member</span>
-                </h2>
+                </h3>
                 {UserData.username !== member.UserName && (
                   <div className="guild-member-tooltip" style={{ display: clickedMember === member.id ? 'block' : 'none' }}>
                     {!member.AccPrivate && (<Link to={`/user/${member.UserName}`}><div style={{color: 'white'}}>View {member.UserName}'s Profile</div></Link>)}
@@ -1224,27 +1224,27 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
         {/* for owner */}
         {AllMembers && UserData.username === AllMembers.Owner.UserName && (
           <div className="guild-rightside-div">
-            <h2 onClick={handleViewGuildStats} style={{cursor: 'pointer'}}>View Guild Stats</h2>
-            <h2 onClick={handleManageJoinReq} style={{cursor: 'pointer'}}>Manage Guild Join request <span className="guild-req-counter">{GuildRequestCount}</span></h2>
+            <h3 onClick={handleViewGuildStats} style={{cursor: 'pointer'}}>View Guild Stats</h3>
+            <h3 onClick={handleManageJoinReq} style={{cursor: 'pointer'}}>Manage Guild Join request <span className="guild-req-counter">{GuildRequestCount}</span></h3>
             <h3 onClick={handleShowElderMessages}>View Elder messages</h3>
-            <h2 className="guild-settings" onClick={handleGuildSettings}>Guild Settings</h2>
+            <h3 className="guild-settings" onClick={handleGuildSettings}>Guild Settings</h3>
           </div>
         )}
         {/* for elders */}
         {AllMembers && AllMembers.Elders.some(elder => elder.UserName === UserData.username) && (
           <div className="guild-rightside-div">
-            <h2 onClick={handleViewGuildStats} style={{cursor: 'pointer'}}>View Guild Stats</h2>
-            <h2 onClick={handleManageJoinReq} style={{cursor: 'pointer'}}>Manage Guild Join request <span className="guild-req-counter">{GuildRequestCount}</span></h2>
-            <h2 onClick={handleShowWarnings}>
+            <h3 onClick={handleViewGuildStats} style={{cursor: 'pointer'}}>View Guild Stats</h3>
+            <h3 onClick={handleManageJoinReq} style={{cursor: 'pointer'}}>Manage Guild Join request <span className="guild-req-counter">{GuildRequestCount}</span></h3>
+            <h3 onClick={handleShowWarnings}>
               View Warnings
               {clickedGuild.Warnings.filter(warning => warning.TravelerUserName === UserData.username).length > 0 && (
                 <span className="warning-notif-number">
                   {clickedGuild.Warnings.filter(warning => warning.TravelerUserName === UserData.username).length}
                 </span>
               )}
-            </h2>
+            </h3>
             <h3 onClick={handleShowElderMessages}>Send a message up to Guild Master</h3>
-            <h2 className="guild-settings" onClick={handleGuildSettings}>Guild Settings</h2>
+            <h3 className="guild-settings" onClick={handleGuildSettings}>Guild Settings</h3>
           </div>
         )}
         {/* for members */}
@@ -1695,7 +1695,7 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
       )}
       {ShowElderMessages && (
         <div style={{background: getGuildSettingsColors(clickedGuild.guildColor)}} className="guild-Elder-Messages-popup-main">
-          {AllMembers && AllMembers.Elders.some(elder => elder.UserName === UserData.username) && (<div>Sending Messages To Owner</div>)}
+          {AllMembers && AllMembers.Elders.some(elder => elder.UserName === UserData.username) && (<div style={{width: '80%'}}>Sending Messages To Owner</div>)}
           {AllMembers && AllMembers.Elders.some(elder => elder.UserName === UserData.username) && (
             <div className="message-container">
               <div className="messages-alignment-div">

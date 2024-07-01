@@ -175,7 +175,7 @@ const FindTravelers = ({UserData, setUserData}) => {
             <span className="Find-C-Span" onClick={() => handleAccPrivChange(true)}>Make Account Private</span>
           </div>
         )}
-        <div style={{ marginTop: '50px' }} className="Current-Companions-grid"> {/* Get all and then filter with findable accounts Also A grid */}
+        <div style={{ marginTop: '50px', marginBottom: '40px' }} className="Current-Companions-grid"> {/* Get all and then filter with findable accounts Also A grid */}
           {/* Render filtered travelers based on filters and search term */}
           {allUsers
             .map((traveler) => {

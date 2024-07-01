@@ -143,7 +143,7 @@ const Header = ({ title, LogOut, UserData, setUserData, clickedGuild, }) => {
       <div className="Header-Main-Div">
         <Link to='/HomePage'><img src={Logo} alt="TAVERN" className="Header-logo"></img></Link>
         <div className="Header-title">
-          <h1 className="header-title">{title || getTitle()}</h1>
+          <div className="header-title">{title || getTitle()}</div>
         </div>
         <img onClick={menuClick} src={Menu} alt="Menu" className="Header-menu"></img>
       </div>

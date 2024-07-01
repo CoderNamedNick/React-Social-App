@@ -108,7 +108,7 @@ const HomePage = ({UserData, setUserData}) => {
         </div></Link>
 
         {/* Div for Tavern News */}
-        <Link to="/Tavern-News"><div className="Homepage-contents-divs">
+        <Link to="/Tavern-News"><div style={{marginBottom: '100px'}} className="Homepage-contents-divs">
           <h2>Tavern News</h2>
           {/* Display Tavern news */}
         </div></Link>
