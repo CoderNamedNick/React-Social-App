@@ -361,8 +361,8 @@ const TravelersBooks = ({UserData, setUserData}) => {
             {userDetails.ProfileImg !== '' && (<img style={{backgroundColor: ProfileImageBgColor}} src={imageMap[userDetails.ProfileImg]} className="Traveler-Pic" alt="Profile" />)}
             {userDetails.ProfileImg === '' && (<div className="Traveler-Pic"></div>)}
             <div className="Traveler-Info">
-              <h1>{userDetails.username}</h1>
-              <h2>Daily Objective: </h2>
+              <h2>{userDetails.username}</h2>
+              <h3>Daily Objective: </h3>
               <div className="PB-dailyObj" style={{ maxWidth: '200px', wordWrap: 'break-word' }}>{userDetails.dailyObj}</div>
               <div>
                 <p style={{display: 'inline-block'}}>Bio:</p>
@@ -370,7 +370,7 @@ const TravelersBooks = ({UserData, setUserData}) => {
                   {userDetails.bio}
                 </div>
               </div>
-              <p>Traveler Since: {userDetails.AccDate ? userDetails.AccDate.substring(0, 10) : ''}</p>
+              <p style={{marginBottom: '40px'}}>Traveler Since: {userDetails.AccDate ? userDetails.AccDate.substring(0, 10) : ''}</p>
             </div>
             {!isBlocked && !isCompanion && !AcceptRequest && !SentRequest && (<h2 onClick={SendCompanionRequest} className="Edit-PB">Send Companion request</h2>)}
             <h2 onClick={handleShowReportWindow} className="Report-PB">Report</h2>

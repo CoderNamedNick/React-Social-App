@@ -178,8 +178,8 @@ const ProfileBook = ({ UserData, setUserData }) => {
               )}
               {UserData.ProfileImg === '' && (<div className="Traveler-Pic"></div>)}
               <div className="Traveler-Info">
-                <h1>{UserData.username}</h1>
-                <h2>Daily Objective: </h2>
+                <h2>{UserData.username}</h2>
+                <h3>Daily Objective: </h3>
                 <div className="PB-dailyObj" style={{ maxWidth: '200px', wordWrap: 'break-word' }}>{UserData.dailyObj}</div>
                 <div>
                   <p>Bio:</p>
@@ -299,7 +299,7 @@ const ProfileBook = ({ UserData, setUserData }) => {
         )}
         <br />
         <br />
-        <div className="ProfileBook-guilds-div">
+        <div style={{marginBottom: '120px'}} className="ProfileBook-guilds-div">
           <h2>Guilds Traveler is part of</h2>
           {JoinedGuilds
             .filter(guild => guild.Findable === true)
