@@ -325,6 +325,8 @@ a{
   gap: 25px;
   color: black;
   font-size: 22px;
+  height: 100%;
+  overflow-y: auto;
 }
 .Homepage-contents-divs{
   background-color: rgb(175, 41, 41);
@@ -1477,4 +1479,51 @@ a{
   padding: 4px;
   border: none;
   margin-bottom: 2%;
+}
+/*PHONE STYLES*/
+@media screen and (max-width: 420px) {
+  .Login-square,
+  .signup-square{
+    margin-top: 5%;
+    width: 300px;
+  }
+  .signup-square{
+    width: 350px;
+  }
+  .Header-logo {
+    width: 160px; 
+    height: 100px;
+  }
+  .header-title{
+    font-family: "MedievalSharp", cursive;
+    font-weight: 500;
+    font-style: normal;
+    font-size: 20px;
+  }
+
+  .Header-menu {
+    width: 80px; 
+    height: 60px;
+    padding-right: 20px;
+    text-align: right; 
+    cursor: pointer;
+  }
+  .Homepage-contents-divs{
+    background-color: rgb(175, 41, 41);
+    font-size: 18px;
+    padding: 10px;
+    width: 260px;
+    border: black solid 3px;
+    border-radius: 10px;
+    text-align: center;
+  }
+
+  .Hompage-daily-input{
+    width: 260px;
+    height: 30px;
+    border: black solid 2px ;
+    border-radius: 10px;
+    margin-left: 0%;
+    display: block;
+  }
 }
