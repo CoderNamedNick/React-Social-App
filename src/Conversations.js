@@ -195,8 +195,8 @@ const Conversations = ({ UserData, setUserData, ClickedConvo, setClickedConvo })
       {showConvoWindow && (
         <div className='convo-window-main-div'>
           <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'center'}}>
-            <h1 style={{alignSelf: 'center'}}>Start a conversation and Send a message</h1>
-            <h2 >Sending To: {Convocompanion}</h2>
+            <h2 style={{alignSelf: 'center'}}>Start a conversation and Send a message</h2>
+            <h3>Sending To: {Convocompanion}</h3>
             <br />
             <textarea
               className='start-new-convo-textarea'
@@ -206,8 +206,8 @@ const Conversations = ({ UserData, setUserData, ClickedConvo, setClickedConvo })
               placeholder="Enter your message">
             </textarea>
           </div>
-          <h2 style={{ cursor: 'pointer', position: 'absolute', left: '10px', bottom: '0' }} onClick={cancelConvo}>Cancel Message</h2>
-          <h1 style={{ cursor: 'pointer', position: 'absolute', right: '10px', bottom: '0' }} onClick={startNewConvo}>Send Message</h1>
+          <h2 style={{ cursor: 'pointer', position: 'absolute', left: '10px', bottom: '0' }} onClick={cancelConvo}>Cancel </h2>
+          <h2 style={{ cursor: 'pointer', position: 'absolute', right: '10px', bottom: '0' }} onClick={startNewConvo}>Send Message</h2>
         </div>
       )}
     </div>
