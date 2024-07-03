@@ -345,7 +345,7 @@ const Messages = ({ UserData, setUserData, ClickedConvo, setClickedConvo }) => {
               <div>Creator: {Party.creatorUserName}</div>
               <div> Members: </div>
               <div>
-                <div style={{display: 'flex', flexDirection: 'row', gap: '25px'}}>
+               <div style={{display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '5px'}}>
                   {Party.UserNames.map(user => (
                     <Link to={`/user/${user}`}><div style={{border: 'solid black 1px', padding: '5px 10px'}}>{user}</div></Link>
                   ))}
