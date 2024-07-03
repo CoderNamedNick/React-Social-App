@@ -1,6 +1,12 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { io } from "socket.io-client";
+import reloadicon from './icons/sync.png'
+import Likeicon from './icons/heart.png'
+import likedicon from './icons/love.png'
+import dislikeicon from './icons/dont-like-symbol.png'
+import dislikedicon from './icons/dislike.png'
+import commenticon from './icons/commentary.png'
 
 //MAKE REFRESH ONLY REFRESH THE USERS AND NOT EMIT TO ALL!!!!!!
 
@@ -64,6 +70,26 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
     ReportDetails: ''
   });
 
+  const inappropriateWords = [
+    "m0therfucker", "vigger", "nigga", "n1gger", "ni99er", "ni9ger",
+    "nig9er", "n199er", "n1g9er", "n19ger", "pu5sy", "pu55y", "pus5y", "pus5", "pu55", "pu5s", "s1ut",
+    "wh0re", "bitch", "cunt", "cum", "cummer", "cun7",
+    "dick", "douche", "fuck", "fucker", "motherfucker", "nigger", 
+    "puss", "pussy","retard", "shit", "slut", "twat", "whore", "wanker", "jerker",
+    "faggot", "fagg0t", "fag", "queer",  "dyke", "killyourself", 
+    "k1llyourself", "k1lly0urself", "k1lly0urse1f", "killy0urself", "killy0urse1f", "k1llyourse1f",
+    "blowjob", "b10wjob", "bl0wjob", "bl0wj0b", "b10wj0b", "blowj0b", "bl0wj0b",
+    "cocksucker", "c0cksucker", "c0cksuck3r", "c0cksuckr", "c0cksuck", "cocksuck3r", "c0cksucker",
+    "c0cksuck", "f4ggot", "f4g", "qu33r", "d1ckhead", "d1ckh3ad", "d1ckhed", "dickhead", "dickh3ad", 
+    "dickhed", "jackass", "jack@ss", "j@ckass", "j@ck@ss", "jerkoff", "jerk0ff", "j3rkoff", "j3rk0ff", 
+    "masturbate", "m@sturbate", "m@stur8", "m@sturb8", "masturb8", "mastur8", "motherfucker", 
+    "moth3rfucker", "m0therfucker", "m0th3rfucker", "phuck", "phucker", "phuk", "p0rn", 
+    "porn", "pr0n", "rap3", "r@pe", "r@p3", "suck", "sh1thead", "sh1th3ad", "sh1thad", "shithe@d", 
+    "shith3ad", "shithad", "t1t", "t1ts", "tit", "tits", "vagina", "vaj1na", "vajina", "vag1na", 
+    "vajayjay", "va-jay-jay", "vaj@yjay", "wh0r3", "whore", "wh0r", "whor", "wank3r", "wank", 
+    "w4nk", "wanker", "w4nker"
+  ];
+
   const handleReportChange = (e) => {
     setReportData({ ...reportData, [e.target.name]: e.target.value });
   };
@@ -99,33 +125,45 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
     }));
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const guildId = clickedGuild.id || clickedGuild._id; // Assuming guild ID is stored in clickedGuild._id
-    try {
-      const response = await fetch(`http://localhost:5000/Guilds/id/${guildId}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(guildData),
-      });
+  
+const handleSubmit = async (e) => {
+  e.preventDefault();
 
-      if (!response.ok) {
-        throw new Error('Failed to update guild');
-      }
+  // Check for inappropriate words
+  const containsInappropriateWords = inappropriateWords.some(word => 
+    Object.values(guildData).some(input => String(input).toLowerCase().includes(word))
+  );
 
-      const updatedGuild = await response.json();
-      console.log('Updated Guild:', updatedGuild);
-      if (socket) {
-        socket.emit('update-all-guild', guildId);
-      }
+  if (containsInappropriateWords) {
+    alert('Input contains inappropriate content');
+    return;
+  }
 
-      handleChangeFeatures(); // Close the edit form
-    } catch (error) {
-      console.error('Error:', error);
+  const guildId = clickedGuild.id || clickedGuild._id; // Assuming guild ID is stored in clickedGuild._id
+  try {
+    const response = await fetch(`http://localhost:5000/Guilds/id/${guildId}`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(guildData),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to update guild');
     }
-  };
+
+    const updatedGuild = await response.json();
+    console.log('Updated Guild:', updatedGuild);
+    if (socket) {
+      socket.emit('update-all-guild', guildId);
+    }
+
+    handleChangeFeatures(); // Close the edit form
+  } catch (error) {
+    console.error('Error:', error);
+  }
+};
   
   const colors = [
     { name: 'blue', color1: '#B5BAE1', color2: '#0F2180' },
@@ -458,6 +496,7 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
 
   useEffect(() => {
     const handleCommentAdded = (postId, newComment) => {
+
       setPosts(prevPosts =>
         prevPosts.map(post =>
           (post.id || post._id) === postId ? { ...post, comments: [...post.comments, newComment] } : post
@@ -616,6 +655,12 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
     if (socket) {
       const OwnerId = UserData.id || UserData._id
       const content = AlertinputValue
+      const containsInappropriateWords = inappropriateWords.some(word => content.toLowerCase().includes(word));
+      
+      if (containsInappropriateWords) {
+        alert('Input contains inappropriate content')
+        return ;
+      }
       const GuildId = clickedGuild.id || clickedGuild._id
       socket.emit('Send-Guild-Alert', GuildId, OwnerId, content)
       setAlertinputValue('');
@@ -625,6 +670,12 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
     if (socket) {
       const posterId = UserData.id || UserData._id
       const content = PostinputValue
+      const containsInappropriateWords = inappropriateWords.some(word => content.toLowerCase().includes(word));
+      
+      if (containsInappropriateWords) {
+        alert('Input contains inappropriate content')
+        return ;
+      }
       const GuildId = clickedGuild.id || clickedGuild._id
       socket.emit('Send-Guild-Post', GuildId, posterId, content)
       setPostinputValue('');
@@ -635,6 +686,12 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
     // check if this works pls
     if (socket) {
       const GuildId = clickedGuild.id || clickedGuild._id
+      const containsInappropriateWords = inappropriateWords.some(word => NewGuidelines.toLowerCase().includes(word));
+      
+      if (containsInappropriateWords) {
+        alert('Input contains inappropriate content')
+        return ;
+      }
       console.log('sending emit')
       socket.emit('Guidelines-updated', GuildId, NewGuidelines);
     }
@@ -861,30 +918,36 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
   };
   const handlePostComment = (postId) => {
     const CommenterId = UserData.id || UserData._id;
-  const GuildId = clickedGuild.id || clickedGuild._id;
-  const comment = {
-    id: new Date().toISOString(),
-    commentingUserName: UserData.username,
-    commentPost: { content: CommentinputValue }
+    const GuildId = clickedGuild.id || clickedGuild._id;
+    const comment = {
+      id: new Date().toISOString(),
+      commentingUserName: UserData.username,
+      commentPost: { content: CommentinputValue }
     };
-    // Emit the comment event to the server
-    socket.emit('Comment-post', postId, CommenterId, GuildId, comment);
-    setCommentInputValue('');
-  };
+    const containsInappropriateWords = inappropriateWords.some(word => CommentinputValue.toLowerCase().includes(word));
+      
+    if (containsInappropriateWords) {
+      alert('Input contains inappropriate content')
+      return ;
+    }
+    
+      // Emit the comment event to the server
+      socket.emit('Comment-post', postId, CommenterId, GuildId, comment);
+      setCommentInputValue('');
+    };
   
   return (
     <div style={{background: getGuildColors(clickedGuild.guildColor)}} className='Guild-Pages-main-div'>
       <div className="Guild-Pages-left-side">
         <div className="GP-left-side-2nd" >
-          <p style={{width: '96%', paddingLeft: '2%'}} className="GP-guild-moto">{clickedGuild.guildMoto}</p>
         </div>
         {AllMembers && (
           <div className="members-div"
-          ref={containerRef}
-          onWheel={handleScroll}
-          onTouchStart={handleTouchStart}
-          onTouchMove={handleTouchMove}
-          style={{width: '98%'}}>
+            ref={containerRef}
+            onWheel={handleScroll}
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            style={{width: '98%', paddingLeft: '5px', marginTop: '10px'}}>
             <h3 style={{cursor: 'pointer'}} onClick={() => toggleTooltip(AllMembers.Owner.id)}>{AllMembers.Owner.UserName} <span style={{fontSize: '14px', fontWeight: '400'}}>Owner</span></h3>
             {UserData.username !== AllMembers.Owner.UserName && (
               <div className="guild-Owner-tooltip" style={{ display: clickedMember === AllMembers.Owner.id ? 'block' : 'none' }}>
@@ -961,88 +1024,86 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
       <div className="Guild-Pages-middle-side">
         <div className="Top-Middle-NavBar">
         <div style={{marginLeft: '-20%'}} onClick={handleYourPostClicked} className={YourPostClicked ? "Bold" : 'not'} >Your Post</div>
-          <div style={{border: 'solid black 1px'}}></div>
           <div onClick={handleMainFeedClick} className={MainFeedClicked ? "Bold" : 'not'} >Main Feed</div>
-          <div style={{border: 'solid black 1px'}}></div>
           <div style={{marginRight: '-21%'}} onClick={handleGuildAlertClick}  className={GuildAlertsClicked ? "Bold" : 'not'} >Guild Alerts</div>
         </div>
         {MainFeedClicked && (
           <div>
-            {NewPost && (<div>THERE IS A NEW POST</div>)}
-            {!CommentClicked && (<div onClick={handleRefreshAndScrollToTop} style={{position: 'fixed', left: '20%', top: '178px'}}>Reload Posts Icon</div>)}
+            {NewPost && (<div onClick={handleRefreshAndScrollToTop} >THERE IS A NEW POST</div>)}
+            {!CommentClicked && (<img src={reloadicon} className="guild-reload-icon" onClick={handleRefreshAndScrollToTop} ></img>)}
             <div  className="Main-Post-Feed">
-              <div ref={topMainFeedRef}>POSTS</div>
+              <div ref={topMainFeedRef}><h2>POSTS</h2></div>
             {posts && posts.slice().reverse().map(Post => (
               <div style={{ background: getGuildPostColors(clickedGuild.guildColor) }} className="Alerts-Div" key={Post.id}>
                 <div className="Alert-Content">
                   <div style={{fontWeight: '600'}}>{Post.PosterUserName}</div>
-                  <div>{Post.content}</div>
+                  <div style={{wordBreak: 'break-word'}}>{Post.content}</div>
                 </div>
                 {Post.PosterUserName !== UserData.username && !Post.LikesList.includes(UserData.username) && !Post.DislikesList.includes(UserData.username) && (
                   <div className="Alert-Reactions">
                     <span
-                      style={{ marginLeft: '0%', cursor: 'pointer' }}
+                      style={{ marginLeft: '0%', cursor: 'pointer', paddingTop: '10px'}}
                       onClick={() => handlePostLike(Post.id || Post._id)}
-                    >Like</span>
+                    ><img style={{width: '30px'}} src={Likeicon}></img></span>
                     <span
                       onClick={() => handleCommentClick(Post.id || Post._id)}
-                      style={{ marginLeft: '2%', marginRight: '2%', cursor: 'pointer' }}
-                    >Comment</span>
+                      style={{ marginLeft: '2%', marginRight: '2%', cursor: 'pointer', paddingTop: '10px' }}
+                    ><img style={{width: '30px'}} src={commenticon}></img></span>
                     <span
-                      style={{ marginRight: '0%', cursor: 'pointer' }}
+                      style={{ marginRight: '0%', cursor: 'pointer', paddingTop: '10px' }}
                       onClick={() => handlePostDislike(Post.id || Post._id)}
-                    >Dislike</span>
+                    ><img style={{width: '30px'}} src={dislikeicon}></img></span>
                   </div>
                 )}
                 {Post.PosterUserName !== UserData.username && Post.LikesList.includes(UserData.username) && (
                   <div className="Alert-Reactions">
                     <span 
-                      style={{ color: 'blue', marginLeft: '0%', cursor: 'pointer' }}
+                      style={{ color: 'blue', marginLeft: '0%', cursor: 'pointer', paddingTop: '10px'  }}
                       onClick={() => handlePostRemoveReaction(Post.id || Post._id)}
-                    >Liked</span>
+                    ><img style={{width: '30px'}} src={likedicon}></img></span>
                     <span
                       onClick={() => handleCommentClick(Post.id || Post._id)}
-                      style={{ marginLeft: '10%', cursor: 'pointer' }}
-                    >Comment</span>
+                      style={{ marginLeft: '2%', marginRight: '2%', cursor: 'pointer', paddingTop: '10px'  }}
+                    ><img style={{width: '30px'}} src={commenticon}></img></span>
                     <span
-                      style={{ marginRight: '10%', cursor: 'pointer' }}
+                      style={{ marginRight: '10%', cursor: 'pointer', paddingTop: '10px'  }}
                       onClick={() => handlePostDislike(Post.id || Post._id)}
-                    >Dislike</span>
+                    ><img style={{width: '30px'}} src={dislikeicon}></img></span>
                   </div>
                 )}
                 {Post.PosterUserName !== UserData.username && Post.DislikesList.includes(UserData.username) && (
                   <div className="Alert-Reactions">
                     <span
-                      style={{ marginLeft: '10%', cursor: 'pointer' }}
+                      style={{ marginLeft: '10%', cursor: 'pointer', paddingTop: '10px'  }}
                       onClick={() => handlePostLike(Post.id || Post._id)}
-                    >Like</span>
+                    ><img style={{width: '30px'}} src={Likeicon}></img></span>
                     <span
                       onClick={() => handleCommentClick(Post.id || Post._id)}
-                      style={{ marginLeft: '10%', cursor: 'pointer' }}
-                    >Comment</span>
+                      style={{ marginLeft: '2%', marginRight: '2%', cursor: 'pointer', paddingTop: '10px'  }}
+                    ><img style={{width: '30px'}} src={commenticon}></img></span>
                     <span 
-                      style={{ color: 'Red', marginRight: '10%', cursor: 'pointer' }}
+                      style={{ color: 'Red', marginRight: '10%', cursor: 'pointer', paddingTop: '10px'  }}
                       onClick={() => handlePostRemoveReaction(Post.id || Post._id)}
-                    >Disliked</span>
+                    ><img style={{width: '30px'}} src={dislikedicon}></img></span>
                   </div>
                 )}
                 {Post.PosterUserName === UserData.username && (
                   <div className="Alert-Reactions">
-                    <span style={{ fontSize: '20px', marginLeft: '0%', cursor: 'pointer' }}>Likes: {Post.Likes}</span>
-                    <span onClick={() => handleCommentClick(Post.id || Post._id)} style={{ fontSize: '20px', marginLeft: '0%', cursor: 'pointer' }}>Comments: {Post.comments.length}</span>
-                    <span style={{ fontSize: '20px', marginRight: '0%', cursor: 'pointer' }}>Dislikes: {Post.Dislikes}</span>
+                    <span style={{ fontSize: '20px', marginLeft: '0%', cursor: 'pointer', paddingTop: '10px'  }}><img style={{width: '30px'}} src={likedicon}></img> {Post.Likes}</span>
+                    <span onClick={() => handleCommentClick(Post.id || Post._id)} style={{ fontSize: '20px', marginLeft: '0%', cursor: 'pointer', paddingTop: '10px'  }}><img style={{width: '30px'}} src={commenticon}></img> {Post.comments.length}</span>
+                    <span style={{ fontSize: '20px', marginRight: '0%', cursor: 'pointer', paddingTop: '10px'  }}><img style={{width: '30px'}} src={dislikedicon}></img> {Post.Dislikes}</span>
                   </div>
                 )}
                 {CommentClicked === (Post.id || Post._id) && (
                   <div className="Make-Comment-main-div">
                     <div style={{ background: getGuildPostColors(clickedGuild.guildColor) }} className="Alerts-Div">
-                      <div className="Alert-Content">
+                      <div style={{height: '180px', overflowY: 'auto'}}className="Alert-Content">
                         <div>{Post.PosterUserName}</div>
-                        <div>{Post.content}</div>
+                        <div style={{wordBreak: 'break-word'}}>{Post.content}</div>
                       </div>
                       <div style={{ width: '100%', borderTop: 'black solid 2px', fontSize: '18px', paddingBottom: '20px' }}>Comments: {Post.comments.length}</div>
                       <div style={{ height: '100%' }}>
-                        <div style={{ height: '400px', overflowY: 'auto' }}>
+                        <div style={{ height: '300px', overflowY: 'auto' }}>
                           {Post.comments && Post.comments.slice().reverse().map(Comment => (
                             <div className="comments-main-div" key={Comment.id}>
                               <div style={{ fontSize: '18px' }}>{Comment.commentingUserName}</div>
@@ -1061,9 +1122,9 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
           </div>
           {!CommentClicked && (<div onClick={() => {setMakePostClicked(true)}} style={{bottom: '1%', left: '21%', position: 'absolute'}}>Make A Post</div>)}
           {MakePostClicked && (
-            <div className="Make-Alert-main-div">
+            <div style={{zIndex:'1000'}}  className="Make-Alert-main-div">
               <div className="Make-Alert">
-                THIS IS A POST
+                MAKE A POST
                 <p><span style={{fontFamily: '"MedievalSharp", cursive'}}>FROM:</span> {UserData.username}</p>
                 <textarea
                   className="TA-make-alert"
@@ -1082,7 +1143,7 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
         )}
         {YourPostClicked && (
           <div>
-            <div  className="Main-Post-Feed"> YOUR POSTS
+            <div  className="Main-Post-Feed"> <h2>YOUR POSTS</h2>
             {posts && posts.filter(Post => Post.PosterUserName === UserData.username).slice().reverse().map(Post => (
               <div style={{ background: getGuildPostColors(clickedGuild.guildColor) }} className="Alerts-Div" key={Post.id}>
                 <div  className="Alert-Content">
@@ -1124,9 +1185,9 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
           </div>
           {!CommentClicked && (<div onClick={() => {setMakePostClicked(true)}} style={{bottom: '1%', left: '21%', position: 'absolute'}}>Make A Post</div>)}
           {MakePostClicked && (
-            <div className="Make-Alert-main-div">
+            <div style={{zIndex:'1000'}} className="Make-Alert-main-div">
               <div className="Make-Alert">
-                THIS IS A POST
+                MAKE A POST
                 <p><span style={{fontFamily: '"MedievalSharp", cursive'}}>FROM:</span> {UserData.username}</p>
                 <textarea
                   className="TA-make-alert"
@@ -1145,8 +1206,8 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
         )}
         {GuildAlertsClicked && (
           <div>
-            <div onClick={handleGuildAlertRefresh} style={{position: 'fixed', left: '20%', top: '178px'}}>Reload Alerts Icon</div>
-            <div  className="Main-Post-Feed">ALERTS
+            <img onClick={handleGuildAlertRefresh} src={reloadicon} className="guild-reload-icon"  ></img>
+            <div  className="Main-Post-Feed"><h2>ALERTS</h2>
             {alerts && alerts.slice().reverse().map(Alert => (
               <div style={{ background: getGuildPostColors(clickedGuild.guildColor) }} className="Alerts-Div" key={Alert.id}>
                 <div className="Alert-Content">
@@ -1200,7 +1261,7 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
             </div>
             {AllMembers && UserData.username === AllMembers.Owner.UserName && (<div onClick={() => {setMakeAlertClicked(true)}} style={{bottom: '1%', left: '21%', position: 'absolute'}}>Make A Alert</div>)}
             {MakeAlertClicked && (
-              <div className="Make-Alert-main-div">
+              <div style={{zIndex:'1000'}} className="Make-Alert-main-div">
                 <div className="Make-Alert">
                   <p><span style={{fontFamily: '"MedievalSharp", cursive'}}>FROM:</span> {UserData.username}</p>
                   <textarea
@@ -1220,7 +1281,7 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
         )}
       </div>
       <div className="Guild-Pages-right-side">
-        <h4 style={{marginTop: '108px'}}>Configuration</h4>
+        <h4 style={{marginTop: '85px'}}></h4>
         {/* for owner */}
         {AllMembers && UserData.username === AllMembers.Owner.UserName && (
           <div className="guild-rightside-div">
@@ -1250,23 +1311,23 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
         {/* for members */}
         {AllMembers && AllMembers.Members.some(Member => Member.UserName === UserData.username) && (
           <div className="guild-rightside-div">
-            <h2 onClick={handleViewGuildStats} style={{cursor: 'pointer'}}>View Guild Stats</h2>
-            <h2 onClick={handleShowWarnings}>
+            <h3 onClick={handleViewGuildStats} style={{cursor: 'pointer'}}>View Guild Stats</h3>
+            <h3 onClick={handleShowWarnings}>
               View Warnings
               {clickedGuild.Warnings.filter(warning => warning.TravelerUserName === UserData.username).length > 0 && (
                 <span className="warning-notif-number">
                   {clickedGuild.Warnings.filter(warning => warning.TravelerUserName === UserData.username).length}
                 </span>
               )}
-            </h2>
-            <h2 className="guild-settings" onClick={handleGuildSettings}>Guild Settings</h2>
+            </h3>
+            <h3 className="guild-settings" onClick={handleGuildSettings}>Guild Settings</h3>
           </div>
         )}
       </div>
       {ShowGuildStats && (
-        <div className="Guild-stats-popup">
-          <div style={{width: '98%', display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: '1rem'}}>
-            <div><h2>{clickedGuild.guildName}</h2></div>
+        <div style={{color: 'white',background: getGuildSettingsColors(clickedGuild.guildColor)}} className="Guild-stats-popup">
+          <div style={{width: '98%', display: 'flex', flexDirection: 'column', justifyContent: 'center',gap: '10px'}}>
+            <div><h3>{clickedGuild.guildName}</h3></div>
             <div>Guild Privacy: {clickedGuild.Findable ? 'Findable' : 'Private'}</div>
             <div>Request To Join: {clickedGuild.RequestToJoin ? 'Yes' : 'No'}</div>
             <div>Owner: {AllMembers.Owner.UserName}</div>
@@ -1328,7 +1389,7 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
               <div style={{background: getGuildSettingsItemsColors(clickedGuild.guildColor)}} className="guild-settings-popup-item" onClick={handleShowReportGuild}>Report Guild</div>
               <div style={{background: getGuildSettingsItemsColors(clickedGuild.guildColor)}} className="guild-settings-popup-item" onClick={() => {setShowFinalLeave(!ShowFinalLeave)}}>Retire From Guild</div>
               {ShowFinalLeave && (
-                <div className="guild-Report-A-User" style={{border: 'black solid 1px'}}>
+                <div className="guild-Report-A-User" style={{border: 'black solid 1px', zIndex: '10000'}}>
                   <h2>Are you Sure You Want To Leave the Guild?</h2>
                   <p><span style={{paddingRight: '90px'}} onClick={() => {RetireFromGuild(UserData.id || UserData._id)}}> Yes </span>       <span onClick={() => {setShowFinalLeave(!ShowFinalLeave)}}> No </span></p>
                 </div>
@@ -1367,8 +1428,8 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
       )}
       {ShowGuildGuidelines && (
         <div style={{background: getGuildSettingsColors(clickedGuild.guildColor)}} className="guild-guidelines-popup-main">
-          <h2>Guild Guidelines</h2>
-          <p style={{textAlign: 'center'}}>Guild Guidelines are unique to each guild to make the guild a welcoming and safe place.</p>
+          <h3 style={{margin: '0'}}>Guild Guidelines</h3>
+          <p style={{textAlign: 'center', fontSize: '20px'}}>Guild Guidelines are unique to each guild to make the guild a welcoming and safe place.</p>
           {AllMembers && UserData.username !== AllMembers.Owner.UserName && (
             <div className="guild-Guideline-popup">
               {clickedGuild.guildGuidelines === "" && (
@@ -1382,20 +1443,20 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
                   {clickedGuild.guildGuidelines}
                 </div>
               )}
-              <h2 onClick={handleGuildGuidelines} >Acknowledge guidelines</h2>
+              <h4 onClick={handleGuildGuidelines} >Acknowledge guidelines</h4>
             </div>
           )}
           {AllMembers && UserData.username === AllMembers.Owner.UserName && (
             <div className="guild-Guideline-popup">
               {clickedGuild.guildGuidelines === "" && (
                 <div>
-                  <p>There Are No guidelines to follow. As Guild Leader please make Guild Lines For your members to follow</p>
+                  <p> As Guild Leader please make Guild Lines For your members to follow</p>
                   <textarea
                     style={{width: '95%', height: '195px', resize: 'none', fontSize: '20px', fontWeight: '600' }}
                     value={GuidelinesinputValue}
                     onChange={handleGuidelinesInputChange}
                   />
-                  <h2 onClick={() => {ChangeGuidelines(GuidelinesinputValue)}}>Save and Exit?</h2>
+                  <h4 onClick={() => {ChangeGuidelines(GuidelinesinputValue)}}>Save and Exit?</h4>
                 </div>
               )}
               {clickedGuild.guildGuidelines !== "" && (
@@ -1409,7 +1470,7 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
                       <br/>
                       <br/>
                       Whould you Like to change them??
-                      <h2><span style={{paddingRight: '60%', cursor: 'pointer'}} onClick={handleGuildGuidelines2}>Yes</span>       <span style={{cursor: 'pointer'}}  onClick={handleGuildGuidelines}>No</span></h2>
+                      <h4><span style={{paddingRight: '60%', cursor: 'pointer'}} onClick={handleGuildGuidelines2}>Yes</span>       <span style={{cursor: 'pointer'}}  onClick={handleGuildGuidelines}>No</span></h4>
                     </div>
                   )}
                   {ShowGuildGuidelines2 && (
@@ -1419,7 +1480,7 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
                       value={GuidelinesinputValue}
                       onChange={handleGuidelinesInputChange}
                     />
-                    <h2 onClick={() => {ChangeGuidelines(GuidelinesinputValue)}}>Save and Exit?</h2>
+                    <h4 onClick={() => {ChangeGuidelines(GuidelinesinputValue)}}>Save and Exit?</h4>
                   </div>
                   )}
                 </div>
@@ -1432,14 +1493,15 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
         <div >
           {!ShowEditGuildFeatures && (
             <div style={{background: getGuildSettingsColors(clickedGuild.guildColor)}} className="guild-features-popup-main">
-              <h2 style={{textAlign: 'center'}}>Guild Features</h2>
+              <h3 style={{textAlign: 'center' ,margin: '0'}}>Guild Features</h3>
               <div>Guild Moto: {clickedGuild.guildMoto}</div>
-              <div>Guild bio: {clickedGuild.bio}</div>
+              <div>Guild Bio:</div>
+              <div style={{height: '200px', marginTop: '-24px', overflowY: 'auto', border: 'white groove 2px'}}>{clickedGuild.bio}</div>
               <div>{clickedGuild.RequestToJoin ? 'Request To Join' : 'Open For all'}</div>
               <div>Findable: {clickedGuild.Findable ? 'Findable' : 'Hidden'}</div>
               <div>Guild Color: {clickedGuild.guildColor}</div>
               <h3 className="guild-settings" onClick={handleEditFeatures}>Edit Features</h3>
-              <h3 onClick={handleChangeFeatures} style={{position: 'absolute', bottom: '0', right: '10px', cursor: 'pointer'}}>Finish</h3>
+              <h3 onClick={handleChangeFeatures} style={{position: 'absolute', bottom: '0', right: '10px', cursor: 'pointer' , margin: '0'}}>Finish</h3>
             </div>
           )}
           {ShowEditGuildFeatures && (

@@ -14,6 +14,29 @@ const imageMap = {
   mouse: mouse,
   cat: cat,
 };
+const inappropriateWords = [
+  "asshole","assh0le", "assh01e","assho1e", "a55hole", "a55h0le", "a55h01e",
+  "a55ho1e", "ba5tard", "b1tch", "bullsh1t", "bu11shit", "bu11sh1t", "bu1lsh1t",
+  "d1ck", "d0uche", "m0therfucker", "vigger", "nigga", "n1gger", "ni99er", "ni9ger",
+  "nig9er", "n199er", "n1g9er", "n19ger", "p1ss", "p155", "p15s", "p1s5", "pi55", "pi5s",
+  "pis5", "pr1ck", "pu5sy", "pu55y", "pus5y", "pus5", "pu55", "pu5s", "sh1t", "s1ut",
+  "wh0re", "bastard", "bitch", "bullshit", "cunt", "cum", "cummer", "cun7",
+  "damn", "dick", "douche", "fuck", "fucker", "motherfucker", "nigger", "piss", 
+  "prick", "puss", "pussy","retard", "shit", "slut", "twat", "whore", "wanker", "jerker",
+  "faggot", "fagg0t", "fag", "queer",  "dyke", "killyourself", 
+  "k1llyourself", "k1lly0urself", "k1lly0urse1f", "killy0urself", "killy0urse1f", "k1llyourse1f",
+  "a5shole", "a5sh0le", "a5sh01e", "a5sho1e", "4sshole", "4ssh0le", "4ssh01e", "4ssho1e",
+  "blowjob", "b10wjob", "bl0wjob", "bl0wj0b", "b10wj0b", "blowj0b", "bl0wj0b",
+  "cocksucker", "c0cksucker", "c0cksuck3r", "c0cksuckr", "c0cksuck", "cocksuck3r", "c0cksucker",
+  "c0cksuck", "f4ggot", "f4g", "qu33r", "d1ckhead", "d1ckh3ad", "d1ckhed", "dickhead", "dickh3ad", 
+  "dickhed", "jackass", "jack@ss", "j@ckass", "j@ck@ss", "jerkoff", "jerk0ff", "j3rkoff", "j3rk0ff", 
+  "masturbate", "m@sturbate", "m@stur8", "m@sturb8", "masturb8", "mastur8", "motherfucker", 
+  "moth3rfucker", "m0therfucker", "m0th3rfucker", "phuck", "phucker", "phuk", "p00p", "p0rn", 
+  "porn", "pr0n", "rap3", "r@pe", "r@p3", "suck", "sh1thead", "sh1th3ad", "sh1thad", "shithe@d", 
+  "shith3ad", "shithad", "t1t", "t1ts", "tit", "tits", "vagina", "vaj1na", "vajina", "vag1na", 
+  "vajayjay", "va-jay-jay", "vaj@yjay", "wh0r3", "whore", "wh0r", "whor", "wank3r", "wank", 
+  "w4nk", "wanker", "w4nker"
+];
 
 const ProfileBook = ({ UserData, setUserData }) => {
   const [EditProfile, setEditProfile] = useState(false);
@@ -92,6 +115,16 @@ const ProfileBook = ({ UserData, setUserData }) => {
   };
 
   const saveProfile = () => {
+    // Check for inappropriate words
+    const containsInappropriateWords = inappropriateWords.some(word => 
+      Object.values(editedUserData).some(input => String(input).toLowerCase().includes(word))
+    );
+  
+    if (containsInappropriateWords) {
+      alert('Input contains inappropriate content');
+      return;
+    }
+  
     fetch(`http://localhost:5000/Users/id/${UserData.id || UserData._id}`, {
       method: "PATCH",
       headers: {
@@ -115,7 +148,6 @@ const ProfileBook = ({ UserData, setUserData }) => {
       console.error("Error updating profile:", error);
     });
   };
-
   const changeBackgroundColor = (colorname, color1, color2) => {
     setSelectedColor(`${color1}, ${color2}`);
     setcolor(colorname);
