@@ -1134,7 +1134,7 @@ a{
 .ReqMember-item{
   display: flex;
   flex-direction: row;
-  width: 96%;
+  width: 94%;
   justify-content: space-between;
   background-color: rgb(93, 170, 147);
   color: rgba(7, 7, 7, 0.801);
@@ -1471,12 +1471,17 @@ a{
 }
 .Make-Comment-main-div{
   position: fixed;
-  top: 180px;
+  top: 108px;
   bottom: 0;
-  left: 20%;
-  right: 20%;
+  left: 0%;
+  right: 0%;
   background-color: rgba(0, 0, 0, 0.473);
   padding-left: 4%;
+  z-index: 100;
+}
+.Comments-alignment-div{
+  height: 300px;
+  overflow: auto;
 }
 .comments-main-div{
   margin-left: 2%;
@@ -1499,8 +1504,27 @@ a{
   border: none;
   margin-bottom: 2%;
 }
+.guild-request-overflow{
+  height: 400px;
+  overflow-y: auto;
+  overflow-x: none;
+}
+.Comment-Div{
+  width: 95%;
+  height: auto;
+  margin-top: 25px;
+  margin-bottom: 50px;
+  font-size: 26px;
+  padding-bottom: 8px;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border: black groove 3px;
+}
 /*PHONE STYLES*/
-@media screen and (max-width: 420px) {
+@media screen and (max-width: 430px) {
   .Login-square,
   .signup-square{
     margin-top: 5%;
@@ -1546,7 +1570,14 @@ a{
     display: block;
   }
   .Traveler-Bio{
+    width: 180px;
+  }
+  .Traveler-Pic {
     width: 160px;
+    height: 180px;
+  }
+  .Edit-PB {
+    bottom: 20px;
   }
   .Color-Div{
     gap: 10px;
@@ -1584,5 +1615,145 @@ a{
     position: fixed;
     left: 21%;
     top: 212px;
+  }
+}
+@media screen and (max-width: 380px) {
+  .Header-logo {
+    width: 150px; 
+    height: 100px;
+  }
+  .header-title{
+    font-family: "MedievalSharp", cursive;
+    font-weight: 500;
+    font-style: normal;
+    font-size: 20px;
+  }
+
+  .Header-menu {
+    width: 60px; 
+    height: 60px;
+    padding-right: 20px;
+    text-align: right; 
+    cursor: pointer;
+  }
+  .Homepage-contents-divs{
+    width: 200px;
+  }
+  .Traveler-Bio{
+    width: 160px;
+  }
+  .Traveler-Pic {
+    width: 140px;
+    height: 160px;
+  }
+  .Color-Div{
+    gap: 4px;
+  }
+  .Edit-PB {
+    bottom: 20px;
+  }
+  .Make-A-convo-grid{
+    display: grid;
+    grid-template-columns: repeat(1,1fr);
+    gap: 7px;
+    width: 98%;
+    margin-bottom: 50px;
+  }
+  .Messages-alignment-div {
+    color: white;
+    flex: 1; /* Expand to fill the remaining space */
+    display: flex;
+    height: 88%;
+    flex-direction: column;
+    width: 72vw;
+    max-height: 70vh;
+    overflow-y: hidden;
+  }
+  .Guild-form{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border: 2px solid black ;
+    gap: 20px;
+    border-radius: 5%;
+    background-color: rgba(255, 255, 255, 0.363);
+    width: 90vw;
+    height: auto;
+    margin-bottom: 70px;
+  }
+  .All-Guilds-content-div{
+    padding-left: 160px;
+    padding-right: 10px;
+  }
+  .guild-reload-icon{
+    position: fixed;
+    left: 21%;
+    top: 212px;
+  }
+}
+@media screen and (max-height: 1000px) {
+  .guild-request-overflow{
+    height: 400px;
+    overflow-y: auto;
+    overflow-x: none;
+  }
+  .guild-stats-font{
+    font-size: 28px;
+  }
+}
+@media screen and (max-height: 820px) {
+  .guild-request-overflow{
+    height: 300px;
+    overflow-y: auto;
+    overflow-x: none;
+  }
+  .Make-Comment-main-div{
+    position: fixed;
+    top: 108px;
+    bottom: 0;
+    left: 0%;
+    right: 0%;
+    background-color: rgba(0, 0, 0, 0.473);
+    padding-left: 4%;
+    z-index: 100;
+  }
+  .Comment-Div{
+    width: 96%;
+    height: auto;
+    margin-top: 5px;
+    margin-bottom: 50px;
+    font-size: 26px;
+    padding-bottom: 8px;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border: black groove 3px;
+  }
+  .Comments-alignment-div{
+    height: 200px;
+  }
+  .guild-stats-font{
+    font-size: 26px;
+  }
+  .guild-settings-div {
+    font-size: 26px;
+  }
+}
+@media screen and (max-height: 720px) {
+  .guild-request-overflow{
+    height: 200px;
+    overflow-y: auto;
+    overflow-x: none;
+  }
+  .Comments-alignment-div{
+    height: 150px;
+  }
+  .guild-stats-font{
+    font-size: 23px;
+  }
+  .guild-settings-div {
+    font-size: 20px;
   }
 }
