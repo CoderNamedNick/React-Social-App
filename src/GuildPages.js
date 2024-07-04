@@ -1096,14 +1096,14 @@ const handleSubmit = async (e) => {
                 )}
                 {CommentClicked === (Post.id || Post._id) && (
                   <div className="Make-Comment-main-div">
-                    <div style={{ background: getGuildPostColors(clickedGuild.guildColor) }} className="Alerts-Div">
+                    <div style={{ background: getGuildPostColors(clickedGuild.guildColor) }} className="Comment-Div">
                       <div style={{height: '180px', overflowY: 'auto'}}className="Alert-Content">
                         <div>{Post.PosterUserName}</div>
                         <div style={{wordBreak: 'break-word'}}>{Post.content}</div>
                       </div>
                       <div style={{ width: '100%', borderTop: 'black solid 2px', fontSize: '18px', paddingBottom: '20px' }}>Comments: {Post.comments.length}</div>
                       <div style={{ height: '100%' }}>
-                        <div style={{ height: '300px', overflowY: 'auto' }}>
+                        <div className="Comments-alignment-div" >
                           {Post.comments && Post.comments.slice().reverse().map(Comment => (
                             <div className="comments-main-div" key={Comment.id}>
                               <div style={{ fontSize: '18px' }}>{Comment.commentingUserName}</div>
@@ -1152,21 +1152,21 @@ const handleSubmit = async (e) => {
                 </div>
                 {Post.PosterUserName === UserData.username && (
                   <div className="Alert-Reactions">
-                    <span style={{ fontSize: '20px', marginLeft: '0%', cursor: 'pointer' }}>Likes: {Post.Likes}</span>
-                    <span onClick={() => handleCommentClick(Post.id || Post._id)} style={{fontSize: '20px',  marginLeft: '0%', cursor: 'pointer' }}>Comments: {Post.comments.length}</span>
-                    <span style={{fontSize: '20px',  marginRight: '0%', cursor: 'pointer' }}>Dislikes: {Post.Dislikes}</span>
+                    <span style={{ fontSize: '20px', marginLeft: '0%', cursor: 'pointer', paddingTop: '10px'  }}><img style={{width: '30px'}} src={likedicon}></img> {Post.Likes}</span>
+                    <span onClick={() => handleCommentClick(Post.id || Post._id)} style={{ fontSize: '20px', marginLeft: '0%', cursor: 'pointer', paddingTop: '10px'  }}><img style={{width: '30px'}} src={commenticon}></img> {Post.comments.length}</span>
+                    <span style={{ fontSize: '20px', marginRight: '0%', cursor: 'pointer', paddingTop: '10px'  }}><img style={{width: '30px'}} src={dislikedicon}></img> {Post.Dislikes}</span>
                   </div>
                 )}
                 {CommentClicked === (Post.id || Post._id) && (
-                  <div className="Make-Comment-main-div">
-                    <div style={{ background: getGuildPostColors(clickedGuild.guildColor) }} className="Alerts-Div">
-                      <div className="Alert-Content">
+                  <div className="Make-Comment-main-div">    
+                    <div style={{ background: getGuildPostColors(clickedGuild.guildColor) }} className="Comment-Div">
+                      <div style={{height: '180px', overflowY: 'auto'}}className="Alert-Content">
                         <div>{Post.PosterUserName}</div>
-                        <div>{Post.content}</div>
+                        <div style={{wordBreak: 'break-word'}}>{Post.content}</div>
                       </div>
                       <div style={{ width: '100%', borderTop: 'black solid 2px', fontSize: '18px', paddingBottom: '20px' }}>Comments: {Post.comments.length}</div>
                       <div style={{ height: '100%' }}>
-                        <div style={{ height: '400px', overflowY: 'auto' }}>
+                        <div className="Comments-alignment-div">
                           {Post.comments && Post.comments.slice().reverse().map(Comment => (
                             <div className="comments-main-div" key={Comment.id}>
                               <div style={{ fontSize: '18px' }}>{Comment.commentingUserName}</div>
@@ -1219,11 +1219,11 @@ const handleSubmit = async (e) => {
                     <span
                       style={{ marginLeft: '10%', cursor: 'pointer' }}
                       onClick={() => handleAlertLike(Alert.id || Alert._id)}
-                    >Like</span>
+                    ><img style={{width: '30px'}} src={likedicon}></img></span>
                     <span
                       style={{ marginRight: '10%', cursor: 'pointer' }}
                       onClick={() => handleAlertDislike(Alert.id || Alert._id)}
-                    >Dislike</span>
+                    ><img style={{width: '30px'}} src={dislikeicon}></img></span>
                   </div>
                 )}
                 {Alert.PosterUserName !== UserData.username && Alert.LikesList.includes(UserData.username) && (
@@ -1231,11 +1231,11 @@ const handleSubmit = async (e) => {
                     <span 
                       style={{ color: 'blue', marginLeft: '10%', cursor: 'pointer' }}
                       onClick={() => handleAlertRemoveReaction(Alert.id || Alert._id)}
-                    >Liked</span>
+                    ><img style={{width: '30px'}} src={likedicon}></img></span>
                     <span
                       style={{ marginRight: '10%', cursor: 'pointer' }}
                       onClick={() => handleAlertDislike(Alert.id || Alert._id)}
-                    >Dislike</span>
+                    ><img style={{width: '30px'}} src={dislikeicon}></img></span>
                   </div>
                 )}
                 {Alert.PosterUserName !== UserData.username && Alert.DislikesList.includes(UserData.username) && (
@@ -1243,17 +1243,17 @@ const handleSubmit = async (e) => {
                     <span
                       style={{ marginLeft: '10%', cursor: 'pointer' }}
                       onClick={() => handleAlertLike(Alert.id || Alert._id)}
-                    >Like</span>
+                    ><img style={{width: '30px'}} src={likedicon}></img></span>
                     <span 
                       style={{ color: 'Red', marginRight: '10%', cursor: 'pointer' }}
                       onClick={() => handleAlertRemoveReaction(Alert.id || Alert._id)}
-                    >Disliked</span>
+                    ><img style={{width: '30px'}} src={dislikedicon}></img></span>
                   </div>
                 )}
                 {Alert.PosterUserName === UserData.username && (
                   <div className="Alert-Reactions">
-                    <span style={{ marginLeft: '10%', cursor: 'pointer' }}>Likes: {Alert.Likes}</span>
-                    <span style={{ marginRight: '10%', cursor: 'pointer' }}>Dislikes: {Alert.Dislikes}</span>
+                    <span style={{ marginLeft: '10%', cursor: 'pointer' }}><img style={{width: '30px'}} src={likedicon}></img> {Alert.Likes}</span>
+                    <span style={{ marginRight: '10%', cursor: 'pointer' }}><img style={{width: '30px'}} src={dislikedicon}></img> {Alert.Dislikes}</span>
                   </div>
                 )}
               </div>
@@ -1326,7 +1326,7 @@ const handleSubmit = async (e) => {
       </div>
       {ShowGuildStats && (
         <div style={{color: 'white',background: getGuildSettingsColors(clickedGuild.guildColor)}} className="Guild-stats-popup">
-          <div style={{width: '98%', display: 'flex', flexDirection: 'column', justifyContent: 'center',gap: '10px'}}>
+          <div className="guild-stats-font" style={{width: '98%', display: 'flex', flexDirection: 'column', justifyContent: 'center',gap: '10px'}}>
             <div><h3>{clickedGuild.guildName}</h3></div>
             <div>Guild Privacy: {clickedGuild.Findable ? 'Findable' : 'Private'}</div>
             <div>Request To Join: {clickedGuild.RequestToJoin ? 'Yes' : 'No'}</div>
@@ -1349,9 +1349,9 @@ const handleSubmit = async (e) => {
                 <p style={{position: 'absolute', bottom: '0', cursor: 'pointer'}} onClick={handleManageJoinReq}>Finish</p>
               </div>
               {clickedGuild.guildJoinRequest.length !== 0 && (
-                <div>
-                  {RequestedMembers.map((traveler, index) => ( // Added parentheses and index parameter
-                    <div style={{background: getGuildSettingsColors(clickedGuild.guildColor)}} className="ReqMember-item" key={index}> {/* Added key for each mapped element */}
+                <div className="guild-request-overflow">
+                  {RequestedMembers.map((traveler, index) => ( 
+                    <div style={{background: getGuildSettingsColors(clickedGuild.guildColor)}} className="ReqMember-item" key={index}> 
                       <div>
                         {traveler.UserName}
                         {traveler.AccPrivate ? (
@@ -1670,7 +1670,7 @@ const handleSubmit = async (e) => {
               ))}
             </div>
           </div>
-          <h3 style={{ position: 'absolute', bottom: '0', left: '10px', cursor: 'pointer' }} onClick={handleGiveWarning}>Finish</h3>
+          <h3 style={{ position: 'absolute', bottom: '0', left: '10px', cursor: 'pointer', marginBottom: '0' }} onClick={handleGiveWarning}>Finish</h3>
           {clickedMemberForWarning && (
             <div className="guild-Report-A-User" style={{border: 'black solid 1px'}}>
               <h3>{clickedMemberForWarning.UserName || clickedMemberForWarning.TravelerUserName}</h3>
