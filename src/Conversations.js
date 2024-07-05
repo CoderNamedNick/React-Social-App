@@ -16,18 +16,13 @@ const Conversations = ({ UserData, setUserData, ClickedConvo, setClickedConvo })
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Establish Socket connection
     const socket = io('http://localhost:5000');
     setSocket(socket)
-  
     socket.on('connect', () => {
-      console.log('connected');
     });
-    // Clean up socket connection when component unmounts
     return () => {
       socket.disconnect();
     };
-  
   }, []);
 
   const handleChange = (e) => {
@@ -36,7 +31,6 @@ const Conversations = ({ UserData, setUserData, ClickedConvo, setClickedConvo })
   };
 
   useEffect(() => {
-    // Fetch user conversations when component mounts
     fetchConversations();
   }, []);
 
@@ -50,7 +44,6 @@ const Conversations = ({ UserData, setUserData, ClickedConvo, setClickedConvo })
         }
       })
       .then(data => {
-        console.log(data.conversations);
         setConversations(data.conversations);
         setNoCompanions(data.conversations.length === 0);
       })
@@ -60,7 +53,6 @@ const Conversations = ({ UserData, setUserData, ClickedConvo, setClickedConvo })
   };
 
   useEffect(() => {
-    // Fetch companion data when UserData.companions change
     const fetchCompanionData = async () => {
       if (UserData.companions.length > 0) {
         const companionDataPromises = UserData.companions.map(async id => {
@@ -71,7 +63,6 @@ const Conversations = ({ UserData, setUserData, ClickedConvo, setClickedConvo })
         setCompanionsData(companionData);
       }
     };
-
     fetchCompanionData();
   }, [UserData.companions]);
 
@@ -89,7 +80,7 @@ const Conversations = ({ UserData, setUserData, ClickedConvo, setClickedConvo })
 
   const cancelConvo = () => {
     setShowConvoWindow(false);
-    setFormData({ message: '' }); // Reset message content
+    setFormData({ message: '' });
   };
 
   const startNewConvo = async () => {
@@ -103,26 +94,18 @@ const Conversations = ({ UserData, setUserData, ClickedConvo, setClickedConvo })
       });
       if (response.ok) {
         const data = await response.json();
-        console.log('Post successful:', data);
-  
-        // Emit socket event to the companion
         if (socket) {
           const userId = UserData.id || UserData._id
           const companionId = Convocompanionid
           socket.emit('new-convo', userId, companionId );
-          console.log('new convo sent');
         }
-  
-        // Handle success, update state or show a success message
         setShowConvoWindow(false);
-        setFormData({ message: '' }); // Reset message content
+        setFormData({ message: '' }); 
       } else {
         console.error('Error posting to API:', response.statusText);
-        // Handle error, show an error message
       }
     } catch (error) {
       console.error('Error posting to API:', error.message);
-      // Handle error, show an error message
     }
     fetchConversations()
   };
@@ -159,7 +142,6 @@ const Conversations = ({ UserData, setUserData, ClickedConvo, setClickedConvo })
           <div>
             <h1>Current Conversations</h1>
             {Conversations.map(Convo => {
-              // Check if Convo.UserNames is defined before filtering
               const otherUsernames = Convo.UserNames ? Convo.UserNames.filter(username => username !== UserData.username) : [];
               return (
                 <div onClick={() => {ConvoClicked(Convo)}} className='current-convos' key={Convo.id || Convo._id}>
@@ -174,7 +156,6 @@ const Conversations = ({ UserData, setUserData, ClickedConvo, setClickedConvo })
           <div className='Make-A-convo-grid' >
           {companionsData
             .filter(({ userData }) => {
-              // Check if userData.username is not present in any of the conversation usernames
               return !Conversations.some(Convo =>
                 Convo.UserNames && Convo.UserNames.includes(userData.username)
               );

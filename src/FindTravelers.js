@@ -11,7 +11,6 @@ const FindTravelers = ({UserData, setUserData}) => {
   const [filteredTravelers, setFilteredTravelers] = useState([]);
 
   useEffect(() => {
-    // Function to fetch all users
     const fetchAllUsers = async () => {
       try {
         const response = await fetch('http://localhost:5000/Users'); // Assuming you have an endpoint to fetch all users
@@ -24,10 +23,10 @@ const FindTravelers = ({UserData, setUserData}) => {
         console.error('Error fetching all users:', error);
       }
     };
-    // Call the fetchAllUsers function when the component mounts
     fetchAllUsers();
   }, []);
 
+  //I stole This code from someone who also stole this code
   const calculateAgeDifference = (birthdate1, birthdate2) => {
     const date1 = new Date(birthdate1);
     const date2 = new Date(birthdate2);
@@ -44,14 +43,13 @@ const FindTravelers = ({UserData, setUserData}) => {
         }
         const companionDataPromises = UserData.companions.map(async (id) => {
           const userData = await fetchUserDataById(id);
-          return { id, userData }; // Store ID along with user data
+          return { id, userData }; 
         });
         const companionData = await Promise.all(companionDataPromises);
         setCompanions(companionData);
-        setFilteredCompanions(companionData); // Initialize filteredCompanions with all companions
+        setFilteredCompanions(companionData); 
       }
     };
-
     fetchCompanionData();
   }, [UserData.companions]);
 
@@ -60,7 +58,7 @@ const FindTravelers = ({UserData, setUserData}) => {
     const userData = await response.json();
     return userData;
   };
-// for companions
+  // for companions
   const handleSearchChange = (event) => {
     const term = event.target.value;
     setSearchTerm(term);
@@ -73,7 +71,7 @@ const FindTravelers = ({UserData, setUserData}) => {
     );
     setFilteredCompanions(filtered);
   };
-// for Travelers
+  // for Travelers
   const handleSearchTravelersChange = (event) => {
     const term = event.target.value;
     setSearchTermTravelers(term);
@@ -84,7 +82,7 @@ const FindTravelers = ({UserData, setUserData}) => {
     const filtered = allUsers.filter((traveler) =>
       traveler.username.toLowerCase().includes(searchTerm.toLowerCase())
     );
-    setFilteredTravelers(filtered); // Update filtered travelers
+    setFilteredTravelers(filtered); 
   };;
 
   const handleAccPrivChange = (newValue) => {
@@ -101,10 +99,6 @@ const FindTravelers = ({UserData, setUserData}) => {
         if (!response.ok) {
           throw new Error('Failed to update Privacy');
         }
-        // Handle successful response (if needed)
-        console.log('Privacy updated successfully');
-  
-        // Fetch updated user data after successful patch
         fetch(`http://localhost:5000/Users/id/${UserData.id || UserData._id}`)
           .then(response => {
             if (!response.ok) {
@@ -113,16 +107,13 @@ const FindTravelers = ({UserData, setUserData}) => {
             return response.json();
           })
           .then(data => {
-            // Update UserData with fetched data
             setUserData(data);
           })
           .catch(error => {
-            // Handle error (if needed)
             console.error('Error fetching updated user data:', error);
           });
       })
       .catch(error => {
-        // Handle error (if needed)
         console.error('Error updating Privacy:', error);
       });
   };
@@ -141,7 +132,7 @@ const FindTravelers = ({UserData, setUserData}) => {
       />
       <div>
         <div className="Current-Companions-grid">
-          {/* Render filtered companions based on search term */}
+          {/* filtered companions based on search  */}
           {filteredCompanions.map((companion, index) => (
             <Link key={companion._id || companion.id} to={`/user/${companion.userData.username}`}>
               <div key={companion._id || companion.id} className="companion-item">
@@ -176,10 +167,9 @@ const FindTravelers = ({UserData, setUserData}) => {
           </div>
         )}
         <div style={{ marginTop: '50px', marginBottom: '40px' }} className="Current-Companions-grid"> {/* Get all and then filter with findable accounts Also A grid */}
-          {/* Render filtered travelers based on filters and search term */}
+          {/*  filtered travelers based on filters and search  */}
           {allUsers
             .map((traveler) => {
-              // Apply filters
               if (
                 traveler.AccPrivate === true ||
                 traveler.username === UserData.username || // Skip user's own profile
@@ -193,14 +183,12 @@ const FindTravelers = ({UserData, setUserData}) => {
             })
             .filter((traveler) => traveler !== null)
             .sort((a, b) => {
-              // Sort based on age difference with UserData
               const ageDifferenceA = calculateAgeDifference(a.birthdate, UserData.birthdate);
               const ageDifferenceB = calculateAgeDifference(b.birthdate, UserData.birthdate);
               return ageDifferenceA - ageDifferenceB;
             })
             .map((traveler) => (
               <Link key={traveler._id || traveler.id} to={`/user/${traveler.username}`}>
-                {/* Link to another page with the username as a parameter */}
                 <div className="companion-item">
                   <p>{traveler.username}</p>
                   <p style={{ wordWrap: 'break-word' }}>Daily Objective: {traveler.dailyObj}</p>

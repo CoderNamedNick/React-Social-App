@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Travelers from "./Travelers";
 import { io } from "socket.io-client";
 
-const AllGuilds = ({ UserData, setUserData, clickedGuild, setclickedGuild }) => {
+const AllGuilds = ({ UserData, setUserData, setclickedGuild }) => {
   const [OwnedGuilds, setOwnedGuilds] = useState([]);
   const [JoinedGuilds, setJoinedGuilds] = useState([]);
   const [RequestedGuilds, setRequestedGuilds] = useState([]);
@@ -15,13 +15,12 @@ const AllGuilds = ({ UserData, setUserData, clickedGuild, setclickedGuild }) => 
     const socket = io('http://localhost:5000');
     setSocket(socket)
     socket.on('connect', () => {
-      console.log('connected');
+      
     });
    return () => {
      socket.disconnect();
    };
   }, []);
-
 
   useEffect(() => {
     const fetchGuildData = async () => {
@@ -30,29 +29,24 @@ const AllGuilds = ({ UserData, setUserData, clickedGuild, setclickedGuild }) => 
           const guildData = await fetchGuildDataById(id);
           return guildData;
         });
-
         const ownedGuildsData = await Promise.all(ownedGuildsPromises);
         setOwnedGuilds(ownedGuildsData);
       }
 
       if (UserData.guildsJoined) {
-        
         const joinedGuildsPromises = UserData.guildsJoined.map(async (id) => {
           const guildData = await fetchGuildDataById(id);
           return guildData;
         });
-
         const joinedGuildsData = await Promise.all(joinedGuildsPromises);
         setJoinedGuilds(joinedGuildsData);
       }
 
       if (UserData.requestedGuilds) {
-        
         const requestedGuildsPromises = UserData.requestedGuilds.map(async (id) => {
           const guildData = await fetchGuildDataById(id);
           return guildData;
         });
-
         const requestedGuildsData = await Promise.all(requestedGuildsPromises);
         setRequestedGuilds(requestedGuildsData);
       }
@@ -62,24 +56,19 @@ const AllGuilds = ({ UserData, setUserData, clickedGuild, setclickedGuild }) => 
 
   useEffect(() => {
     let isMounted = true;
-  
     const fetchGuildData = async () => {
       if (isMounted && UserData.guildsOwned.length === 0 && UserData.guildsJoined.length === 0 && UserData.requestedGuilds.length === 0) {
         setNoGuild(true);
       }
     };
-  
     fetchGuildData();
-  
-    // Cleanup function
+
     return () => {
       isMounted = false;
     };
   }, [UserData.guildsOwned, UserData.guildsJoined, UserData.requestedGuilds, OwnedGuilds, JoinedGuilds, RequestedGuilds]);
 
-  // Function to fetch guild data by ID (replace this with your actual implementation)
   const fetchGuildDataById = async (id) => {
-    // Example fetch call
     const response = await fetch(`http://localhost:5000/Guilds/id/${id}`);
     const guildData = await response.json();
     return guildData;
@@ -93,29 +82,24 @@ const AllGuilds = ({ UserData, setUserData, clickedGuild, setclickedGuild }) => 
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          TravelerId: UserData.id || UserData._id, // Assuming UserData has the traveler's ID
+          TravelerId: UserData.id || UserData._id, 
         }),
       });
       
       if (!response.ok) {
         throw new Error('Failed to Cancel Request');
       }
-      const data = await response.json(); // assuming the response includes both user and guild data
-  
-      // Update UserData with the user data from the response
+      //if response is okay!
+      const data = await response.json(); 
       setUserData(data.user);
-      
-      // Remove canceled guild ID from requestedGuilds array
       const updatedRequestedGuilds = RequestedGuilds.filter(guild => guild._id !== guildId);
       setRequestedGuilds(updatedRequestedGuilds);
       if (socket) {
         socket.emit('request-join-guild', guildId);
       }
-  
-      console.log('Request Canceled successfully');
     } catch (error) {
       console.error('Error sending Cancel:', error);
-      // Handle error: display error message to user or retry request
+      alert('Error sending Cancel:', error)
     }
   }
 

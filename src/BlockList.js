@@ -16,12 +16,10 @@ const BlockList = ({ UserData, setUserData }) => {
           const userData = await fetchUserDataById(id);
           return userData;
         });
-
         const companionData = await Promise.all(companionDataPromises);
         setBlockedTravs(companionData);
       }
     };
-
     fetchCompanionData();
   }, [UserData.BlockedTravelers]);
 
@@ -46,11 +44,8 @@ const BlockList = ({ UserData, setUserData }) => {
       if (!response.ok) {
         throw new Error('Failed to unblock traveler');
       }
-    
       const data = await response.json();
-      console.log('Traveler unblocked successfully:', data);
       setUserData(data.user);
-      // Remove the unblocked traveler from BlockedTravs
       setBlockedTravs(BlockedTravs.filter(trav => trav._id !== travelerId));
     } catch (error) {
       console.error('Error unblocking traveler:', error);
