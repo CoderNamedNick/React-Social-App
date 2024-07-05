@@ -45,6 +45,7 @@ const ProfileBook = ({ UserData, setUserData }) => {
   const [ProfileImage, setProfileImage] = useState(UserData.ProfileImg || '');
   const [ProfileImageBgColor, setProfileImageBgColor] = useState(UserData.ProfileImgBgColor || '');
   const [color, setcolor] = useState('');
+  const [errors, setErrors] = useState({});
   const [selectedProfileImage, setSelectedProfileImage] = useState(UserData.ProfileImg || '');
   const [selectedBgColor, setSelectedBgColor] = useState(UserData.ProfileImgBgColor || '');
 
@@ -132,20 +133,33 @@ const ProfileBook = ({ UserData, setUserData }) => {
       },
       body: JSON.stringify(editedUserData)
     })
-    .then((response) => response.json())
+    .then((response) => {
+      if (!response.ok) {
+        return response.json().then((errorData) => {
+          throw new Error(errorData.message || 'Error updating profile');
+        });
+      }
+      return response.json();
+    })
     .then((data) => {
-      fetch(`http://localhost:5000/Users/id/${UserData.id || UserData._id}`)
-      .then((response) => response.json())
-      .then((updatedUserData) => {
-        setEditProfile(false);
-        setUserData(updatedUserData);
-      })
-      .catch((error) => {
-        console.error("Error fetching updated user data:", error);
-      });
+      return fetch(`http://localhost:5000/Users/id/${UserData.id || UserData._id}`);
+    })
+    .then((response) => {
+      if (!response.ok) {
+        return response.json().then((errorData) => {
+          setErrors(errorData.message || 'Error From server');
+          return
+        });
+      }
+      return response.json();
+    })
+    .then((updatedUserData) => {
+      setEditProfile(false);
+      setUserData(updatedUserData);
     })
     .catch((error) => {
-      console.error("Error updating profile:", error);
+      console.error(error.message);
+      alert(error.message);
     });
   };
   const changeBackgroundColor = (colorname, color1, color2) => {
@@ -286,8 +300,8 @@ const ProfileBook = ({ UserData, setUserData }) => {
                 ))}
               </div>
             </div>
-
             <div className="Traveler-Info">
+              {errors && (<p>{errors.message}</p>)}
               <h1>
                 UserName:{" "}
                 <input

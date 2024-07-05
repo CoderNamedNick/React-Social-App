@@ -80,35 +80,38 @@ function SignUpPage({ onSignupSuccess, UserData, setUserData }) {
     // Reset errors
     setErrors({});
 
+    let errors = {};
+
     // Username length validation
     if (formData.username.length < 4 || formData.username.length > 16) {
-      setErrors({ username: 'Must be between 4 and 16 characters' });
-      return;
+      errors.username = 'Must be between 4 and 16 characters';
     }
 
     // Username appropriateness validation
     const usernameValidationError = validateUsername(formData.username);
     if (usernameValidationError) {
-      setErrors({ username: usernameValidationError });
-      return;
+      errors.username = usernameValidationError;
     }
 
     // Password length validation
     if (formData.password.length < 6) {
-      setErrors({ password: 'Password must be more than 6 characters' });
-      return;
+      errors.password = 'Password must be more than 6 characters';
     }
 
     // Password match validation
     if (formData.password !== formData.confirmPassword) {
-      setErrors({ confirmPassword: 'Passwords do not match' });
-      return;
+      errors.confirmPassword = 'Passwords do not match';
     }
 
     // Email validation using regular expression and domain validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(formData.email) || !validateEmail(formData.email)) {
-      setErrors({ email: 'Invalid email address' });
+      errors.email = 'Invalid email address';
+    }
+
+    // If there are validation errors, update the state and return
+    if (Object.keys(errors).length > 0) {
+      setErrors(errors);
       return;
     }
 
@@ -130,8 +133,10 @@ function SignUpPage({ onSignupSuccess, UserData, setUserData }) {
       });
 
       if (!response.ok) {
-        // Handle error response
-        throw new Error('Sign up request failed');
+        // Handle error response from server
+        const errorResponse = await response.json();
+        setErrors({ server: errorResponse.message });
+        return;
       }
 
       // Assuming successful sign up
@@ -144,7 +149,7 @@ function SignUpPage({ onSignupSuccess, UserData, setUserData }) {
       navigate('/HomePage');
     } catch (error) {
       console.error('Error during sign up:', error);
-      // Handle error, maybe display a message to the user
+      setErrors({ server: 'An unexpected error occurred. Please try again.' });
     }
   };
 
@@ -152,6 +157,7 @@ function SignUpPage({ onSignupSuccess, UserData, setUserData }) {
     <div className='main-login-page-div'>
       <div className="signup-square">
         <h2 className='medievalsharp-regular'>Create an Account</h2>
+        {errors.server && <p className="error">{errors.server}</p>}
         <form onSubmit={handleSubmit}>
           <div>
             <label className='signup-labels' htmlFor="username">Username:</label><br />
