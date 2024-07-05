@@ -1190,6 +1190,7 @@ a{
   display: flex; 
   flex-direction: column;
   align-items: center;
+  overflow-y: auto;
 }
 .guild-Guideline-popup{
   display: flex; 
@@ -1212,14 +1213,13 @@ a{
   display: flex; 
   flex-direction: column;
   gap: 30px;
+  height: auto;
+  overflow-y: auto;
 }
 .guild-features-form-divs{
   margin-top: 30px;
 }
 .guild-features-form-submit-btn {
-  position: absolute;
-  bottom: 5%;
-  right: 2%;
   cursor: pointer;
   background-color: rgba(128, 128, 128, 0);
   border: none;
@@ -1239,6 +1239,7 @@ a{
   font-size: 30px;
   word-wrap: break-word;
   padding: 20px;
+  overflow-y: auto;
 }
 .Report-A-User-grid-container {
   display: grid;
@@ -1555,20 +1556,12 @@ a{
     background-color: rgb(175, 41, 41);
     font-size: 18px;
     padding: 10px;
-    width: 260px;
+    width: 240px;
     border: black solid 3px;
     border-radius: 10px;
     text-align: center;
   }
 
-  .Hompage-daily-input{
-    width: 260px;
-    height: 30px;
-    border: black solid 2px ;
-    border-radius: 10px;
-    margin-left: 0%;
-    display: block;
-  }
   .Traveler-Bio{
     width: 180px;
   }
@@ -1615,6 +1608,11 @@ a{
     position: fixed;
     left: 21%;
     top: 212px;
+  }
+  .disband-text{
+    font-size: 20px;
+    width: 100px;
+    display: inline-block;
   }
 }
 @media screen and (max-width: 380px) {
@@ -1690,6 +1688,21 @@ a{
     left: 21%;
     top: 212px;
   }
+  .disband-text{
+    font-size: 18px;
+    width: 80px;
+    display: inline-block;
+  }
+}
+@media screen and (max-width: 360px) {
+  .guild-settings-popup {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    z-index: 100;
+    cursor: pointer;
+}
 }
 @media screen and (max-height: 1000px) {
   .guild-request-overflow{

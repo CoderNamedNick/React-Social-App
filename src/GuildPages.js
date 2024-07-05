@@ -1417,9 +1417,9 @@ const handleSubmit = async (e) => {
               <div style={{background: getGuildSettingsItemsColors(clickedGuild.guildColor)}} className="guild-settings-popup-item" onClick={handleShowBanList}>Manage Banned Travelers</div>
               <div style={{background: getGuildSettingsItemsColors(clickedGuild.guildColor)}} className="guild-settings-popup-item" onClick={handleShowDisbandWarning}>Disband Guild</div>
               {ShowDisbandWarning && (
-                <div className="guild-Report-A-User" style={{border: 'black solid 1px'}}>
+                <div className="guild-Report-A-User" style={{border: 'black solid 1px', zIndex: '1000090', overflowY: 'auto'}}>
                   <h3>Disbanding the guild removes all members/elders and the deletes the guild forever!</h3>
-                  <div><span style={{paddingRight: '120px'}} onClick={DisbandGuild}>Confirm and Disband Guild</span>    <span onClick={() => {setShowDisbandWarning(false)}}>Cancel</span></div>
+                  <div><span style={{paddingRight: '40px'}} className="disband-text" onClick={DisbandGuild}>Confirm and Disband Guild</span>    <span className="disband-text" onClick={() => {setShowDisbandWarning(false)}}>Cancel</span></div>
                 </div>
               )}
             </div>
@@ -1496,12 +1496,12 @@ const handleSubmit = async (e) => {
               <h3 style={{textAlign: 'center' ,margin: '0'}}>Guild Features</h3>
               <div>Guild Moto: {clickedGuild.guildMoto}</div>
               <div>Guild Bio:</div>
-              <div style={{height: '200px', marginTop: '-24px', overflowY: 'auto', border: 'white groove 2px'}}>{clickedGuild.bio}</div>
+              <div style={{minHeight: '200px', marginTop: '-24px', overflowY: 'auto', border: 'white groove 2px'}}>{clickedGuild.bio}</div>
               <div>{clickedGuild.RequestToJoin ? 'Request To Join' : 'Open For all'}</div>
               <div>Findable: {clickedGuild.Findable ? 'Findable' : 'Hidden'}</div>
               <div>Guild Color: {clickedGuild.guildColor}</div>
-              <h3 className="guild-settings" onClick={handleEditFeatures}>Edit Features</h3>
-              <h3 onClick={handleChangeFeatures} style={{position: 'absolute', bottom: '0', right: '10px', cursor: 'pointer' , margin: '0'}}>Finish</h3>
+              <h3 onClick={handleEditFeatures}>Edit Features</h3>
+              <h3 onClick={handleChangeFeatures} style={{ alignItems: 'end', cursor: 'pointer' , margin: '0'}}>Finish</h3>
             </div>
           )}
           {ShowEditGuildFeatures && (
@@ -1567,7 +1567,7 @@ const handleSubmit = async (e) => {
                 </select>
               </div>
               <button className="guild-features-form-submit-btn" type="submit">Finish</button>
-              <h2 onClick={handleEditFeatures} style={{ position: 'absolute', bottom: '0', left: '10px', cursor: 'pointer' }}>leave</h2>
+              <h2 onClick={handleEditFeatures} style={{  cursor: 'pointer' }}>leave</h2>
             </form>
           </div>
           )}
@@ -1622,7 +1622,7 @@ const handleSubmit = async (e) => {
               ))}
             </div>
           </div>
-          <h3 style={{ position: 'absolute', bottom: '0', left: '10px', cursor: 'pointer' }} onClick={handleReportAUser}>Finish</h3>
+          <h3 style={{  cursor: 'pointer' }} onClick={handleReportAUser}>Finish</h3>
           {clickedMemberForReport && (
             <div className="guild-Report-A-User" style={{border: 'black solid 1px'}}>
               <h3>{clickedMemberForReport.UserName}</h3>
@@ -1670,7 +1670,7 @@ const handleSubmit = async (e) => {
               ))}
             </div>
           </div>
-          <h3 style={{ position: 'absolute', bottom: '0', left: '10px', cursor: 'pointer', marginBottom: '0' }} onClick={handleGiveWarning}>Finish</h3>
+          <h3 style={{ cursor: 'pointer', marginBottom: '0' }} onClick={handleGiveWarning}>Finish</h3>
           {clickedMemberForWarning && (
             <div className="guild-Report-A-User" style={{border: 'black solid 1px'}}>
               <h3>{clickedMemberForWarning.UserName || clickedMemberForWarning.TravelerUserName}</h3>
@@ -1703,7 +1703,7 @@ const handleSubmit = async (e) => {
               ))}
             </div>
           )}
-          <h3 style={{ position: 'absolute', bottom: '0', left: '10px', cursor: 'pointer' }} onClick={handleShowWarnings}>Finish</h3>
+          <h3 style={{  cursor: 'pointer' }} onClick={handleShowWarnings}>Finish</h3>
         </div>
       )}
       {ShowBannedTravelers && (
@@ -1728,19 +1728,19 @@ const handleSubmit = async (e) => {
               ))}
             </div>
           )}
-          <h3 style={{ position: 'absolute', bottom: '0', left: '10px', cursor: 'pointer' }} onClick={handleShowBanList}>Finish</h3>
+          <h3 style={{  cursor: 'pointer' }} onClick={handleShowBanList}>Finish</h3>
         </div>
       )}
       {ShowReportGuild && (
         <div style={{background: getGuildSettingsColors(clickedGuild.guildColor)}} className="guild-Report-A-User-popup-main">
           <h2 style={{marginBottom: '100px', textAlign: 'center'}}>Reporting  Guild</h2>
           <form style={{display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10%', height: '65%'}} onSubmit={handleReportSubmit}>
-            <input style={{padding: '10px',  width: '30%', fontSize:'20px',}} type="text" name="GuildName" value={reportData.GuildName} onChange={handleReportChange} placeholder="Reporting Guild's Name" required />
+            <input style={{padding: '10px',  width: '50%', fontSize:'20px',}} type="text" name="GuildName" value={reportData.GuildName} onChange={handleReportChange} placeholder="Guild's Name" required />
             <select
               name="ReasonForReport"
               value={reportData.ReasonForReport}
               onChange={handleReportChange}
-              style={{padding: '10px',  width: '30%', fontSize:'20px',}}
+              style={{padding: '10px',  width: '60%', fontSize:'20px',}}
             >
               <option value="Harassment">Harassment</option>
               <option value="Sexual Misconduct">Sexual Misconduct</option>
@@ -1749,10 +1749,10 @@ const handleSubmit = async (e) => {
               <option value="Threats">Threats</option>
               <option value="Other">Other</option>
             </select>
-            <textarea style={{resize: 'none', width: '50%', height: '30%', fontSize: '20px'}} name="ReportDetails" value={reportData.ReportDetails} onChange={handleReportChange} placeholder="Report Details" required></textarea>
+            <textarea style={{resize: 'none', width: '70%', height: '30%', fontSize: '20px'}} name="ReportDetails" value={reportData.ReportDetails} onChange={handleReportChange} placeholder="Report Details" required></textarea>
             <button type="submit">Submit Report</button>
           </form>
-          <h3 style={{ position: 'absolute', bottom: '0', left: '10px', cursor: 'pointer' }} onClick={handleShowReportGuild}>Cancel</h3>
+          <h3 style={{ cursor: 'pointer' }} onClick={handleShowReportGuild}>Cancel</h3>
         </div>
       )}
       {ShowElderMessages && (
