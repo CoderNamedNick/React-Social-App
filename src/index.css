@@ -288,6 +288,22 @@ a{
   display: flex;
   padding-top: 108px;
 }
+.Tavern-News-main-div{
+  display: flex;
+  padding-top: 108px;
+  flex-direction: column;
+  align-items: center;
+}
+.TN-contents-divs{
+  background-color: rgb(175, 41, 41);
+  font-size: 18px;
+  padding: 10px;
+  width: 800px;
+  border: black solid 3px;
+  border-radius: 10px;
+  text-align: center;
+  cursor: pointer;
+}
 .Travelers-container {
   flex-grow: 1;
 }
@@ -335,7 +351,8 @@ a{
   border-radius: 10px;
   text-align: center;
 }
-.Homepage-contents-divs:hover{
+.Homepage-contents-divs:hover, 
+.TN-contents-divs:hover{
   border: rgba(0, 0, 0, 0.185) solid 3px;
   border-bottom: rgba(0, 0, 0, 0.767) solid 6px;
 }

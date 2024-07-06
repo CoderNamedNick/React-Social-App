@@ -1,21 +1,36 @@
 import React, { useState, useEffect } from "react";
 
 const TavernNews = ({ UserData, setUserData }) => {
-
+  const [ShowUpdatesComingsSoon, setShowUpdatesComingsSoon] = useState(false);
+  const [ShowBehindTheTavern, setShowBehindTheTavern] = useState(false);
+  const [ShowHowToHelpTheTavern, setShowHowToHelpTheTavern] = useState(false);
+  const [ShowReportAProblemorBug, setShowReportAProblemorBug] = useState(false);
+  const [ShowContactTavern, setShowContactTavern] = useState(false);
+  
 
   return (
-    <div className="Homepage-main-div">
-      <h1>TAVERN NEWS</h1>
-      <div>
-        <p>
-          Hello and welcome to Tavern News! This is going to be a dev blog where i tell
-          you and everyone here what i plan on doing wit this project. This is by far my first big project so I wont only be 
-          sharing my progress and thoughts I also want to here from you! Recommendations, New Features, Bugs, Fixes, design flaws, upgrades,
-          thoughts, everything you name it. I want this website to not only be my pride and joy but yours too.
-        </p>
+    <div className="Tavern-News-main-div">
+      <h2>Hello And Welcome To Tavern News</h2>
+      <div style={{display:'flex', flexDirection: 'column', gap: '10px'}}>
+        <div className="TN-contents-divs">
+          <h2>Updates Comings Soon?</h2>
+        </div>
+        <div className="TN-contents-divs">
+          <div><h2>Behind The Tavern</h2></div>
+          <div>'how it was made'</div>
+        </div>
+        <div className="TN-contents-divs">
+          <h2>How To Help The Tavern</h2>
+        </div>
+        <div className="TN-contents-divs">
+         <h2>Report A Problem or Bug</h2>
+        </div>
+        <div className="TN-contents-divs">
+          <h2>Contact Tavern</h2>
+        </div>
       </div>
     </div>
-  );
+  ); 
 };
 
 export default TavernNews;
