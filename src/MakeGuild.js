@@ -47,7 +47,6 @@ const MakeGuild = ({ UserData, setUserData }) => {
   const handleChange = (e) => {
     const { name, type, checked } = e.target;
     const newValue = type === 'checkbox' ? checked : e.target.value;
-    // Convert 'true' and 'false' strings to actual boolean values
     const finalValue = newValue === 'true' ? true : newValue === 'false' ? false : newValue;
     setFormData({ ...formData, [name]: finalValue });
   };
@@ -81,16 +80,12 @@ const MakeGuild = ({ UserData, setUserData }) => {
         throw new Error(errorData.message);
       }
   
-      const data = await response.json(); // assuming the response includes both user and guild data
-      console.log('Guild created:', data.guild);
-  
-      // Update UserData with the user data from the response
+      const data = await response.json(); 
       setUserData(data.user);
       setGuildMade(true)
     } catch (error) {
       console.error('Error creating guild:', error.message);
       setErrorMessage(`${error.message}`)
-      // Handle error, display message to the user, etc.
     }
   };
 
@@ -171,7 +166,6 @@ const MakeGuild = ({ UserData, setUserData }) => {
             <option value="green">Green</option>
           </select>
 
-          {/* I want this to send a true if request to join and false if open to all  */}
           <label htmlFor="RequestToJoin">Send Request To Join:</label>
           <input
           type="checkbox"

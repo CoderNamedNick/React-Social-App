@@ -8,7 +8,25 @@ import dislikeicon from './icons/dont-like-symbol.png'
 import dislikedicon from './icons/dislike.png'
 import commenticon from './icons/commentary.png'
 
-//MAKE REFRESH ONLY REFRESH THE USERS AND NOT EMIT TO ALL!!!!!!
+const inappropriateWords = [
+  "m0therfucker", "vigger", "nigga", "n1gger", "ni99er", "ni9ger",
+  "nig9er", "n199er", "n1g9er", "n19ger", "pu5sy", "pu55y", "pus5y", "pus5", "pu55", "pu5s", "s1ut",
+  "wh0re", "bitch", "cunt", "cum", "cummer", "cun7",
+  "dick", "douche", "fuck", "fucker", "motherfucker", "nigger", 
+  "puss", "pussy","retard", "shit", "slut", "twat", "whore", "wanker", "jerker",
+  "faggot", "fagg0t", "fag", "queer",  "dyke", "killyourself", 
+  "k1llyourself", "k1lly0urself", "k1lly0urse1f", "killy0urself", "killy0urse1f", "k1llyourse1f",
+  "blowjob", "b10wjob", "bl0wjob", "bl0wj0b", "b10wj0b", "blowj0b", "bl0wj0b",
+  "cocksucker", "c0cksucker", "c0cksuck3r", "c0cksuckr", "c0cksuck", "cocksuck3r", "c0cksucker",
+  "c0cksuck", "f4ggot", "f4g", "qu33r", "d1ckhead", "d1ckh3ad", "d1ckhed", "dickhead", "dickh3ad", 
+  "dickhed", "jackass", "jack@ss", "j@ckass", "j@ck@ss", "jerkoff", "jerk0ff", "j3rkoff", "j3rk0ff", 
+  "masturbate", "m@sturbate", "m@stur8", "m@sturb8", "masturb8", "mastur8", "motherfucker", 
+  "moth3rfucker", "m0therfucker", "m0th3rfucker", "phuck", "phucker", "phuk", "p0rn", 
+  "porn", "pr0n", "rap3", "r@pe", "r@p3", "suck", "sh1thead", "sh1th3ad", "sh1thad", "shithe@d", 
+  "shith3ad", "shithad", "t1t", "t1ts", "tit", "tits", "vagina", "vaj1na", "vajina", "vag1na", 
+  "vajayjay", "va-jay-jay", "vaj@yjay", "wh0r3", "whore", "wh0r", "whor", "wank3r", "wank", 
+  "w4nk", "wanker", "w4nker"
+];
 
 const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
   const [socket, setSocket] = useState(null);
@@ -70,26 +88,6 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
     ReportDetails: ''
   });
 
-  const inappropriateWords = [
-    "m0therfucker", "vigger", "nigga", "n1gger", "ni99er", "ni9ger",
-    "nig9er", "n199er", "n1g9er", "n19ger", "pu5sy", "pu55y", "pus5y", "pus5", "pu55", "pu5s", "s1ut",
-    "wh0re", "bitch", "cunt", "cum", "cummer", "cun7",
-    "dick", "douche", "fuck", "fucker", "motherfucker", "nigger", 
-    "puss", "pussy","retard", "shit", "slut", "twat", "whore", "wanker", "jerker",
-    "faggot", "fagg0t", "fag", "queer",  "dyke", "killyourself", 
-    "k1llyourself", "k1lly0urself", "k1lly0urse1f", "killy0urself", "killy0urse1f", "k1llyourse1f",
-    "blowjob", "b10wjob", "bl0wjob", "bl0wj0b", "b10wj0b", "blowj0b", "bl0wj0b",
-    "cocksucker", "c0cksucker", "c0cksuck3r", "c0cksuckr", "c0cksuck", "cocksuck3r", "c0cksucker",
-    "c0cksuck", "f4ggot", "f4g", "qu33r", "d1ckhead", "d1ckh3ad", "d1ckhed", "dickhead", "dickh3ad", 
-    "dickhed", "jackass", "jack@ss", "j@ckass", "j@ck@ss", "jerkoff", "jerk0ff", "j3rkoff", "j3rk0ff", 
-    "masturbate", "m@sturbate", "m@stur8", "m@sturb8", "masturb8", "mastur8", "motherfucker", 
-    "moth3rfucker", "m0therfucker", "m0th3rfucker", "phuck", "phucker", "phuk", "p0rn", 
-    "porn", "pr0n", "rap3", "r@pe", "r@p3", "suck", "sh1thead", "sh1th3ad", "sh1thad", "shithe@d", 
-    "shith3ad", "shithad", "t1t", "t1ts", "tit", "tits", "vagina", "vaj1na", "vajina", "vag1na", 
-    "vajayjay", "va-jay-jay", "vaj@yjay", "wh0r3", "whore", "wh0r", "whor", "wank3r", "wank", 
-    "w4nk", "wanker", "w4nker"
-  ];
-
   const handleReportChange = (e) => {
     setReportData({ ...reportData, [e.target.name]: e.target.value });
   };
@@ -126,44 +124,42 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
   };
 
   
-const handleSubmit = async (e) => {
-  e.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-  // Check for inappropriate words
-  const containsInappropriateWords = inappropriateWords.some(word => 
-    Object.values(guildData).some(input => String(input).toLowerCase().includes(word))
-  );
+    const containsInappropriateWords = inappropriateWords.some(word => 
+      Object.values(guildData).some(input => String(input).toLowerCase().includes(word))
+    );
 
-  if (containsInappropriateWords) {
-    alert('Input contains inappropriate content');
-    return;
-  }
-
-  const guildId = clickedGuild.id || clickedGuild._id; // Assuming guild ID is stored in clickedGuild._id
-  try {
-    const response = await fetch(`http://localhost:5000/Guilds/id/${guildId}`, {
-      method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(guildData),
-    });
-
-    if (!response.ok) {
-      throw new Error('Failed to update guild');
+    if (containsInappropriateWords) {
+      alert('Input contains inappropriate content');
+      return;
     }
 
-    const updatedGuild = await response.json();
-    console.log('Updated Guild:', updatedGuild);
-    if (socket) {
-      socket.emit('update-all-guild', guildId);
-    }
+    const guildId = clickedGuild.id || clickedGuild._id; 
+    try {
+      const response = await fetch(`http://localhost:5000/Guilds/id/${guildId}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(guildData),
+      });
 
-    handleChangeFeatures(); // Close the edit form
-  } catch (error) {
-    console.error('Error:', error);
-  }
-};
+      if (!response.ok) {
+        throw new Error('Failed to update guild');
+      }
+
+      const updatedGuild = await response.json();
+      if (socket) {
+        socket.emit('update-all-guild', guildId);
+      }
+
+      handleChangeFeatures();
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
   
   const colors = [
     { name: 'blue', color1: '#B5BAE1', color2: '#0F2180' },
@@ -232,14 +228,12 @@ const handleSubmit = async (e) => {
   const handleCommentInputChange = (event) => {
     setCommentInputValue(event.target.value);
   }
-  
-  // Function to handle mouse wheel scroll
+
   const handleScroll = (e) => {
     const container = containerRef.current;
     container.scrollTop += e.deltaY;
   };
 
-  // Function to handle touch events (swipe)
   let touchStartY = 0;
   const handleTouchStart = (e) => {
     touchStartY = e.touches[0].clientY;
@@ -249,7 +243,7 @@ const handleSubmit = async (e) => {
     const container = containerRef.current;
     const touchY = e.touches[0].clientY;
     const deltaY = touchY - touchStartY;
-    container.scrollTop += deltaY * 2; // Adjust the scrolling speed as needed
+    container.scrollTop += deltaY * 2; 
     touchStartY = touchY;
   };
 
@@ -266,7 +260,6 @@ const handleSubmit = async (e) => {
         throw new Error('Failed to fetch members');
       }
       const MembersData = await response.json();
-      console.log(MembersData)
       setAllMembers(MembersData);
     } catch (error) {
       console.error('Error fetching all guilds:', error);
@@ -279,25 +272,20 @@ const handleSubmit = async (e) => {
         throw new Error('Failed to fetch members');
       }
       const travelersData = await response.json();
-      console.log(travelersData)
       setRequestedMembers(travelersData.traveler);
     } catch (error) {
       console.error('Error fetching all guilds:', error);
     }
   };
   useEffect(() => {
-     // Establish Socket connection
-     const socket = io('http://localhost:5000');
-     setSocket(socket)
-    // make a socket for notifs
+    const socket = io('http://localhost:5000');
+    setSocket(socket)
     const guildId = clickedGuild.id || clickedGuild._id
-     socket.on('connect', () => {
-       console.log('connected');
-     });
-     socket.emit('joinGuildRoom', guildId);
-     socket.emit('storeUserIdForGuild', UserData.id || UserData._id)
-     socket.emit('Get-Alerts-And-Post', guildId)
-     // Clean up socket connection when component unmounts
+    socket.on('connect', () => {
+    });
+    socket.emit('joinGuildRoom', guildId);
+    socket.emit('storeUserIdForGuild', UserData.id || UserData._id)
+    socket.emit('Get-Alerts-And-Post', guildId)
     fetchGuildMembers();
     fetchRequestToJoinMembers()
     setGuildRequestCount(clickedGuild.guildJoinRequest.length)
@@ -306,10 +294,9 @@ const handleSubmit = async (e) => {
     };
   }, []); 
   useEffect(() => {
-    setAlerts(AlertsArray); // Initialize alerts state with AlertsArray
+    setAlerts(AlertsArray); 
   
     if (socket) {
-      // Handle 'like' event
       socket.on('Alert-like', ({ alertId, username }) => {
         setAlerts(prevAlerts => {
           const updatedAlerts = [...prevAlerts];
@@ -322,7 +309,6 @@ const handleSubmit = async (e) => {
         });
       });
   
-      // Handle 'dislike' event
       socket.on('Alert-dislike', ({ alertId, username }) => {
         setAlerts(prevAlerts => {
           const updatedAlerts = [...prevAlerts];
@@ -334,22 +320,19 @@ const handleSubmit = async (e) => {
           return updatedAlerts;
         });
       });
-  
-      // Handle 'Removed-reaction' event
+
       socket.on('Alert-Removed-reaction', ({ alertId, username }) => {
         setAlerts(prevAlerts => {
           const updatedAlerts = [...prevAlerts];
           const alertIndex = updatedAlerts.findIndex(alert => alert.id === alertId);
           
           if (alertIndex > -1) {
-            // Remove username from DislikesList if present
             const dislikeIndex = updatedAlerts[alertIndex].DislikesList.indexOf(username);
             if (dislikeIndex !== -1) {
               updatedAlerts[alertIndex].DislikesList.splice(dislikeIndex, 1);
               updatedAlerts[alertIndex].Dislikes = updatedAlerts[alertIndex].DislikesList.length;
             }
-  
-            // Remove username from LikesList if present
+
             const likeIndex = updatedAlerts[alertIndex].LikesList.indexOf(username);
             if (likeIndex !== -1) {
               updatedAlerts[alertIndex].LikesList.splice(likeIndex, 1);
@@ -359,8 +342,7 @@ const handleSubmit = async (e) => {
           return updatedAlerts;
         });
       });
-  
-      // Cleanup: Remove event listeners when component unmounts
+
       return () => {
         socket.off('Alert-like');
         socket.off('Alert-dislike');
@@ -369,10 +351,9 @@ const handleSubmit = async (e) => {
     }
   }, [AlertsArray, socket]);
   useEffect(() => {
-    setPosts(PostsArray); // Initialize posts state with PostsArray
+    setPosts(PostsArray); 
   
     if (socket) {
-      // Handle 'like' event
       socket.on('Post-like', ({ postId, username }) => {
         setPosts(prevPosts => {
           const updatedPosts = [...prevPosts];
@@ -384,8 +365,7 @@ const handleSubmit = async (e) => {
           return updatedPosts;
         });
       });
-  
-      // Handle 'dislike' event
+
       socket.on('Post-dislike', ({ postId, username }) => {
         setPosts(prevPosts => {
           const updatedPosts = [...prevPosts];
@@ -397,22 +377,19 @@ const handleSubmit = async (e) => {
           return updatedPosts;
         });
       });
-  
-      // Handle 'Removed-reaction' event
+
       socket.on('Post-Removed-reaction', ({ postId, username }) => {
         setPosts(prevPosts => {
           const updatedPosts = [...prevPosts];
           const postIndex = updatedPosts.findIndex(post => post.id === postId);
           
           if (postIndex > -1) {
-            // Remove username from DislikesList if present
             const dislikeIndex = updatedPosts[postIndex].DislikesList.indexOf(username);
             if (dislikeIndex !== -1) {
               updatedPosts[postIndex].DislikesList.splice(dislikeIndex, 1);
               updatedPosts[postIndex].Dislikes = updatedPosts[postIndex].DislikesList.length;
             }
   
-            // Remove username from LikesList if present
             const likeIndex = updatedPosts[postIndex].LikesList.indexOf(username);
             if (likeIndex !== -1) {
               updatedPosts[postIndex].LikesList.splice(likeIndex, 1);
@@ -422,8 +399,7 @@ const handleSubmit = async (e) => {
           return updatedPosts;
         });
       });
-  
-      // Cleanup: Remove event listeners when component unmounts
+
       return () => {
         socket.off('Post-like');
         socket.off('Post-dislike');
@@ -431,51 +407,41 @@ const handleSubmit = async (e) => {
       };
     }
   }, [PostsArray, socket]);
+
   useEffect(() => {
     if (socket) {
       socket.on('memberUpdates', (guildMembersWithElders) => {
-        console.log('got new member')
         setAllMembers(guildMembersWithElders);
       });
       socket.on('guildReqUpdates', (updatedGuild, joinRequestCount, ReqToJoinTavelers) => {
-        console.log('got new request update')
         setclickedGuild(updatedGuild)
         setGuildRequestCount(joinRequestCount)
         setRequestedMembers(ReqToJoinTavelers)
       });
       socket.on('Guild-Settings-updates', (updatedGuild) => {
-        console.log('got new guild update')
         setclickedGuild(updatedGuild)
       });
       socket.on('guild-update', (updatedGuild) => {
-        console.log('got new guild update')
         setclickedGuild(updatedGuild)
       });
       socket.on('Guild-Alert', (Alert) => {
-        console.log('got new guild Alert')
-        console.log(Alert)
         setMakeAlertClicked(false)
       });
       socket.on('Guild-Post', (Post) => {
-        console.log('got new guild Post')
-        console.log(Post)
         setMakePostClicked(false)
       });
       socket.on('Guild-Alerts-And-Post', (GuildDoc) => {
-        console.log(GuildDoc)
         if (GuildDoc) {
           setAlertsArray(GuildDoc.Alerts)
           setPostsArray(GuildDoc.post)
         }
       });
       socket.on('Guild-Alerts-Refresh', (GuildDoc) => {
-        console.log(GuildDoc)
         if (GuildDoc) {
           setAlerts(GuildDoc.Alerts)
         }
       });
       socket.on('Guild-Posts-Refresh', (GuildDoc,) => {
-        console.log(GuildDoc)
         if (GuildDoc) {
           setPosts(GuildDoc.post)
         }
@@ -484,8 +450,7 @@ const handleSubmit = async (e) => {
         setNewPost(true)
       });
     }
-  
-    // Clean up event listener when component unmounts
+
     return () => {
       if (socket) {
         socket.off('promote-update');
@@ -496,20 +461,17 @@ const handleSubmit = async (e) => {
 
   useEffect(() => {
     const handleCommentAdded = (postId, newComment) => {
-
       setPosts(prevPosts =>
         prevPosts.map(post =>
           (post.id || post._id) === postId ? { ...post, comments: [...post.comments, newComment] } : post
         )
       );
     };
-  
-    // Listen for the server's confirmation that the comment was added
+
     if (socket) {
       socket.on('Comment-added', handleCommentAdded);
     }
-  
-    // Cleanup the event listener on component unmount
+
     return () => {
       if (socket) {
         socket.off('Comment-added', handleCommentAdded);
@@ -531,15 +493,12 @@ const handleSubmit = async (e) => {
   const PromoteToElder = (TravelerId) => {
     if (socket) {
       const GuildId = clickedGuild.id || clickedGuild._id;
-      console.log('sending emit');
       socket.emit('update-to-elder', GuildId, TravelerId)
     }
   };
   const DemoteToMember = (TravelerId) => {
-    // check if this works pls
     if (socket) {
       const GuildId = clickedGuild.id || clickedGuild._id
-      console.log('sending emit')
       socket.emit('demote-to-member', GuildId, TravelerId );
     }
   }
@@ -551,21 +510,18 @@ const handleSubmit = async (e) => {
   const BanMember = (TravelerId, Reason) => {
     if (socket) {
       const GuildId = clickedGuild.id || clickedGuild._id
-      console.log('sending emit')
       socket.emit('Ban-member', GuildId, TravelerId, Reason );
     }
   }
   const UnbanMember = (TravelerId) => {
     if (socket) {
       const GuildId = clickedGuild.id || clickedGuild._id
-      console.log('sending emit')
       socket.emit('Unban-member', GuildId, TravelerId);
     }
   }
   const BanFromReportMember = (TravelerId, Reason, ReportId) => {
     if (socket) {
       const GuildId = clickedGuild.id || clickedGuild._id
-      console.log('sending emit')
       socket.emit('Ban-member', GuildId, TravelerId, Reason );
       RemoveReport(ReportId)
     }
@@ -579,7 +535,6 @@ const handleSubmit = async (e) => {
   const ReportMember = (TravelerId, Reason) => {
     if (socket) {
       const GuildId = clickedGuild.id || clickedGuild._id
-      console.log('sending emit')
       socket.emit('Report-member', GuildId, TravelerId, Reason );
     }
     setclickedMemberForReport(null)
@@ -605,30 +560,24 @@ const handleSubmit = async (e) => {
   const AcceptJoinRequest = (TravelerId) => {
     if (socket) {
       const GuildId = clickedGuild.id || clickedGuild._id
-      console.log('sending emit')
       socket.emit('New-member-Accepted', GuildId, TravelerId );
     }
   }
-
   const DeclineJoinRequest = (TravelerId) => {
     if (socket) {
       const GuildId = clickedGuild.id || clickedGuild._id
-      console.log('sending emit')
       socket.emit('New-member-Declined', GuildId, TravelerId );
     }
   }
   const RetireFromGuild = async (TravelerId) => {
     if (socket) {
       const GuildId = clickedGuild.id || clickedGuild._id;
-      console.log('sending emit to leave guild');
       await socket.emit('Retire-From-Guild', GuildId, TravelerId);
     }
   };
-
   const DisbandGuild = async () => {
     if (socket) {
       const GuildId = clickedGuild.id || clickedGuild._id;
-      console.log('sending emit to disband guild');
       socket.emit('Disband-Guild', GuildId, UserData.id || UserData._id);
     }
   };
@@ -683,7 +632,6 @@ const handleSubmit = async (e) => {
   };
 
   const ChangeGuidelines = (NewGuidelines) => {
-    // check if this works pls
     if (socket) {
       const GuildId = clickedGuild.id || clickedGuild._id
       const containsInappropriateWords = inappropriateWords.some(word => NewGuidelines.toLowerCase().includes(word));
@@ -692,7 +640,6 @@ const handleSubmit = async (e) => {
         alert('Input contains inappropriate content')
         return ;
       }
-      console.log('sending emit')
       socket.emit('Guidelines-updated', GuildId, NewGuidelines);
     }
     setShowGuildGuidelines(false)
@@ -776,9 +723,9 @@ const handleSubmit = async (e) => {
       setCommentInputValue('')
     }
     if (CommentClicked === postId) {
-      setCommentClicked(null); // Toggle off if the same post is clicked again
+      setCommentClicked(null); 
     } else {
-      setCommentClicked(postId); // Set the clicked post ID
+      setCommentClicked(postId); 
     }
   };
   const handleAlertLike = (alertId) => {
@@ -789,7 +736,6 @@ const handleSubmit = async (e) => {
         updatedAlerts[alertIndex].LikesList.push(UserData.username);
         updatedAlerts[alertIndex].Likes = updatedAlerts[alertIndex].LikesList.length;
   
-        // Ensure the user isn't in the DislikesList if they liked the alert
         const dislikeIndex = updatedAlerts[alertIndex].DislikesList.indexOf(UserData.username);
         if (dislikeIndex !== -1) {
           updatedAlerts[alertIndex].DislikesList.splice(dislikeIndex, 1);
@@ -810,7 +756,6 @@ const handleSubmit = async (e) => {
         updatedAlerts[alertIndex].DislikesList.push(UserData.username);
         updatedAlerts[alertIndex].Dislikes = updatedAlerts[alertIndex].DislikesList.length;
   
-        // Ensure the user isn't in the LikesList if they disliked the alert
         const likeIndex = updatedAlerts[alertIndex].LikesList.indexOf(UserData.username);
         if (likeIndex !== -1) {
           updatedAlerts[alertIndex].LikesList.splice(likeIndex, 1);
@@ -827,13 +772,11 @@ const handleSubmit = async (e) => {
       const updatedAlerts = [...prevAlerts];
       const alertIndex = updatedAlerts.findIndex(alert => alert.id === alertId || alert._id === alertId);
       if (alertIndex > -1 && !updatedAlerts[alertIndex].DislikesList.includes(UserData.username) || alertIndex > -1 && !updatedAlerts[alertIndex].LikesList.includes(UserData.username)) {
-        // Ensure the user isn't in the DislikesList if they liked the alert
         const dislikeIndex = updatedAlerts[alertIndex].DislikesList.indexOf(UserData.username);
         if (dislikeIndex !== -1) {
           updatedAlerts[alertIndex].DislikesList.splice(dislikeIndex, 1);
           updatedAlerts[alertIndex].Dislikes = updatedAlerts[alertIndex].DislikesList.length;
         }
-        // Ensure the user isn't in the LikesList if they disliked the alert
         const likeIndex = updatedAlerts[alertIndex].LikesList.indexOf(UserData.username);
         if (likeIndex !== -1) {
           updatedAlerts[alertIndex].LikesList.splice(likeIndex, 1);
@@ -859,8 +802,7 @@ const handleSubmit = async (e) => {
       if (postIndex > -1 && !updatedPosts[postIndex].LikesList.includes(UserData.username)) {
         updatedPosts[postIndex].LikesList.push(UserData.username);
         updatedPosts[postIndex].Likes = updatedPosts[postIndex].LikesList.length;
-  
-        // Ensure the user isn't in the DislikesList if they liked the post
+
         const dislikeIndex = updatedPosts[postIndex].DislikesList.indexOf(UserData.username);
         if (dislikeIndex !== -1) {
           updatedPosts[postIndex].DislikesList.splice(dislikeIndex, 1);
@@ -880,8 +822,7 @@ const handleSubmit = async (e) => {
       if (postIndex > -1 && !updatedPosts[postIndex].DislikesList.includes(UserData.username)) {
         updatedPosts[postIndex].DislikesList.push(UserData.username);
         updatedPosts[postIndex].Dislikes = updatedPosts[postIndex].DislikesList.length;
-  
-        // Ensure the user isn't in the LikesList if they disliked the post
+
         const likeIndex = updatedPosts[postIndex].LikesList.indexOf(UserData.username);
         if (likeIndex !== -1) {
           updatedPosts[postIndex].LikesList.splice(likeIndex, 1);
@@ -898,13 +839,12 @@ const handleSubmit = async (e) => {
       const updatedPosts = [...prevPosts];
       const postIndex = updatedPosts.findIndex(post => post.id === postId || post._id === postId);
       if (postIndex > -1 && !updatedPosts[postIndex].DislikesList.includes(UserData.username) || postIndex > -1 && !updatedPosts[postIndex].LikesList.includes(UserData.username)) {
-        // Ensure the user isn't in the DislikesList if they liked the Post
         const dislikeIndex = updatedPosts[postIndex].DislikesList.indexOf(UserData.username);
         if (dislikeIndex !== -1) {
           updatedPosts[postIndex].DislikesList.splice(dislikeIndex, 1);
           updatedPosts[postIndex].Dislikes = updatedPosts[postIndex].DislikesList.length;
         }
-        // Ensure the user isn't in the LikesList if they disliked the Post
+
         const likeIndex = updatedPosts[postIndex].LikesList.indexOf(UserData.username);
         if (likeIndex !== -1) {
           updatedPosts[postIndex].LikesList.splice(likeIndex, 1);
@@ -930,11 +870,9 @@ const handleSubmit = async (e) => {
       alert('Input contains inappropriate content')
       return ;
     }
-    
-      // Emit the comment event to the server
-      socket.emit('Comment-post', postId, CommenterId, GuildId, comment);
-      setCommentInputValue('');
-    };
+    socket.emit('Comment-post', postId, CommenterId, GuildId, comment);
+    setCommentInputValue('');
+  };
   
   return (
     <div style={{background: getGuildColors(clickedGuild.guildColor)}} className='Guild-Pages-main-div'>
@@ -1408,7 +1346,6 @@ const handleSubmit = async (e) => {
           )}
           {AllMembers && UserData.username === AllMembers.Owner.UserName && (
             <div className="guild-settings-popup">
-              {/*make colors  */}
               <div onClick={handleGuildSettings} style={{alignSelf: 'flex-start', cursor: 'pointer'}}>Finish</div>
               <div style={{background: getGuildSettingsItemsColors(clickedGuild.guildColor)}} className="guild-settings-popup-item" onClick={handleGuildGuidelines}>Manage Guild guidelines</div>
               <div style={{background: getGuildSettingsItemsColors(clickedGuild.guildColor)}} className="guild-settings-popup-item" onClick={handleChangeFeatures}>Change Guild Features</div>
@@ -1764,7 +1701,6 @@ const handleSubmit = async (e) => {
                 {clickedGuild.guildElderMessages
                   .filter(convo => convo.ElderConvoStarter === UserData.username)
                   .map((convo, index) => {
-                    // Merge and sort messages by timestamp
                     const combinedMessages = [
                       ...convo.EldersMessages.map(message => ({ ...message, type: 'elder' })),
                       ...convo.OwnersMessages.map(message => ({ ...message, type: 'owner' }))
@@ -1808,7 +1744,6 @@ const handleSubmit = async (e) => {
                     {clickedGuild.guildElderMessages
                       .filter(convo => convo.ElderConvoStarter === currentlyclickedelder)
                       .map((convo, index) => {
-                        // Merge and sort messages by timestamp
                         const combinedMessages = [
                           ...convo.EldersMessages.map(message => ({ ...message, type: 'elder' })),
                           ...convo.OwnersMessages.map(message => ({ ...message, type: 'owner' }))

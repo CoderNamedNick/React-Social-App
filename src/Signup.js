@@ -1,6 +1,31 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+const inappropriateWords = [
+  "asshole","assh0le", "assh01e","assho1e", "a55hole", "a55h0le", "a55h01e",
+  "a55ho1e", "ba5tard", "b1tch", "bullsh1t", "bu11shit", "bu11sh1t", "bu1lsh1t",
+  "d1ck", "d0uche", "m0therfucker", "vigger", "nigga", "n1gger", "ni99er", "ni9ger",
+  "nig9er", "n199er", "n1g9er", "n19ger", "p1ss", "p155", "p15s", "p1s5", "pi55", "pi5s",
+  "pis5", "pr1ck", "pu5sy", "pu55y", "pus5y", "pus5", "pu55", "pu5s", "sh1t", "s1ut",
+  "wh0re", "bastard", "bitch", "bullshit", "cunt", "cum", "cummer", "cun7",
+  "damn", "dick", "douche", "fuck", "fucker", "motherfucker", "nigger", "piss", 
+  "prick", "puss", "pussy","retard", "shit", "slut", "twat", "whore", "wanker", "jerker",
+  "faggot", "fagg0t", "fag", "queer",  "dyke", "killyourself", 
+  "k1llyourself", "k1lly0urself", "k1lly0urse1f", "killy0urself", "killy0urse1f", "k1llyourse1f",
+  "a5shole", "a5sh0le", "a5sh01e", "a5sho1e", "4sshole", "4ssh0le", "4ssh01e", "4ssho1e",
+  "blowjob", "b10wjob", "bl0wjob", "bl0wj0b", "b10wj0b", "blowj0b", "bl0wj0b",
+  "cocksucker", "c0cksucker", "c0cksuck3r", "c0cksuckr", "c0cksuck", "cocksuck3r", "c0cksucker",
+  "c0cksuck", "f4ggot", "f4g", "qu33r", "d1ckhead", "d1ckh3ad", "d1ckhed", "dickhead", "dickh3ad", 
+  "dickhed", "jackass", "jack@ss", "j@ckass", "j@ck@ss", "jerkoff", "jerk0ff", "j3rkoff", "j3rk0ff", 
+  "masturbate", "m@sturbate", "m@stur8", "m@sturb8", "masturb8", "mastur8", "motherfucker", 
+  "moth3rfucker", "m0therfucker", "m0th3rfucker", "phuck", "phucker", "phuk", "p00p", "p0rn", 
+  "porn", "pr0n", "rap3", "r@pe", "r@p3", "suck", "sh1thead", "sh1th3ad", "sh1thad", "shithe@d", 
+  "shith3ad", "shithad", "t1t", "t1ts", "tit", "tits", "vagina", "vaj1na", "vajina", "vag1na", 
+  "vajayjay", "va-jay-jay", "vaj@yjay", "wh0r3", "whore", "wh0r", "whor", "wank3r", "wank", 
+  "w4nk", "wanker", "w4nker"
+];
+
+
 function SignUpPage({ onSignupSuccess, UserData, setUserData }) {
   const [formData, setFormData] = useState({
     username: '',
@@ -18,30 +43,6 @@ function SignUpPage({ onSignupSuccess, UserData, setUserData }) {
     'mac.com', 'zoho.com', 'mail.com', 'yandex.com', 'protonmail.com', 
     'gmx.com', 'mail.ru', 'comcast.net', 'att.net', 'verizon.net', 
     'yahoo.co.jp', 'lycos.com', 'fastmail.com', 'hushmail.com', '123.com'
-  ];
-
-  const inappropriateWords = [
-    "asshole","assh0le", "assh01e","assho1e", "a55hole", "a55h0le", "a55h01e",
-    "a55ho1e", "ba5tard", "b1tch", "bullsh1t", "bu11shit", "bu11sh1t", "bu1lsh1t",
-    "d1ck", "d0uche", "m0therfucker", "vigger", "nigga", "n1gger", "ni99er", "ni9ger",
-    "nig9er", "n199er", "n1g9er", "n19ger", "p1ss", "p155", "p15s", "p1s5", "pi55", "pi5s",
-    "pis5", "pr1ck", "pu5sy", "pu55y", "pus5y", "pus5", "pu55", "pu5s", "sh1t", "s1ut",
-    "wh0re", "bastard", "bitch", "bullshit", "cunt", "cum", "cummer", "cun7",
-    "damn", "dick", "douche", "fuck", "fucker", "motherfucker", "nigger", "piss", 
-    "prick", "puss", "pussy","retard", "shit", "slut", "twat", "whore", "wanker", "jerker",
-    "faggot", "fagg0t", "fag", "queer",  "dyke", "killyourself", 
-    "k1llyourself", "k1lly0urself", "k1lly0urse1f", "killy0urself", "killy0urse1f", "k1llyourse1f",
-    "a5shole", "a5sh0le", "a5sh01e", "a5sho1e", "4sshole", "4ssh0le", "4ssh01e", "4ssho1e",
-    "blowjob", "b10wjob", "bl0wjob", "bl0wj0b", "b10wj0b", "blowj0b", "bl0wj0b",
-    "cocksucker", "c0cksucker", "c0cksuck3r", "c0cksuckr", "c0cksuck", "cocksuck3r", "c0cksucker",
-    "c0cksuck", "f4ggot", "f4g", "qu33r", "d1ckhead", "d1ckh3ad", "d1ckhed", "dickhead", "dickh3ad", 
-    "dickhed", "jackass", "jack@ss", "j@ckass", "j@ck@ss", "jerkoff", "jerk0ff", "j3rkoff", "j3rk0ff", 
-    "masturbate", "m@sturbate", "m@stur8", "m@sturb8", "masturb8", "mastur8", "motherfucker", 
-    "moth3rfucker", "m0therfucker", "m0th3rfucker", "phuck", "phucker", "phuk", "p00p", "p0rn", 
-    "porn", "pr0n", "rap3", "r@pe", "r@p3", "suck", "sh1thead", "sh1th3ad", "sh1thad", "shithe@d", 
-    "shith3ad", "shithad", "t1t", "t1ts", "tit", "tits", "vagina", "vaj1na", "vajina", "vag1na", 
-    "vajayjay", "va-jay-jay", "vaj@yjay", "wh0r3", "whore", "wh0r", "whor", "wank3r", "wank", 
-    "w4nk", "wanker", "w4nker"
   ];
 
   const handleChange = (e) => {
@@ -77,45 +78,37 @@ function SignUpPage({ onSignupSuccess, UserData, setUserData }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Reset errors
     setErrors({});
 
     let errors = {};
 
-    // Username length validation
     if (formData.username.length < 4 || formData.username.length > 16) {
       errors.username = 'Must be between 4 and 16 characters';
     }
 
-    // Username appropriateness validation
     const usernameValidationError = validateUsername(formData.username);
     if (usernameValidationError) {
       errors.username = usernameValidationError;
     }
 
-    // Password length validation
     if (formData.password.length < 6) {
       errors.password = 'Password must be more than 6 characters';
     }
 
-    // Password match validation
     if (formData.password !== formData.confirmPassword) {
       errors.confirmPassword = 'Passwords do not match';
     }
 
-    // Email validation using regular expression and domain validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(formData.email) || !validateEmail(formData.email)) {
       errors.email = 'Invalid email address';
     }
 
-    // If there are validation errors, update the state and return
     if (Object.keys(errors).length > 0) {
       setErrors(errors);
       return;
     }
 
-    // If all validations pass, you can submit the form data
     try {
       const response = await fetch('http://localhost:5000/Users', {
         method: 'POST',
@@ -133,17 +126,13 @@ function SignUpPage({ onSignupSuccess, UserData, setUserData }) {
       });
 
       if (!response.ok) {
-        // Handle error response from server
         const errorResponse = await response.json();
         setErrors({ server: errorResponse.message });
         return;
       }
 
-      // Assuming successful sign up
-      const newUser = await response.json(); // Assuming server returns the created user data
-      console.log('Sign up successful');
+      const newUser = await response.json(); 
 
-      // Update UserData state with the new user
       setUserData(newUser);
       onSignupSuccess();
       navigate('/HomePage');
@@ -231,7 +220,6 @@ function SignUpPage({ onSignupSuccess, UserData, setUserData }) {
               required 
             />
           </div>
-
           <button className='signup-submit-btn medievalsharp-regular' type="submit">Register</button>
         </form>
       </div>

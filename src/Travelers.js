@@ -15,31 +15,24 @@ const Travelers = ({ UserData, setUserData }) => {
   const containerRef = useRef(null);
   const [socket, setSocket] = useState(null);
   
-
-  // Effect for establishing the socket connection
   useEffect(() => {
     const newSocket = io('http://localhost:5000');
     setSocket(newSocket);
 
-    // Clean up the socket connection when component unmounts
     return () => {
       newSocket.disconnect();
     };
   }, []);
 
-  // Effect for fetching the initial message count for each companion
   useEffect(() => {
     if (socket) {
       socket.on('connect', () => {
-        console.log('connected');
         const userId = UserData.id || UserData._id;
         socket.emit('storeUserIdForMessages', userId);
 
         if (userId && companionsData.length > 0) {
-          console.log('user id')
           companionsData.forEach(companion => {
             socket.emit('message-count', userId, companion.id, (unreadMessageCount) => {
-              console.log('got Message count response', unreadMessageCount);
               setCompanionsData(prevData => {
                 return prevData.map(companionData => {
                   if (companionData.id === companion.id) {
@@ -55,18 +48,11 @@ const Travelers = ({ UserData, setUserData }) => {
     }
   }, [socket, UserData.id, companionsData]);
 
-  // Effect for listening to socket events and updating message count
-
   useEffect(() => {
     if (socket) {
-      // Listen for socket event indicating message count update
       socket.on('message-count-update', (userId, unreadMessageCount) => {
-        console.log('Message count updated for user:', userId, 'New count:', unreadMessageCount);
-        
-        // Update the message count for the corresponding companion
         setCompanionsData(prevData => {
           return prevData.map(companionData => {
-            // Check if the companion ID matches the user ID for which the message count was updated
             if (companionData.id === userId) {
               return { ...companionData, messageCount: unreadMessageCount };
             }
@@ -75,8 +61,7 @@ const Travelers = ({ UserData, setUserData }) => {
         });
       });
     }
-  
-    // Clean up event listener when component unmounts
+
     return () => {
       if (socket) {
         socket.off('message-count-update');
@@ -92,11 +77,11 @@ const Travelers = ({ UserData, setUserData }) => {
         }
         const companionDataPromises = UserData.companions.map(async (id) => {
           const userData = await fetchUserDataById(id);
-          return { id, userData }; // Store ID and user data
+          return { id, userData }; 
         });
         const companionData = await Promise.all(companionDataPromises);
         setCompanionsData(companionData);
-        setLoading(false); // Set loading to false after fetching data
+        setLoading(false); 
       }
     };
 
@@ -105,7 +90,7 @@ const Travelers = ({ UserData, setUserData }) => {
 
   useEffect(() => {
     if (companionsData.length > 0) {
-      setFilteredCompanions(companionsData.slice(0, 5)); // Show the first five companions
+      setFilteredCompanions(companionsData.slice(0, 5)); 
     }
   }, [companionsData]);
 
@@ -128,13 +113,13 @@ const Travelers = ({ UserData, setUserData }) => {
   };
 
   const handleShowMore = () => {
-    setShowMore(true); // This can be used to implement a "Show more" feature if needed
+    setShowMore(true);
   };
 
   const handleResize = (event, { size }) => {
     setWidth(size.width);
   };
-  // Handle scroll wheel event to scroll the div
+
   const handleWheel = (e) => {
     if (containerRef.current) {
       containerRef.current.scrollBy({
@@ -179,7 +164,7 @@ const Travelers = ({ UserData, setUserData }) => {
                   <div key={index} className="Travelers-hompage-info">
                     <p style={{paddingTop: '10px'}}>{userData.username}</p>
                     <p style={{wordWrap: 'break-word', marginTop: '-10px'}}>Daily: {userData.dailyObj}</p>
-                    <p style={{wordWrap: 'break-word', marginTop: '-10px'}}>New Messages: {messageCount || 0}</p> {/* Display message count */}
+                    <p style={{wordWrap: 'break-word', marginTop: '-10px'}}>New Messages: {messageCount || 0}</p> 
                   </div>
                 </Link>
               ))}

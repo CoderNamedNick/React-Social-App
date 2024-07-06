@@ -25,8 +25,6 @@ const inappropriateWords = [
   "vajayjay", "va-jay-jay", "vaj@yjay", "wh0r3", "whore", "wh0r", "whor", "wank3r", "wank", 
   "w4nk", "wanker", "w4nker"
 ];
-
-//START HERE 
  
 const FormAParty = ({ UserData, setUserData }) => {
   const [companionsData, setCompanionsData] = useState([]);
@@ -40,22 +38,17 @@ const FormAParty = ({ UserData, setUserData }) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Establish Socket connection
     const socket = io('http://localhost:5000');
     setSocket(socket);
   
     socket.on('connect', () => {
-      console.log('connected');
     });
-    // Clean up socket connection when component unmounts
     return () => {
       socket.disconnect();
     };
-  
   }, []);
 
   useEffect(() => {
-    // Fetch companion data when UserData.companions change
     const fetchCompanionData = async () => {
       if (UserData.companions.length > 0) {
         const companionDataPromises = UserData.companions.map(async id => {
@@ -66,7 +59,6 @@ const FormAParty = ({ UserData, setUserData }) => {
         setCompanionsData(companionData);
       }
     };
-
     fetchCompanionData();
   }, [UserData.companions]);
 
@@ -100,12 +92,10 @@ const FormAParty = ({ UserData, setUserData }) => {
       return;
     }
     const containsInappropriateWords = inappropriateWords.some(word => NewPartyName.toLowerCase().includes(word));
-    
     if (containsInappropriateWords) {
       setErrorMessage('Party name contains inappropriate content');
       return;
     }
-
     socket.emit('Create-Party', {
       creatorId: UserData.id || UserData._id,
       messengers: NewPartyList.map(companion => ({

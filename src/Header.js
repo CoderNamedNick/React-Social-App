@@ -12,24 +12,13 @@ const Header = ({ title, LogOut, UserData, setUserData, clickedGuild, }) => {
   const location = useLocation();
   const navigate = useNavigate();
 
-
-  // make notif counter for messages all added together
-
-
-  // Function to get the title based on the current route
   const getTitle = () => {
-    // Check if the current route contains "/user/" substring
     if (location.pathname.startsWith("/user/")) {
-      // Extract the username from the URL
-      const username = location.pathname.split("/")[2]; // Assuming "/user/:username" format
-      
+      const username = location.pathname.split("/")[2]; 
       // Return a custom title with the username
       return `${username}'s Profile Book`;
     }
-    
 
-
-    // For other routes, provide default titles
     switch (location.pathname) {
       case "/":
         return "Login";
@@ -66,34 +55,27 @@ const Header = ({ title, LogOut, UserData, setUserData, clickedGuild, }) => {
           return "";
         }
       default:
-        return "TAVERN"; // Default title
+        return "TAVERN"; 
     }
   };
     
     useEffect(() => {
-      // Establish Socket connection
       const socket = io('http://localhost:5000');
       setSocket(socket)
     
       socket.on('connect', () => {
-        console.log('connected');
-    
-        // Retrieve user ID from session storage or wherever it's stored
-        const userId = UserData.id || UserData._id; // Assuming the user ID is stored in session storage
+        const userId = UserData.id || UserData._id;
         socket.emit('storeUserIdForConvos', userId);
-        // If user ID exists, emit it to the server to get the initial message count
+
         if (userId) {
           socket.emit('Conversation-count', userId, (unreadConversationCount) => {
-            console.log('got Conversation count response', unreadConversationCount);
-            setconvoCount(unreadConversationCount); // Update message count based on the initial response
+            setconvoCount(unreadConversationCount); 
           });
           socket.emit('All-Unread-count', userId, (allunreadmessageCount) => {
-            console.log('got messages count response', allunreadmessageCount);
-            setMessageCount(allunreadmessageCount); // Update message count based on the initial response
+            setMessageCount(allunreadmessageCount); 
           });
         }
       });
-      // Clean up socket connection when component unmounts
       return () => {
         socket.disconnect();
       };
@@ -109,15 +91,12 @@ const Header = ({ title, LogOut, UserData, setUserData, clickedGuild, }) => {
       };
       if (socket) {
         const userId = UserData.id || UserData._id
-        // Listen for socket event indicating conversation count update
         socket.on('convo-count-update', (unreadConversationCount) => {
-          console.log('Conversation count updated:', unreadConversationCount);
-          setconvoCount(unreadConversationCount); // Update message count based on the updated response
+          setconvoCount(unreadConversationCount); 
         });
         socket.on('allunreadupdate', (NewUnreadNotifNumber) => {
           socket.emit('All-Unread-count', userId, (allunreadmessageCount) => {
-            console.log('got messages count response', allunreadmessageCount);
-            setMessageCount(allunreadmessageCount); // Update message count based on the initial response
+            setMessageCount(allunreadmessageCount); 
           });
         });
         socket.on('Banned-From-A-Guild', handleBannedFromGuild);
@@ -126,7 +105,6 @@ const Header = ({ title, LogOut, UserData, setUserData, clickedGuild, }) => {
         });
       }
     
-      // Clean up event listener when component unmounts
       return () => {
         if (socket) {
           socket.off('convo-count-update');

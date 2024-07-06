@@ -22,7 +22,6 @@ const Messages = ({ UserData, setUserData, ClickedConvo, setClickedConvo }) => {
     setSocket(socket);
 
     socket.on('connect', () => {
-      console.log('connected');
       const userId = UserData.id || UserData._id;
       socket.emit('storeUserIdForInTheMessages', userId);
       socket.emit('Find-Parties', userId);
@@ -41,9 +40,6 @@ const Messages = ({ UserData, setUserData, ClickedConvo, setClickedConvo }) => {
       socket.on('New-Message-update', (Conversation) => {
         const currentUserInConversation = Conversation.messengers.includes(UserData.id) || Conversation.messengers.includes(UserData._id);
         fetchData();
-        console.log('New-M');
-        console.log(currentUserInConversation, THECurrentConvo, Conversation);
-
         setCurrentConvo((prevConvo) => {
           if (currentUserInConversation && prevConvo && prevConvo.messageId === Conversation._id) {
             setmessagesArray(Conversation.messages);
@@ -54,14 +50,11 @@ const Messages = ({ UserData, setUserData, ClickedConvo, setClickedConvo }) => {
       });
 
       socket.on('Read-update', (NewUnreadNotifNumber) => {
-        console.log('got a read update');
         fetchData();
       });
 
       socket.on('Parties-Found', (parties) => {
         setPartiesArray(parties);
-        console.log("this is parties");
-        console.log(parties);
       });
 
       socket.on('Message-to-Party-update', (party) => {
@@ -70,7 +63,6 @@ const Messages = ({ UserData, setUserData, ClickedConvo, setClickedConvo }) => {
         }
       });
       socket.on('Left-Party', (partyId) => {
-        console.log('leftparty')
         const userId = UserData.id || UserData._id
         socket.emit('Find-Parties', userId);
         setParty(null)
@@ -93,7 +85,6 @@ const Messages = ({ UserData, setUserData, ClickedConvo, setClickedConvo }) => {
     setmessagesArray([]);
     if (CompanionsNames !== '') {
       setCurrentConvoCompanionName(CompanionsNames);
-      console.log(CompanionsNames);
     }
     fetch(`http://localhost:5000/Messages/messagesById/id/${ConvoID}`)
       .then(response => {
@@ -104,12 +95,9 @@ const Messages = ({ UserData, setUserData, ClickedConvo, setClickedConvo }) => {
         }
       })
       .then(data => {
-        console.log(data);
-        console.log(Convo);
         SetNoCurrentConvo(false);
         setParty(null);
         setmessagesArray(data.messages);
-        console.log(messagesArray);
       })
       .catch(error => {
         console.error('Error fetching conversations:', error);
@@ -149,7 +137,6 @@ const Messages = ({ UserData, setUserData, ClickedConvo, setClickedConvo }) => {
       const data = await response.json();
       const conversations = data.conversations;
 
-      // Update conversation array with unread message counts
       const promises = conversations.map(conversation => {
         const companionId = conversation.messengers.find(id => id !== UserData.id && id !== UserData._id); 
         return new Promise(resolve => {
@@ -187,7 +174,6 @@ const Messages = ({ UserData, setUserData, ClickedConvo, setClickedConvo }) => {
         }
       })
       .then(data => {
-        console.log(data.conversations);
         setConversationsArray(data.conversations);
       })
       .catch(error => {
@@ -215,7 +201,6 @@ const Messages = ({ UserData, setUserData, ClickedConvo, setClickedConvo }) => {
             const userId = UserData.id || UserData._id;
             const content = messageInput;
             MarkMessagesRead()
-            console.log(Convocompanionid);
             socket.emit('sending-A-New-Message', userId, Convocompanionid, content);
             setMessageInput('');
           }
@@ -226,7 +211,6 @@ const Messages = ({ UserData, setUserData, ClickedConvo, setClickedConvo }) => {
     }
     if (Party !== null) {
       if (socket) {
-        console.log('party is not null');
         const userId = UserData.id || UserData._id;
         const partyId = Party.id || Party._id;
         const content = messageInput;
@@ -274,13 +258,12 @@ const Messages = ({ UserData, setUserData, ClickedConvo, setClickedConvo }) => {
 
   return (
     <div className="main-messages-div">
-      <div className="messages-div">{/*Make this have padding top with flexdir row */}
+      <div className="messages-div">
         { ConvosClicked && !PartiesClicked &&  (
           <div className="left-side-with-Conversations">
             <h4>Convos</h4>
             <div onClick={handlePartyandConvoswitch}>switch to parties</div>
             {ConversationsArray.map(Convo => {
-                // Check if Convo.UserNames is defined before filtering
                 const otherUsernames = Convo.UserNames ? Convo.UserNames.filter(username => username !== UserData.username) : [];
                 return (
                   <div onClick={() => {ConvoCLick(Convo.messageId, otherUsernames.join(', '), Convo)}} className='current-convos-messages' key={Convo.messageId}>
@@ -323,7 +306,6 @@ const Messages = ({ UserData, setUserData, ClickedConvo, setClickedConvo }) => {
                   ))}
                 <div ref={messagesEndRef} />
                 </div>
-                {/*on click of convo get new messages with messages box and a array getting looped thru newest messages*/}
                   <div className="input-div">
                     {errorMessage}
                     <input 

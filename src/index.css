@@ -9,7 +9,7 @@ body {
   -moz-osx-font-smoothing: grayscale;
   background: linear-gradient(to bottom, rgba(90, 25, 25), rgba(90, 25, 25),rgb(105, 30, 30), rgb(121, 36, 36), rgb(141, 47, 47), rgb(139, 56, 56),rgb(170, 72, 72),rgb(197, 99, 99));
   background-repeat: no-repeat;
-  background-attachment: fixed; /* Add this line */
+  background-attachment: fixed; 
 }
 .medievalsharp-regular {
   font-family: "MedievalSharp", cursive;
@@ -115,7 +115,6 @@ a{
   border-bottom: 4px black solid;
   z-index: 111110000;
 }
-
 .Header-logo {
   width: 220px; 
   height: 100px;
@@ -167,7 +166,6 @@ a{
     text-align: center; 
   }
 }
-
 .Header-menu {
   width: 80px; 
   height: 60px;
@@ -337,7 +335,6 @@ a{
   border-radius: 10px;
   text-align: center;
 }
-
 .Homepage-contents-divs:hover{
   border: rgba(0, 0, 0, 0.185) solid 3px;
   border-bottom: rgba(0, 0, 0, 0.767) solid 6px;
@@ -615,7 +612,6 @@ a{
   width: 99%;
   margin-left: 0%;
 }
-
 .Trav-negatives{
   display: flex;
   flex-direction: row;
@@ -689,13 +685,12 @@ a{
   background: linear-gradient(to bottom, rgb(219, 197, 98), #d49029);
   background-repeat: no-repeat;
   background-attachment: fixed; 
-  overflow-y: auto;/* Adjust as needed */
+  overflow-y: auto;
 }
-
 .guild-container {
   display: flex;
   flex-direction: column;
-  width: 90%; /* Ensure container spans the entire viewport width */
+  width: 90%; 
 }
 .All-Guilds-content-div{
   padding-left: 170px;
@@ -710,7 +705,7 @@ a{
   padding: 10px; 
   margin-bottom: 20px;
   color: rgb(58, 52, 52);
-  width: 100%; /* Ensures the item stretches horizontally */
+  width: 100%; 
   cursor: pointer;
 }
 .findable-guild-item{
@@ -881,7 +876,6 @@ a{
   font-weight: 600;
   color: red;
 }
-
 .input-div {
   width: 96%;
   padding: 2%;
@@ -895,20 +889,18 @@ a{
   flex-direction: row;
   justify-content: center;
 }
-
 .messages-input {
-  width: calc(100% - 120px); /* Adjust width of input field */
-  height: 50px; /* Adjust height of input field */
-  margin-right: 10px; /* Adjust margin */
+  width: calc(100% - 120px); 
+  height: 50px; 
+  margin-right: 10px; 
   background-color: #f0f0f031;
   font-size: 20px;
 }
-
 .send-btn {
-  width: 100px; /* Adjust width of button */
-  height: 60px; /* Adjust height of button */
+  width: 100px; 
+  height: 60px; 
   position: relative;
-  top: -7px; /* Adjusted to move the button up by 10 pixels */
+  top: -7px; 
   border-radius: 10px;
   background-color: #299c6c;
   cursor: pointer;
@@ -916,9 +908,9 @@ a{
 }
 .Messages-alignment-div {
   color: white;
-  flex: 1; /* Expand to fill the remaining space */
+  flex: 1; 
   display: flex;
- height: 88%;
+  height: 88%;
   flex-direction: column;
   width: 77vw;
   max-height: 70vh;
@@ -949,7 +941,6 @@ a{
   text-align: right;
 
 }
-
 .message-left {
   text-align: left;
   display: block;
@@ -963,7 +954,6 @@ a{
   border-top-left-radius: 20px;
   border-bottom-left-radius: 20px;
   border-top-right-radius: 20px;
-
 }
 .message-content2{
   display: inline-flex;
@@ -1355,13 +1345,12 @@ a{
   border-top-right-radius: 20px;
   border: solid rgb(255, 255, 255) 1px;
 }
-
 .message-container {
   display: flex;
   flex-direction: column;
   overflow-y: auto;
   width: 100%;
-  height: 80%; /* Make sure the parent container has a defined height */
+  height: 80%; 
 }
 .owner-message-container{
   display: flex;
@@ -1454,7 +1443,6 @@ a{
   justify-content: space-between;
   border: black groove 3px;
 }
-
 .Alert-Content {
   flex-grow: 1;
   display: flex;
@@ -1659,7 +1647,7 @@ a{
   }
   .Messages-alignment-div {
     color: white;
-    flex: 1; /* Expand to fill the remaining space */
+    flex: 1; 
     display: flex;
     height: 88%;
     flex-direction: column;

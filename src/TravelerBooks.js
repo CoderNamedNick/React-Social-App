@@ -28,31 +28,26 @@ const TravelersBooks = ({UserData, setUserData}) => {
   const [ShowReportWindow, setShowReportWindow] = useState(false);
   const [socket, setSocket] = useState(null);
   useEffect(() => {
-    // Establish Socket connection
     const socket = io('http://localhost:5000');
     setSocket(socket)
-   // make a socket for notifs
     socket.on('connect', () => {
-      console.log('connected');
       const userId = UserData.id || UserData._id;
       socket.emit('storeUserIdForInTheMessages', userId);
     });
    
-    // Clean up socket connection when component unmounts
     return () => {
       socket.disconnect();
     };
-  
   }, []);
   const colors = 
   [
-  {name: 'Blue', color1: '#F5F6FC', color2: '#0F2180'},
-  {name: 'Green', color1: '#9FE5A6', color2: '#0F6617'},
-  {name: 'Red', color1: '#C26D6D', color2: '#A70909'},
-  {name: 'Purple', color1: '#D8B4D9', color2: '#78096F'},
-  {name: 'Yellow', color1: '#F9F1C7', color2: '#F6D936'},
-  {name: 'Orange', color1: '#F6AF75', color2: '#EA6A00'},
-  {name: 'Gray', color1: '#D3D3D3', color2: '#4D4545'},
+    {name: 'Blue', color1: '#F5F6FC', color2: '#0F2180'},
+    {name: 'Green', color1: '#9FE5A6', color2: '#0F6617'},
+    {name: 'Red', color1: '#C26D6D', color2: '#A70909'},
+    {name: 'Purple', color1: '#D8B4D9', color2: '#78096F'},
+    {name: 'Yellow', color1: '#F9F1C7', color2: '#F6D936'},
+    {name: 'Orange', color1: '#F6AF75', color2: '#EA6A00'},
+    {name: 'Gray', color1: '#D3D3D3', color2: '#4D4545'},
   ];
   const [reportData, setReportData] = useState({
     TravelerUserName: '',
@@ -87,7 +82,6 @@ const TravelersBooks = ({UserData, setUserData}) => {
     }
   };
   const [selectedColor, setSelectedColor] = useState(() => {
-    // If UserData.ProfileColor exists and is a valid color option, return its corresponding color1 and color2
     if (!userDetails) {
       return '';
     }
@@ -100,11 +94,11 @@ const TravelersBooks = ({UserData, setUserData}) => {
     }
     return '';
   });
+
   useEffect(() => {
-    // Fetch user details based on the username
     const fetchUserDetails = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/Users/username/${username}`); // Assuming your backend API endpoint for fetching user details is '/api/users/:username'
+        const response = await fetch(`http://localhost:5000/Users/username/${username}`); 
         if (!response.ok) {
           throw new Error('Failed to fetch user details');
         }
@@ -116,15 +110,9 @@ const TravelersBooks = ({UserData, setUserData}) => {
     };
 
     fetchUserDetails();
-    console.log(userDetails)
 
-    // Cleanup function
-    return () => {
-      // Any cleanup code if needed
-    };
   }, [username]);
   useEffect(() => {
-    // If UserDetails exists and is a valid color option, update selectedColor
     if (userDetails && userDetails.ProfileColor &&
       ["Blue", "Green", "Red", "Purple", "Yellow", "Orange", "Gray"].includes(userDetails.ProfileColor)) {
       const selectedColorData = colors.find(color => color.name === userDetails.ProfileColor);
@@ -149,26 +137,22 @@ const TravelersBooks = ({UserData, setUserData}) => {
   
   useEffect(() => {
     const fetchGuildData = async () => {
-      if (userDetails && userDetails.guildsJoined) { // Check if userDetails and guildsJoined are defined
+      if (userDetails && userDetails.guildsJoined) { 
         const joinedGuildsPromises = userDetails.guildsJoined.map(async (id) => {
-          // Assuming you have a function to fetch guild data by ID, replace `fetchGuildDataById` with that function
           const guildData = await fetchGuildDataById(id);
           return guildData;
         });
-  
         const joinedGuildsData = await Promise.all(joinedGuildsPromises);
         setJoinedGuilds(joinedGuildsData);
       }
     };
-  
-    // Ensure userDetails is defined before trying to fetch guild data
+
     if (userDetails) {
       fetchGuildData();
     }
   }, [userDetails]);
-  // Function to fetch guild data by ID (replace this with your actual implementation)
+
   const fetchGuildDataById = async (id) => {
-    // Example fetch call
     const response = await fetch(`http://localhost:5000/Guilds/id/${id}`);
     const guildData = await response.json();
     return guildData;
@@ -177,6 +161,7 @@ const TravelersBooks = ({UserData, setUserData}) => {
   const SendCompanionRequest = () => {
     sendCompanionRequest(UserData.id || UserData._id, userDetails.id || userDetails._id)
   }
+
   const sendCompanionRequest = async (senderUserId, receiverUserId) => {
     if(userDetails.CompanionRequest.includes(senderUserId)){
       return alert('request already sent')
@@ -187,18 +172,15 @@ const TravelersBooks = ({UserData, setUserData}) => {
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ companionId: senderUserId }) // Send the sender's user ID as companionId in the request body
+        body: JSON.stringify({ companionId: senderUserId })
       });
       const data = await response.json();
       if (response.ok) {
-        // Companion request sent successfully
         if (socket) {
           socket.emit('update-user', receiverUserId)
         }
-        setSentRequest(true); // Update state to indicate that the request has been sent
-        console.log(data.message); // Log the success message from the server
+        setSentRequest(true); 
       } else {
-        // Handle error response from the server
         console.error('Failed to send companion request:', data.message);
       }
     } catch (error) {
@@ -209,9 +191,9 @@ const TravelersBooks = ({UserData, setUserData}) => {
   const AccCompanionRequest = () => {
     AcceptCompanionRequest(UserData.id || UserData._id, userDetails.id || userDetails._id)
   }
+
   const AcceptCompanionRequest = async (accepterId, acceptieId) => {
     try {
-      // Check if the accepter is already a companion
       if (userDetails.companions.includes(accepterId)) {
         return alert('You are already a companion');
       }
@@ -221,23 +203,20 @@ const TravelersBooks = ({UserData, setUserData}) => {
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ companionId: accepterId }) // Send the sender's user ID as companionId in the request body
+        body: JSON.stringify({ companionId: accepterId }) 
       });
       const data = await response.json();
       if (response.ok) {
-        // Companion request sent successfully
         const userDataResponse = await fetch(`http://localhost:5000/Users/id/${accepterId}`);
         const userData = await userDataResponse.json();
         setUserData(userData);
-        setisCompanion(true); // Update state to indicate that the request has been sent
+        setisCompanion(true); 
         setAcceptRequest(false);
         DeclCompanionRequest();
         if (socket) {
           socket.emit('update-user', acceptieId)
         }
-        console.log(data.message); // Log the success message from the server
       } else {
-        // Handle error response from the server
         console.error('Failed to send companion request:', data.message);
       }
     } catch (error) {
@@ -248,6 +227,7 @@ const TravelersBooks = ({UserData, setUserData}) => {
   const DeclCompanionRequest = () => {
     DeclineCompanionRequest(UserData.id || UserData._id, userDetails.id || userDetails._id)
   }
+
   const DeclineCompanionRequest = async (accepterId, acceptieId) => {
     try {
       const response = await fetch(`http://localhost:5000/Users/${acceptieId}/companions/${accepterId}`, {
@@ -255,30 +235,27 @@ const TravelersBooks = ({UserData, setUserData}) => {
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({}) // No need to send any data in the body
+        body: JSON.stringify({}) 
       });
       const data = await response.json();
       if (response.ok) {
-        // Companion request declined successfully
-        // Fetch updated user data and save it as setUserData
         const userDataResponse = await fetch(`http://localhost:5000/Users/id/${accepterId}`);
         const userData = await userDataResponse.json();
         setUserData(userData);
         setAcceptRequest(false);
         setSentRequest(false);
-        console.log(data.message); // Log the success message from the server
       } else {
-        // Handle error response from the server
         console.error('Failed to decline companion request:', data.message);
       }
     } catch (error) {
-      console.error('Error declining companion request:', error); // Handle fetch errors
+      console.error('Error declining companion request:', error); 
     }
   }
 
   const RemCompanion = () => {
     RemoveCompanion(UserData.id || UserData._id, userDetails.id || userDetails._id)
   }
+
   const RemoveCompanion = async (userId, companionId) => {
     try {
       const response = await fetch(`http://localhost:5000/Users/${userId}/companions/${companionId}`, {
@@ -287,16 +264,11 @@ const TravelersBooks = ({UserData, setUserData}) => {
             'Content-Type': 'application/json'
           }
       });
-
       if (!response.ok) {
         const errorMessage = await response.json();
         throw new Error(errorMessage.message);
       }
 
-      // If the response is okay, companion has been successfully removed
-      console.log('Companion removed successfully');
-
-      // Fetch updated user data and update UI
       const userDataResponse = await fetch(`http://localhost:5000/Users/id/${userId}`);
       const userData = await userDataResponse.json();
       setUserData(userData);
@@ -304,8 +276,7 @@ const TravelersBooks = ({UserData, setUserData}) => {
       setSentRequest(false);
       setisCompanion(false);
     } catch (error) {
-        console.error('Error removing companion:', error.message);
-        // Optionally, update UI to indicate the error to the user
+      console.error('Error removing companion:', error.message);
     }
   }
 
@@ -332,19 +303,14 @@ const TravelersBooks = ({UserData, setUserData}) => {
       if (!response.ok) {
         throw new Error('Failed to block traveler');
       }
-    
       const data = await response.json();
-      console.log('Traveler blocked successfully:', data);
-      // Handle success, maybe update UI
       setUserData(data.user)
       setisBlocked(true);
     } catch (error) {
       console.error('Error blocking traveler:', error);
-      // Handle error, show error message to user
     }
   }
 
-  // Render loading state while user details are being fetched
   if (!userDetails) {
     return <div>Loading...</div>;
   }
@@ -390,7 +356,7 @@ const TravelersBooks = ({UserData, setUserData}) => {
         <div className="ProfileBook-guilds-div">
           <h2>Guilds Traveler is part of</h2>
           {JoinedGuilds
-          .filter(guild => guild.Findable === true) // Filter out the guilds where Findable is true
+          .filter(guild => guild.Findable === true) 
           .map((Guild) => (
             <div className="PB-guilds-div" style={{ display: 'flex', marginBottom: '20px' }}>
               <div style={{ flex: '0 0 30%', paddingLeft: "20px" }}>

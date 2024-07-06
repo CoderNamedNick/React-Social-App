@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
 import { io } from "socket.io-client";
 
 const JoinAGuild = ({ UserData, setUserData }) => {
@@ -37,7 +36,6 @@ const JoinAGuild = ({ UserData, setUserData }) => {
     const socket = io('http://localhost:5000');
     setSocket(socket)
     socket.on('connect', () => {
-      console.log('connected');
     });
    return () => {
      socket.disconnect();
@@ -78,7 +76,6 @@ const JoinAGuild = ({ UserData, setUserData }) => {
       }
       const data = await response.json();
       setUserData(data.user);
-      console.log('Join request sent successfully');
       setRequestedGuilds([...requestedGuilds, guildId]);
       if (socket) {
         socket.emit('request-join-guild', guildId);
@@ -105,7 +102,6 @@ const JoinAGuild = ({ UserData, setUserData }) => {
       }
       const data = await response.json();
       setUserData(data.user);
-      console.log('Joined successfully');
       if (socket) {
         const userId = UserData.id || UserData._id
         socket.emit('New-member', guildId, userId)

@@ -101,7 +101,6 @@ const ProfileBook = ({ UserData, setUserData }) => {
           const guildData = await fetchGuildDataById(id);
           return guildData;
         });
-
         const joinedGuildsData = await Promise.all(joinedGuildsPromises);
         setJoinedGuilds(joinedGuildsData);
       }
@@ -115,8 +114,8 @@ const ProfileBook = ({ UserData, setUserData }) => {
     return guildData;
   };
 
+  //somehow this works
   const saveProfile = () => {
-    // Check for inappropriate words
     const containsInappropriateWords = inappropriateWords.some(word => 
       Object.values(editedUserData).some(input => String(input).toLowerCase().includes(word))
     );

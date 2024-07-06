@@ -6,7 +6,7 @@ const LoginPage = ({ onSignupClick, onLogin, UserData, setUserData }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
-  const navigate = useNavigate(); // Initialize useNavigate
+  const navigate = useNavigate(); 
 
   const acceptedDomains = [
     'gmail.com', 'yahoo.com', 'yahoo.co.uk', 'yahoo.co.in', 'outlook.com', 
@@ -45,18 +45,14 @@ const LoginPage = ({ onSignupClick, onLogin, UserData, setUserData }) => {
       });
 
       if (response.ok) {
-        // If response is OK, user is authenticated
         setMessage('Login successful');
-        // Get user data from the response, including the token
         const userData = await response.json();
         setUserData(userData.user);
 
         onLogin();
 
-        // Navigate to home page
         navigate('/HomePage');
       } else {
-        // If response is not OK, handle error
         setMessage('Incorrect email or password');
       }
     } catch (error) {
