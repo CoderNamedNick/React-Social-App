@@ -24,14 +24,14 @@ const BlockList = ({ UserData, setUserData }) => {
   }, [UserData.BlockedTravelers]);
 
   const fetchUserDataById = async (id) => {
-    const response = await fetch(`http://localhost:5000/Users/id/${id}`);
+    const response = await fetch(`https://tavern-backend-8tu5.onrender.com/Users/id/${id}`);
     const userData = await response.json();
     return userData;
   };
 
   const UnBlockTraveler = async (userId, travelerId) => {
     try {
-      const response = await fetch(`http://localhost:5000/Users/${userId}/Unblock-List`, {
+      const response = await fetch(`https://tavern-backend-8tu5.onrender.com/Users/${userId}/Unblock-List`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',

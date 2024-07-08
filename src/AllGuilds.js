@@ -12,7 +12,7 @@ const AllGuilds = ({ UserData, setUserData, setclickedGuild }) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const socket = io('http://localhost:5000');
+    const socket = io('https://tavern-backend-8tu5.onrender.com');
     setSocket(socket)
     socket.on('connect', () => {
       
@@ -69,14 +69,14 @@ const AllGuilds = ({ UserData, setUserData, setclickedGuild }) => {
   }, [UserData.guildsOwned, UserData.guildsJoined, UserData.requestedGuilds, OwnedGuilds, JoinedGuilds, RequestedGuilds]);
 
   const fetchGuildDataById = async (id) => {
-    const response = await fetch(`http://localhost:5000/Guilds/id/${id}`);
+    const response = await fetch(`https://tavern-backend-8tu5.onrender.com/Guilds/id/${id}`);
     const guildData = await response.json();
     return guildData;
   };
 
   const CancelGuildRequest = async (guildId) => {
     try {
-      const response = await fetch(`http://localhost:5000/Guilds/${guildId}/Cancel-Join-Request`, {
+      const response = await fetch(`https://tavern-backend-8tu5.onrender.com/Guilds/${guildId}/Cancel-Join-Request`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',

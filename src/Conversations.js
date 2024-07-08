@@ -16,7 +16,7 @@ const Conversations = ({ UserData, setUserData, ClickedConvo, setClickedConvo })
   const navigate = useNavigate();
 
   useEffect(() => {
-    const socket = io('http://localhost:5000');
+    const socket = io('https://tavern-backend-8tu5.onrender.com');
     setSocket(socket)
     socket.on('connect', () => {
     });
@@ -35,7 +35,7 @@ const Conversations = ({ UserData, setUserData, ClickedConvo, setClickedConvo })
   }, []);
 
   const fetchConversations = () => {
-    fetch(`http://localhost:5000/Messages/Conversations/${UserData.id || UserData._id}`)
+    fetch(`https://tavern-backend-8tu5.onrender.com/Messages/Conversations/${UserData.id || UserData._id}`)
       .then(response => {
         if (response.ok) {
           return response.json();
@@ -67,7 +67,7 @@ const Conversations = ({ UserData, setUserData, ClickedConvo, setClickedConvo })
   }, [UserData.companions]);
 
   const fetchUserDataById = async id => {
-    const response = await fetch(`http://localhost:5000/Users/id/${id}`);
+    const response = await fetch(`https://tavern-backend-8tu5.onrender.com/Users/id/${id}`);
     const userData = await response.json();
     return userData;
   };
@@ -85,7 +85,7 @@ const Conversations = ({ UserData, setUserData, ClickedConvo, setClickedConvo })
 
   const startNewConvo = async () => {
     try {
-      const response = await fetch(`http://localhost:5000/Messages/messages/${UserData.id || UserData._id}/send/${Convocompanionid}`, {
+      const response = await fetch(`https://tavern-backend-8tu5.onrender.com/Messages/messages/${UserData.id || UserData._id}/send/${Convocompanionid}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

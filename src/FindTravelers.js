@@ -13,7 +13,7 @@ const FindTravelers = ({UserData, setUserData}) => {
   useEffect(() => {
     const fetchAllUsers = async () => {
       try {
-        const response = await fetch('http://localhost:5000/Users'); // Assuming you have an endpoint to fetch all users
+        const response = await fetch('https://tavern-backend-8tu5.onrender.com/Users'); 
         if (!response.ok) {
           throw new Error('Failed to fetch users');
         }
@@ -54,7 +54,7 @@ const FindTravelers = ({UserData, setUserData}) => {
   }, [UserData.companions]);
 
   const fetchUserDataById = async (id) => {
-    const response = await fetch(`http://localhost:5000/Users/id/${id}`);
+    const response = await fetch(`https://tavern-backend-8tu5.onrender.com/Users/id/${id}`);
     const userData = await response.json();
     return userData;
   };
@@ -88,7 +88,7 @@ const FindTravelers = ({UserData, setUserData}) => {
   const handleAccPrivChange = (newValue) => {
     const updatedUserData = { ...UserData, AccPrivate: newValue };
   
-    fetch(`http://localhost:5000/Users/id/${UserData.id || UserData._id}`, {
+    fetch(`https://tavern-backend-8tu5.onrender.com/Users/id/${UserData.id || UserData._id}`, {
       method: 'PATCH',
       body: JSON.stringify(updatedUserData),
       headers: {
@@ -99,7 +99,7 @@ const FindTravelers = ({UserData, setUserData}) => {
         if (!response.ok) {
           throw new Error('Failed to update Privacy');
         }
-        fetch(`http://localhost:5000/Users/id/${UserData.id || UserData._id}`)
+        fetch(`https://tavern-backend-8tu5.onrender.com/Users/id/${UserData.id || UserData._id}`)
           .then(response => {
             if (!response.ok) {
               throw new Error('Failed to fetch updated user data');

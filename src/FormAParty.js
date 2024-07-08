@@ -38,7 +38,7 @@ const FormAParty = ({ UserData, setUserData }) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const socket = io('http://localhost:5000');
+    const socket = io('https://tavern-backend-8tu5.onrender.com');
     setSocket(socket);
   
     socket.on('connect', () => {
@@ -63,7 +63,7 @@ const FormAParty = ({ UserData, setUserData }) => {
   }, [UserData.companions]);
 
   const fetchUserDataById = async id => {
-    const response = await fetch(`http://localhost:5000/Users/id/${id}`);
+    const response = await fetch(`https://tavern-backend-8tu5.onrender.com/Users/id/${id}`);
     const userData = await response.json();
     return userData;
   };

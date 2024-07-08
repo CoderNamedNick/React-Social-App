@@ -95,7 +95,7 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
   const handleReportSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch(`http://localhost:5000/Reports/guild/${UserData.id || UserData._id}/${clickedGuild.id || clickedGuild._id}`, {
+      const response = await fetch(`https://tavern-backend-8tu5.onrender.com/Reports/guild/${UserData.id || UserData._id}/${clickedGuild.id || clickedGuild._id}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -138,7 +138,7 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
 
     const guildId = clickedGuild.id || clickedGuild._id; 
     try {
-      const response = await fetch(`http://localhost:5000/Guilds/id/${guildId}`, {
+      const response = await fetch(`https://tavern-backend-8tu5.onrender.com/Guilds/id/${guildId}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -255,7 +255,7 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
 
   const fetchGuildMembers = async () => {
     try {
-      const response = await fetch(`http://localhost:5000/Guilds/JoinedTravelers/${clickedGuild.id || clickedGuild._id}`);
+      const response = await fetch(`https://tavern-backend-8tu5.onrender.com/Guilds/JoinedTravelers/${clickedGuild.id || clickedGuild._id}`);
       if (!response.ok) {
         throw new Error('Failed to fetch members');
       }
@@ -267,7 +267,7 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
   };
   const fetchRequestToJoinMembers = async () => {
     try {
-      const response = await fetch(`http://localhost:5000/Guilds/ReqToJoinTavelers/${clickedGuild.id || clickedGuild._id}`);
+      const response = await fetch(`https://tavern-backend-8tu5.onrender.com/Guilds/ReqToJoinTavelers/${clickedGuild.id || clickedGuild._id}`);
       if (!response.ok) {
         throw new Error('Failed to fetch members');
       }
@@ -278,7 +278,7 @@ const GuildPages = ({UserData, setUserData, clickedGuild, setclickedGuild}) => {
     }
   };
   useEffect(() => {
-    const socket = io('http://localhost:5000');
+    const socket = io('https://tavern-backend-8tu5.onrender.com');
     setSocket(socket)
     const guildId = clickedGuild.id || clickedGuild._id
     socket.on('connect', () => {

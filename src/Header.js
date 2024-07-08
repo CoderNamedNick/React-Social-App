@@ -60,7 +60,7 @@ const Header = ({ title, LogOut, UserData, setUserData, clickedGuild, }) => {
   };
     
     useEffect(() => {
-      const socket = io('http://localhost:5000');
+      const socket = io('https://tavern-backend-8tu5.onrender.com');
       setSocket(socket)
     
       socket.on('connect', () => {

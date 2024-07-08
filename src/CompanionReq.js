@@ -24,7 +24,7 @@ const CompanionReq = ({ UserData, setUserData }) => {
   }, [UserData.CompanionRequest]);
 
   const fetchUserDataById = async (id) => {
-    const response = await fetch(`http://localhost:5000/Users/id/${id}`);
+    const response = await fetch(`https://tavern-backend-8tu5.onrender.com/Users/id/${id}`);
     const userData = await response.json();
     return userData;
   };
