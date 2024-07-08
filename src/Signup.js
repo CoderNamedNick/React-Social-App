@@ -110,7 +110,7 @@ function SignUpPage({ onSignupSuccess, UserData, setUserData }) {
     }
 
     try {
-      const response = await fetch('http://localhost:5000/Users', {
+      const response = await fetch('https://tavern-backend-8tu5.onrender.com/Users', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
