@@ -16,7 +16,7 @@ const Travelers = ({ UserData, setUserData }) => {
   const [socket, setSocket] = useState(null);
   
   useEffect(() => {
-    const newSocket = io('http://localhost:5000');
+    const newSocket = io('https://tavern-backend-8tu5.onrender.com');
     setSocket(newSocket);
 
     return () => {
@@ -95,7 +95,7 @@ const Travelers = ({ UserData, setUserData }) => {
   }, [companionsData]);
 
   const fetchUserDataById = async (id) => {
-    const response = await fetch(`http://localhost:5000/Users/id/${id}`);
+    const response = await fetch(`https://tavern-backend-8tu5.onrender.com/Users/id/${id}`);
     const userData = await response.json();
     return userData;
   };

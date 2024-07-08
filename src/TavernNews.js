@@ -1,9 +1,6 @@
 import React, { useState, useEffect } from "react";
 import returnArrow from './icons/left.png'
 
-
-
-
 const TavernNews = ({ UserData, setUserData }) => {
   const [ShowUpdatesComingsSoon, setShowUpdatesComingsSoon] = useState(false);
   const [ShowBehindTheTavern, setShowBehindTheTavern] = useState(false);

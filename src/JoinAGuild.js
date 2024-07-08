@@ -22,7 +22,7 @@ const JoinAGuild = ({ UserData, setUserData }) => {
   useEffect(() => {
     const fetchAllGuilds = async () => {
       try {
-        const response = await fetch('http://localhost:5000/Guilds');
+        const response = await fetch('https://tavern-backend-8tu5.onrender.com/Guilds');
         if (!response.ok) {
           throw new Error('Failed to fetch Guilds');
         }
@@ -33,7 +33,7 @@ const JoinAGuild = ({ UserData, setUserData }) => {
       }
     };
     fetchAllGuilds();
-    const socket = io('http://localhost:5000');
+    const socket = io('https://tavern-backend-8tu5.onrender.com');
     setSocket(socket)
     socket.on('connect', () => {
     });
@@ -61,7 +61,7 @@ const JoinAGuild = ({ UserData, setUserData }) => {
 
   const handleRequestToJoinClick = async (guildId) => {
     try {
-      const response = await fetch(`http://localhost:5000/Guilds/${guildId}/Join-Request`, {
+      const response = await fetch(`https://tavern-backend-8tu5.onrender.com/Guilds/${guildId}/Join-Request`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -87,7 +87,7 @@ const JoinAGuild = ({ UserData, setUserData }) => {
 
   const handleJoinGuildClick = async (guildId) => {
     try {
-      const response = await fetch(`http://localhost:5000/Guilds/${guildId}/Join`, {
+      const response = await fetch(`https://tavern-backend-8tu5.onrender.com/Guilds/${guildId}/Join`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',

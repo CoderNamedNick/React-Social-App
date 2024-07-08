@@ -28,7 +28,7 @@ const TravelersBooks = ({UserData, setUserData}) => {
   const [ShowReportWindow, setShowReportWindow] = useState(false);
   const [socket, setSocket] = useState(null);
   useEffect(() => {
-    const socket = io('http://localhost:5000');
+    const socket = io('https://tavern-backend-8tu5.onrender.com');
     setSocket(socket)
     socket.on('connect', () => {
       const userId = UserData.id || UserData._id;
@@ -62,7 +62,7 @@ const TravelersBooks = ({UserData, setUserData}) => {
   const handleReportSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch(`http://localhost:5000/Reports/user/${UserData.id || UserData._id}/${userDetails.id || userDetails._id}`, {
+      const response = await fetch(`https://tavern-backend-8tu5.onrender.com/Reports/user/${UserData.id || UserData._id}/${userDetails.id || userDetails._id}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -98,7 +98,7 @@ const TravelersBooks = ({UserData, setUserData}) => {
   useEffect(() => {
     const fetchUserDetails = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/Users/username/${username}`); 
+        const response = await fetch(`https://tavern-backend-8tu5.onrender.com/Users/username/${username}`); 
         if (!response.ok) {
           throw new Error('Failed to fetch user details');
         }
@@ -153,7 +153,7 @@ const TravelersBooks = ({UserData, setUserData}) => {
   }, [userDetails]);
 
   const fetchGuildDataById = async (id) => {
-    const response = await fetch(`http://localhost:5000/Guilds/id/${id}`);
+    const response = await fetch(`https://tavern-backend-8tu5.onrender.com/Guilds/id/${id}`);
     const guildData = await response.json();
     return guildData;
   };
@@ -167,7 +167,7 @@ const TravelersBooks = ({UserData, setUserData}) => {
       return alert('request already sent')
     }
     try {
-      const response = await fetch(`http://localhost:5000/Users/${receiverUserId}/companion-request`, {
+      const response = await fetch(`https://tavern-backend-8tu5.onrender.com/Users/${receiverUserId}/companion-request`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json'
@@ -198,7 +198,7 @@ const TravelersBooks = ({UserData, setUserData}) => {
         return alert('You are already a companion');
       }
   
-      const response = await fetch(`http://localhost:5000/Users/${acceptieId}/companions`, {
+      const response = await fetch(`https://tavern-backend-8tu5.onrender.com/Users/${acceptieId}/companions`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json'
@@ -207,7 +207,7 @@ const TravelersBooks = ({UserData, setUserData}) => {
       });
       const data = await response.json();
       if (response.ok) {
-        const userDataResponse = await fetch(`http://localhost:5000/Users/id/${accepterId}`);
+        const userDataResponse = await fetch(`https://tavern-backend-8tu5.onrender.com/Users/id/${accepterId}`);
         const userData = await userDataResponse.json();
         setUserData(userData);
         setisCompanion(true); 
@@ -230,7 +230,7 @@ const TravelersBooks = ({UserData, setUserData}) => {
 
   const DeclineCompanionRequest = async (accepterId, acceptieId) => {
     try {
-      const response = await fetch(`http://localhost:5000/Users/${acceptieId}/companions/${accepterId}`, {
+      const response = await fetch(`https://tavern-backend-8tu5.onrender.com/Users/${acceptieId}/companions/${accepterId}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json'
@@ -239,7 +239,7 @@ const TravelersBooks = ({UserData, setUserData}) => {
       });
       const data = await response.json();
       if (response.ok) {
-        const userDataResponse = await fetch(`http://localhost:5000/Users/id/${accepterId}`);
+        const userDataResponse = await fetch(`https://tavern-backend-8tu5.onrender.com/Users/id/${accepterId}`);
         const userData = await userDataResponse.json();
         setUserData(userData);
         setAcceptRequest(false);
@@ -258,7 +258,7 @@ const TravelersBooks = ({UserData, setUserData}) => {
 
   const RemoveCompanion = async (userId, companionId) => {
     try {
-      const response = await fetch(`http://localhost:5000/Users/${userId}/companions/${companionId}`, {
+      const response = await fetch(`https://tavern-backend-8tu5.onrender.com/Users/${userId}/companions/${companionId}`, {
           method: 'DELETE',
           headers: {
             'Content-Type': 'application/json'
@@ -269,7 +269,7 @@ const TravelersBooks = ({UserData, setUserData}) => {
         throw new Error(errorMessage.message);
       }
 
-      const userDataResponse = await fetch(`http://localhost:5000/Users/id/${userId}`);
+      const userDataResponse = await fetch(`https://tavern-backend-8tu5.onrender.com/Users/id/${userId}`);
       const userData = await userDataResponse.json();
       setUserData(userData);
       setAcceptRequest(false);
@@ -290,7 +290,7 @@ const TravelersBooks = ({UserData, setUserData}) => {
   }
   const BlockTraveler = async (userId, travelerId) => {
     try {
-      const response = await fetch(`http://localhost:5000/Users/${userId}/Block-List`, {
+      const response = await fetch(`https://tavern-backend-8tu5.onrender.com/Users/${userId}/Block-List`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
