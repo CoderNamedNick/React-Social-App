@@ -48,9 +48,7 @@ const LoginPage = ({ onSignupClick, onLogin, UserData, setUserData }) => {
         setMessage('Login successful');
         const userData = await response.json();
         setUserData(userData.user);
-
         onLogin();
-
         navigate('/HomePage');
       } else {
         setMessage('Incorrect email or password');
